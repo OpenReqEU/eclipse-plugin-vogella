@@ -26,3 +26,11 @@ This can also be run from the IDE by using the Eclipse Buildship 2.x tooling.
 When starting the application (-> <<running-with-gradle>>) a CommandLineRunner is used to save bugs from Eclipse Bugzilla into a H2 database by using Spring Data.
 
 Saving bugs from Eclipse Bugzilla is also scheduled by using a @Scheduled(cron = "0 0 23 ? * MON-FRI") annotation for the `saveBugs` method of the `BugzillaCommunicationController` class.
+
+=== What's next?
+
+* Reading the bugs with rdf/xml (https://www.bugzilla.org/docs/2.20/html/list.html)
+** Use a Retrofit xml converter for this
+* Support querying from bugzilla 5.x by using the new JSON API
+** Use a Retrofit json converter for this
+* ...
