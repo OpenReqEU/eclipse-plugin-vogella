@@ -1,0 +1,27 @@
+== OpenReq Prototype
+
+The following technologies are used:
+
+* Spring Boot
+* H2 Database
+* RxJava 2.x
+* Retrofit
+* Lombok
+* Gradle
+
+[[running-with-gradle]]
+=== Running the Spring Boot application
+
+In order to run the Spring Boot application the following has to be run on the command line, while being inside the com.vogella.spring.datacrawler directory:
+
+[source, console]
+----
+./gradlew bRun
+----
+
+This can also be run from the IDE by using the Eclipse Buildship 2.x tooling.
+
+=== What does the application currently do?
+
+When starting the application (-> <<running-with-gradle>>) a CommandLineRunner is used to save bugs from Eclipse Bugzilla into a H2 database by using Spring Data.
+Saving bugs from Eclipse Bugzilla is also scheduled by using a @Scheduled(cron = "0 0 23 ? * MON-FRI") annotation for the `saveBugs` method of the `BugzillaCommunicationController` class.
