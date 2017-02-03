@@ -2,12 +2,12 @@
 
 The following technologies are used:
 
-* Spring Boot
-* H2 Database
-* RxJava 2.x
-* Retrofit
-* Lombok
-* Gradle
+* Spring Boot (-> http://www.vogella.com/tutorials/Spring/article.html)
+* H2 Database (-> http://www.vogella.com/tutorials/EclipseLink/article.html)
+* Lombok (-> http://www.vogella.com/tutorials/Lombok/article.html)
+* RxJava 2.x (-> http://www.vogella.com/tutorials/RxJava/article.html)
+* Retrofit (-> http://www.vogella.com/tutorials/Retrofit/article.html)
+* Gradle (-> http://www.vogella.com/tutorials/Gradle/article.html)
 
 [[running-with-gradle]]
 === Running the Spring Boot application
@@ -24,4 +24,5 @@ This can also be run from the IDE by using the Eclipse Buildship 2.x tooling.
 === What does the application currently do?
 
 When starting the application (-> <<running-with-gradle>>) a CommandLineRunner is used to save bugs from Eclipse Bugzilla into a H2 database by using Spring Data.
+
 Saving bugs from Eclipse Bugzilla is also scheduled by using a @Scheduled(cron = "0 0 23 ? * MON-FRI") annotation for the `saveBugs` method of the `BugzillaCommunicationController` class.
