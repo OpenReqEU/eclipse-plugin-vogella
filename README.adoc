@@ -29,8 +29,6 @@ Saving bugs from Eclipse Bugzilla is also scheduled by using a @Scheduled(cron =
 
 === What's next?
 
-* Reading the bugs with rdf/xml (https://www.bugzilla.org/docs/2.20/html/list.html)
-** Use a Retrofit xml converter for this
 * Support querying from bugzilla 5.x by using the new JSON API
 ** Use a Retrofit json converter for this
 * ...
