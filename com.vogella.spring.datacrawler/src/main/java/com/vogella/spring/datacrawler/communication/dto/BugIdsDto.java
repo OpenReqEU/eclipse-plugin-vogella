@@ -6,18 +6,18 @@ import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Path;
 import org.simpleframework.xml.Root;
 
-@Root(name="rdf", strict=false)
-public class BugListDto {
+@Root(strict=false)
+public class BugIdsDto {
 
 	@ElementList(name="Seq", inline=false)
 	@Path("result/bugs")
-	private List<BugDto> bugList;
+	private List<BugIdDto> bugIdDtos;
 
-	public List<BugDto> getBugList() {
-		return bugList;
+	public List<BugIdDto> getBugIdDtos() {
+		return bugIdDtos;
 	}
 
-	public void setBugList(List<BugDto> bugList) {
-		this.bugList = bugList;
+	public void setBugIdDtos(List<BugIdDto> bugIdDtos) {
+		this.bugIdDtos = bugIdDtos;
 	}
 }

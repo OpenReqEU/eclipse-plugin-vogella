@@ -1,33 +1,33 @@
 package com.vogella.spring.datacrawler.communication.dto;
 
+import java.util.List;
+
 import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Path;
+import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 import com.vogella.spring.datacrawler.data.entities.Bug;
 
-@Root(name="bug", strict=false)
+@Root(strict=false)
 public class BugDto {
 
-	@Element(name="id")
-	@Path("bug")
+	@Element(name="bug_id")
 	private String id;
-
+	
 	@Element(name="product")
-	@Path("bug")
-	private String product;
+	String product;
 	
 	@Element(name="component")
-	@Path("bug")
-	private String component;
+	String component;
 	
-	@Element(name="short_desc")
-	@Path("bug")
-	private String description;
+	@Element(name="reporter")
+	String reporter;
 	
 	@Element(name="assigned_to")
-	@Path("bug")
-	private String assignedTo;
+	String assignedTo;
+	
+	@ElementList(entry="see_also", inline = true, required=false)
+	List<String> gerritChanges;
 
 	public String getId() {
 		return id;
@@ -36,7 +36,7 @@ public class BugDto {
 	public void setId(String id) {
 		this.id = id;
 	}
-
+	
 	public String getProduct() {
 		return product;
 	}
@@ -53,12 +53,12 @@ public class BugDto {
 		this.component = component;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getReporter() {
+		return reporter;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setReporter(String reporter) {
+		this.reporter = reporter;
 	}
 
 	public String getAssignedTo() {
@@ -68,14 +68,22 @@ public class BugDto {
 	public void setAssignedTo(String assignedTo) {
 		this.assignedTo = assignedTo;
 	}
-	
+
+	public List<String> getGerritChanges() {
+		return gerritChanges;
+	}
+
+	public void setGerritChanges(List<String> gerritChanges) {
+		this.gerritChanges = gerritChanges;
+	}
+
 	public Bug getBugFromBugDto() {
-		Bug bug = new Bug();
-		bug.setId(this.id);
-		bug.setDescription(this.description);
-		bug.setAssignedTo(this.assignedTo);
-		bug.setProduct(this.product);
-		bug.setComponent(this.component);
-		return bug;
+		Bug bugDetails = new Bug();
+		bugDetails.setId(this.id);
+		bugDetails.setProduct(this.product);
+		bugDetails.setComponent(this.component);
+		bugDetails.setReporter(this.reporter);
+		bugDetails.setAssignedTo(this.assignedTo);
+		return bugDetails;
 	}
 }

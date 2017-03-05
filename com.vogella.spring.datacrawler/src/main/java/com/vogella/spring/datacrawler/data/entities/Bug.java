@@ -15,10 +15,9 @@ public class Bug {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	String id;
-	String product;
-	String component;
-	String description;
+	String id;	
 	String assignedTo;
-	
+	String component;
+	String product;
+	String reporter;
 }

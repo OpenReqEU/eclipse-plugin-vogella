@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import com.vogella.spring.datacrawler.communication.BugzillaCommunicationController;
+import com.vogella.spring.datacrawler.communication.BugzillaController;
 import com.vogella.spring.datacrawler.repository.BugRepository;
 
 @SpringBootApplication
@@ -18,10 +18,10 @@ public class Application {
 	}
 
 	@Bean
-	public CommandLineRunner jpaSample(BugRepository bugRepo,
-			BugzillaCommunicationController bugzillaCommunicationController) {
+	public CommandLineRunner jpaSample(BugRepository bugRepo, BugzillaController bugController) {
 		return (args) -> {
-			bugzillaCommunicationController.saveBugs();
+
+			bugController.loadBugs();
 
 			// query for all bugs in the H2 database and print them
 			bugRepo.findAll().forEach(System.out::println);
