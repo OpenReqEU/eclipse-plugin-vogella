@@ -1,89 +1,94 @@
 package com.vogella.spring.datacrawler.communication.dto;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 import com.vogella.spring.datacrawler.data.entities.Bug;
+import com.vogella.spring.datacrawler.data.entities.Comment;
 
-@Root(strict=false)
+import lombok.Data;
+
+@Root(strict = false)
+@Data
 public class BugDto {
 
-	@Element(name="bug_id")
+	@Element(name = "bug_id")
 	private String id;
+
+	@Element(name = "product")
+	private String product;
+
+	@Element(name = "component")
+	private String component;
+
+	@Element(name = "reporter")
+	private String reporter;
+
+	@Element(name = "assigned_to")
+	private String assignedTo;
+
+	@Element(name = "creation_ts")
+	private String creationTimestamp;
+
+	@Element(name = "delta_ts")
+	private String lastChangeTimestamp;
+
+	@Element(name = "version")
+	private String version;
+
+	@Element(name = "bug_status")
+	private String status;
+
+	@Element(name = "priority")
+	private String priority;
+
+	@Element(name = "bug_severity")
+	private String severity;
+
+	@Element(name = "votes")
+	private int votes;
 	
-	@Element(name="product")
-	String product;
-	
-	@Element(name="component")
-	String component;
-	
-	@Element(name="reporter")
-	String reporter;
-	
-	@Element(name="assigned_to")
-	String assignedTo;
-	
-	@ElementList(entry="see_also", inline = true, required=false)
-	List<String> gerritChanges;
+	@ElementList(entry = "cc", inline = true, required = false)
+	Set<String> ccList;
 
-	public String getId() {
-		return id;
-	}
+	@ElementList(entry = "see_also", inline = true, required = false)
+	Set<String> additionalLinks;
 
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public String getProduct() {
-		return product;
-	}
-
-	public void setProduct(String product) {
-		this.product = product;
-	}
-
-	public String getComponent() {
-		return component;
-	}
-
-	public void setComponent(String component) {
-		this.component = component;
-	}
-
-	public String getReporter() {
-		return reporter;
-	}
-
-	public void setReporter(String reporter) {
-		this.reporter = reporter;
-	}
-
-	public String getAssignedTo() {
-		return assignedTo;
-	}
-
-	public void setAssignedTo(String assignedTo) {
-		this.assignedTo = assignedTo;
-	}
-
-	public List<String> getGerritChanges() {
-		return gerritChanges;
-	}
-
-	public void setGerritChanges(List<String> gerritChanges) {
-		this.gerritChanges = gerritChanges;
-	}
+	@ElementList(entry = "long_desc", inline = true, required = false)
+	List<CommentDto> commentDtos;
 
 	public Bug getBugFromBugDto() {
-		Bug bugDetails = new Bug();
-		bugDetails.setId(this.id);
-		bugDetails.setProduct(this.product);
-		bugDetails.setComponent(this.component);
-		bugDetails.setReporter(this.reporter);
-		bugDetails.setAssignedTo(this.assignedTo);
-		return bugDetails;
+		// TODO move
+		Bug bug = new Bug();
+		bug.setBugId(getId());
+		bug.setProduct(getProduct());
+		bug.setComponent(getComponent());
+		bug.setReporter(getReporter());
+		bug.setAssignedTo(getAssignedTo());
+		bug.setCreationTimestamp(getCreationTimestamp());
+		bug.setLastChangeTimestamp(getLastChangeTimestamp());
+		bug.setPriority(getPriority());
+		bug.setSeverity(getSeverity());
+		bug.setStatus(getStatus());
+		bug.setVersion(getVersion());
+		bug.setVotes(getVotes());
+		bug.setCcList(getCcList());
+		bug.setAdditionalLinks(getAdditionalLinks());
+		// TODO move
+		if (getCommentDtos() != null) {
+			List<Comment> comments = new ArrayList<>();
+			getCommentDtos().forEach(commentDto -> {
+				Comment comment = new Comment(commentDto.getCommentId(), commentDto.getCommentCount(),
+						commentDto.getAuthor(), commentDto.getPublishTimestamp(), commentDto.getText(), bug);
+				comments.add(comment);
+			});
+			bug.setComments(comments);
+		}
+		return bug;
 	}
 }

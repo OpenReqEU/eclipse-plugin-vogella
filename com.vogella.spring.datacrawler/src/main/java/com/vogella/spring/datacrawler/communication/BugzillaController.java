@@ -73,7 +73,7 @@ public class BugzillaController {
 			public void onSuccess(BugsDto t) {
 				List<Bug> bugs = new ArrayList<>();
 				t.getBugDtos().forEach(bugDto -> bugs.add(bugDto.getBugFromBugDto()));
-				bugRepository.save(bugs);
+				List<Bug> savedBugs = (List<Bug>) bugRepository.save(bugs);
 			}
 
 			@Override

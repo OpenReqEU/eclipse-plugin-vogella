@@ -13,7 +13,7 @@ public interface BugzillaApi {
 
 	String BASE_URL = "https://bugs.eclipse.org/bugs/";
 
-	@GET("buglist.cgi?classification=Eclipse&component=Ui&product=Platform&columnlist=bug_id&limit=2&ctype=rdf")
+	@GET("buglist.cgi?classification=Eclipse&component=Ui&product=Platform&columnlist=bug_id&limit=50&ctype=rdf")
 	Single<BugIdsDto> getBugIds();
 
 	@GET("show_bug.cgi?ctype=xml")
