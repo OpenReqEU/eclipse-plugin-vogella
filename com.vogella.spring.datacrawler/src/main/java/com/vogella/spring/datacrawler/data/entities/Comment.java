@@ -7,13 +7,15 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.Data;
 import lombok.ToString;
 
 @Entity
 @Table(name="Comment")
 @Data
-@ToString(exclude = "bug")
+@ToString(exclude="bug")
 public class Comment {
 	
 	public Comment() {}
@@ -32,19 +34,16 @@ public class Comment {
 	@Id 
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
-
 	private String commentId;
-	
 	private String commentCount;
-	
 	private String author;
-	
 	private String publishTimestamp;
 	
 //	@Column(length=65535)
 //	private String text;
 	
 	@ManyToOne
+	@JsonBackReference
 	private Bug bug;
 
 }

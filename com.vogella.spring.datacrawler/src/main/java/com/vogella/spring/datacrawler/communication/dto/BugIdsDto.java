@@ -6,18 +6,13 @@ import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Path;
 import org.simpleframework.xml.Root;
 
+import lombok.Data;
+
 @Root(strict=false)
+@Data
 public class BugIdsDto {
 
 	@ElementList(name="Seq", inline=false)
 	@Path("result/bugs")
 	private List<BugIdDto> bugIdDtos;
-
-	public List<BugIdDto> getBugIdDtos() {
-		return bugIdDtos;
-	}
-
-	public void setBugIdDtos(List<BugIdDto> bugIdDtos) {
-		this.bugIdDtos = bugIdDtos;
-	}
 }

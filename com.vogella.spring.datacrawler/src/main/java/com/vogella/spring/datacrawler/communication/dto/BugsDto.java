@@ -5,17 +5,12 @@ import java.util.List;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
+import lombok.Data;
+
 @Root(strict=false)
+@Data
 public class BugsDto {
 	
 	@ElementList(entry="bug", inline=true)
 	List<BugDto> bugDtos;
-
-	public List<BugDto> getBugDtos() {
-		return bugDtos;
-	}
-
-	public void setBugDtos(List<BugDto> bugDtos) {
-		this.bugDtos = bugDtos;
-	}
 }
