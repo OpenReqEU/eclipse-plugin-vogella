@@ -8,9 +8,9 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
-import com.vogella.spring.datacrawler.data.entities.Attachment;
-import com.vogella.spring.datacrawler.data.entities.Bug;
-import com.vogella.spring.datacrawler.data.entities.Comment;
+import com.vogella.spring.data.entities.Attachment;
+import com.vogella.spring.data.entities.Bug;
+import com.vogella.spring.data.entities.Comment;
 
 import lombok.Data;
 

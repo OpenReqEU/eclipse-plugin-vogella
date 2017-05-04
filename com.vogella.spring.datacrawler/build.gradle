@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '1.5.1.RELEASE'
+		springBootVersion = '1.5.3.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -26,13 +26,13 @@ repositories {
 	maven {
 		url 'https://oss.sonatype.org/content/repositories/snapshots/'
 	}
+	mavenLocal()
 }
 
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
 	compile('org.springframework.boot:spring-boot-starter-cache')
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
 	compile('org.springframework.boot:spring-boot-starter-hateoas')
 	
@@ -41,6 +41,7 @@ dependencies {
 	compile('com.squareup.retrofit2:converter-simplexml:2.2.0')
 	compile('com.squareup.okhttp3:logging-interceptor:3.6.0')
 	compile('com.squareup.retrofit2:adapter-rxjava2:2.2.0')
+	compile('com.vogella.spring:data:0.1')
 	
 	compile('com.h2database:h2')
 	compileOnly('org.projectlombok:lombok')

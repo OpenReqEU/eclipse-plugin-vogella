@@ -1,4 +1,4 @@
-package com.vogella.spring.datacrawler.data.entities;
+package com.vogella.spring.data.entities;
 
 public class UserProfile {
 	String id;

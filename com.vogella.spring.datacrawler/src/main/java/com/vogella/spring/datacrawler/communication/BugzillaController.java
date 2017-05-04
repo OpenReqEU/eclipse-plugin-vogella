@@ -9,10 +9,10 @@ import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.vogella.spring.data.entities.Bug;
+import com.vogella.spring.data.repositories.BugRepository;
 import com.vogella.spring.datacrawler.communication.dto.BugIdsDto;
 import com.vogella.spring.datacrawler.communication.dto.BugsDto;
-import com.vogella.spring.datacrawler.data.entities.Bug;
-import com.vogella.spring.datacrawler.repository.BugRepository;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
