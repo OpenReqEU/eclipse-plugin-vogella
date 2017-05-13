@@ -12,5 +12,5 @@ public class BugIdDto {
 	
 	@Element(name="id")
 	@Path("bug")
-	private String id;
+	private int id;
 }

@@ -29,7 +29,6 @@ repositories {
 	mavenLocal()
 }
 
-
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
 	compile('org.springframework.boot:spring-boot-starter-cache')
@@ -42,6 +41,8 @@ dependencies {
 	compile('com.squareup.okhttp3:logging-interceptor:3.6.0')
 	compile('com.squareup.retrofit2:adapter-rxjava2:2.2.0')
 	compile('com.vogella.spring:data:0.1')
+	compile('nz.ac.waikato.cms.weka:weka-stable:3.8.1')
+	
 	
 	compile('com.h2database:h2')
 	compileOnly('org.projectlombok:lombok')

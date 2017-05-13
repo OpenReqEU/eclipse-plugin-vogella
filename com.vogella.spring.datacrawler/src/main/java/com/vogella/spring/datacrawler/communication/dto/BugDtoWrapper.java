@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Root(strict=false)
 @Data
-public class BugsDto {
+public class BugDtoWrapper {
 	
 	@ElementList(entry="bug", inline=true)
 	List<BugDto> bugDtos;

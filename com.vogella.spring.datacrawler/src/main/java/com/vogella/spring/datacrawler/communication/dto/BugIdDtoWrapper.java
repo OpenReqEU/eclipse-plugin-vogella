@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Root(strict=false)
 @Data
-public class BugIdsDto {
+public class BugIdDtoWrapper {
 
 	@ElementList(name="Seq", inline=false)
 	@Path("result/bugs")

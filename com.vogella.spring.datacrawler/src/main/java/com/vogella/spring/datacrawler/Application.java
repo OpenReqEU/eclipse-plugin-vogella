@@ -28,7 +28,7 @@ public class Application {
 			bugController.loadBugs();
 
 			// query for all bugs in the H2 database and print them
-			bugRepo.findAll().forEach(System.out::println);
+			// bugRepo.findAll().forEach(System.out::println);
 		};
 	}
 }

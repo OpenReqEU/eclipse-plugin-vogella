@@ -25,7 +25,8 @@ public class Bug {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private String bugId;
+	private int bugIdInternal;
+	private int bugIdBugzilla;
 	private String title;
 	private String classification;
 	private String product;

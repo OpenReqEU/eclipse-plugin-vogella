@@ -22,7 +22,7 @@ public class AttachmentDto {
 	@Element(name = "desc")
 	private String description;
 
-	@Element(name = "filename")
+	@Element(name = "filename", required = false)
 	private String filename;
 
 	@Element(name = "type")
