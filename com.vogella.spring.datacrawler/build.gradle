@@ -36,13 +36,12 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-hateoas')
 	
 	compile('io.reactivex.rxjava2:rxjava:2.0.5')
-	compile('com.squareup.retrofit2:retrofit:2.2.0')
-	compile('com.squareup.retrofit2:converter-simplexml:2.2.0')
+	compile('com.squareup.retrofit2:retrofit:2.3.0')
+	compile('com.squareup.retrofit2:converter-simplexml:2.3.0')
 	compile('com.squareup.okhttp3:logging-interceptor:3.6.0')
-	compile('com.squareup.retrofit2:adapter-rxjava2:2.2.0')
+	compile('com.squareup.retrofit2:adapter-rxjava2:2.3.0')
 	compile('com.vogella.spring:data:0.1')
 	compile('nz.ac.waikato.cms.weka:weka-stable:3.8.1')
-	
 	
 	compile('com.h2database:h2')
 	compileOnly('org.projectlombok:lombok')

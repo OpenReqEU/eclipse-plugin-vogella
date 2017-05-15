@@ -14,6 +14,7 @@ public class Scheduler {
 	
 	@Scheduled(cron = "0 0 23 ? * MON-FRI")
 	public void loadNewBugs() {
-		controller.loadBugs();
+		controller.loadLatestCreatedBugs();
 	}
+
 }

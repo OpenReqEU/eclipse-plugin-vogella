@@ -24,8 +24,7 @@ public class Application {
 	@Bean
 	public CommandLineRunner jpaSample(BugRepository bugRepo, BugzillaController bugController) {
 		return (args) -> {
-
-			bugController.loadBugs();
+			bugController.loadBugsForTrainingSet();
 
 			// query for all bugs in the H2 database and print them
 			// bugRepo.findAll().forEach(System.out::println);

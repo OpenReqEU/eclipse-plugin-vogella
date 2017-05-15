@@ -1,6 +1,8 @@
 package com.vogella.spring.datacrawler.communication;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 import com.vogella.spring.data.entities.Bug;
 import com.vogella.spring.data.repositories.BugRepository;
 import com.vogella.spring.datacrawler.ArffFileExporter;
+import com.vogella.spring.datacrawler.KeyValueStore;
 import com.vogella.spring.datacrawler.communication.dto.BugDtoWrapper;
 import com.vogella.spring.datacrawler.communication.dto.BugIdDto;
 import com.vogella.spring.datacrawler.communication.dto.BugIdDtoWrapper;
@@ -37,11 +40,14 @@ public class BugzillaController {
 	private BugzillaApi api;
 	private BugRepository bugRepository;
 	private ArffFileExporter fileexporter;
+	private KeyValueStore keyValueStore;
 
 	@Autowired
-	public BugzillaController(BugRepository bugRepository, ArffFileExporter fileexporter) {
+	public BugzillaController(BugRepository bugRepository, ArffFileExporter fileexporter,
+			KeyValueStore datacrawlerPreferences) {
 		this.bugRepository = bugRepository;
 		this.fileexporter = fileexporter;
+		this.keyValueStore = datacrawlerPreferences;
 		initBugzillaApi();
 	}
 
@@ -59,42 +65,75 @@ public class BugzillaController {
 		api = retrofitClient.create(BugzillaApi.class);
 	}
 
-	public void loadBugs() {
-		compositeDisposable.add(Observable.concat(getBugIdsObservables()).subscribeOn(Schedulers.io())
-				.flatMap((wrapper) -> Observable.just(wrapper.getBugIdDtos()))
-				.subscribeWith(new DisposableObserver<List<BugIdDto>>() {
-
-					List<Integer> idList = new ArrayList<>();
-
-					@Override
-					public void onNext(List<BugIdDto> result) {
-						// List<Integer> idList = new ArrayList<>();
-						result.forEach(bugIdTo -> idList.add(bugIdTo.getId()));
-						// idListWrapper.add(idList);
-					}
-
-					@Override
-					public void onError(Throwable e) {
-						e.printStackTrace();
-					}
-
-					@Override
-					public void onComplete() {
-						loadBugsForBugIds(splitList(idList));
-					}
-				}));
+	/**
+	 * Loads bugs for the training set.
+	 */
+	public void loadBugsForTrainingSet() {
+		Observable<BugIdDtoWrapper> observable = Observable.concat(api.getBugIdsForPriority("P1", "P2"),
+				api.getBugIdsForPriority("P3", null), api.getBugIdsForPriority("P4", "P5"));
+		loadBugs(observable);
 	}
 
 	/**
-	 * Bugzilla throws an Exception if the URL to request the bug details is too
-	 * large. Therefore, this method takes a list of lists of bug ids and performs
-	 * separate request for each of the lists.
+	 * Loads latest created bugs.
+	 */
+	public void loadLatestCreatedBugs() {
+		String lastSynced = keyValueStore.getValue(KeyValueStore.LAST_SYNC_BUGS_KEY);
+		Observable<BugIdDtoWrapper> observable = api
+				.getBugIdsSince(lastSynced == null ? getFormattedTimestamp(System.currentTimeMillis()) : lastSynced);
+		loadBugs(observable);
+	}
+
+	/**
+	 * Loads an initial set of bugs.
+	 */
+	public void loadInitialBugs() {
+		long timestamp = System.currentTimeMillis() + (30 * 24 * 60 * 60 * 1000);
+		Observable<BugIdDtoWrapper> observable = api.getBugIdsSince(getFormattedTimestamp(timestamp));
+		loadBugs(observable);
+	}
+
+	/**
+	 * Method to request bugs.
+	 * 
+	 * This method first request the bug IDs and, if successful, requests the bug
+	 * details for each of the IDs.
+	 * 
+	 * @param observable
+	 *            an Observable to request the bug IDs
+	 */
+	private void loadBugs(Observable<BugIdDtoWrapper> observable) {
+		compositeDisposable.add(
+				observable.subscribeOn(Schedulers.io()).flatMap((wrapper) -> Observable.just(wrapper.getBugIdDtos()))
+						.subscribeWith(new DisposableObserver<List<BugIdDto>>() {
+
+							List<Integer> idList = new ArrayList<>();
+
+							@Override
+							public void onNext(List<BugIdDto> result) {
+								result.forEach(bugIdTo -> idList.add(bugIdTo.getId()));
+							}
+
+							@Override
+							public void onError(Throwable e) {
+								e.printStackTrace();
+							}
+
+							@Override
+							public void onComplete() {
+								loadBugDetailsForBugIds(idList);
+							}
+						}));
+	}
+
+	/**
+	 * Requests the bug details for a list of bug IDs.
 	 * 
 	 * @param bugIds
-	 *            the list of lists of bug ids
+	 *            the list of bug IDs
 	 */
-	private void loadBugsForBugIds(List<List<Integer>> bugIds) {
-		compositeDisposable.add(Observable.concat(getBugDetailsObservables(bugIds)).subscribeOn(Schedulers.io())
+	private void loadBugDetailsForBugIds(List<Integer> bugIds) {
+		compositeDisposable.add(getBugDetailsObservable(bugIds).subscribeOn(Schedulers.io())
 				.subscribeWith(new DisposableObserver<BugDtoWrapper>() {
 					int loadedBugs = 0;
 
@@ -115,52 +154,34 @@ public class BugzillaController {
 
 					@Override
 					public void onComplete() {
+						keyValueStore.setValue(KeyValueStore.LAST_SYNC_BUGS_KEY,
+								getFormattedTimestamp(System.currentTimeMillis()));
 						fileexporter.exportBugData();
 					}
 				}));
 	}
 
 	/**
-	 * Takes a list of lists of bug IDs. Returns a list of Observables. One
-	 * Observable for each list. The Observables emit the bug details for the bug
-	 * IDs.
+	 * Takes a list of bug IDs. Returns an Observable. The Observable emits the bug
+	 * details for the bug IDs.
 	 * 
 	 * @param ids
-	 *            List with Lists of bug ids
-	 * @return list of observables
+	 *            list of bug ids
+	 * @return an Observable
 	 */
-	private List<Observable<BugDtoWrapper>> getBugDetailsObservables(List<List<Integer>> ids) {
+	private Observable<BugDtoWrapper> getBugDetailsObservable(List<Integer> ids) {
 		List<Observable<BugDtoWrapper>> observableList = new ArrayList<>();
-		for (List<Integer> bugIds : ids) {
+		for (List<Integer> bugIds : splitList(ids)) {
 			observableList.add(api.getBugsForBugIds(bugIds));
 		}
-		return observableList;
+		return Observable.concat(observableList);
 	}
 
 	/**
-	 * Return a list of Observables to request an equal amount of bugs for each //
-	 * priority to train a classifier.
-	 * 
-	 * @return list of Observables
-	 */
-	private List<Observable<BugIdDtoWrapper>> getBugIdsObservables() {
-		List<Observable<BugIdDtoWrapper>> observableList = new ArrayList<>();
-		observableList.add(api.getHighPriorityBugIds());
-		observableList.add(api.getMediumPriorityBugIds());
-		observableList.add(api.getLowPriorityBugIds());
-		return observableList;
-	}
-
-	@PreDestroy
-	public void dispose() {
-		compositeDisposable.dispose();
-	}
-
-	/**
-	 * Splits a list of bug ids in sublist of equal parts.
+	 * Splits a list of bug IDs in sublist.
 	 * 
 	 * @param bugIds
-	 *            the List of bug IDs to split
+	 *            the list of bug IDs to split
 	 * @return list that contains the splitted lists
 	 */
 	private List<List<Integer>> splitList(List<Integer> bugIds) {
@@ -171,5 +192,16 @@ public class BugzillaController {
 		}
 		logger.log(Level.INFO, "Splitted list in " + splittedLists.size() + " parts");
 		return splittedLists;
+	}
+
+	private String getFormattedTimestamp(long timemillis) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+		Date date = new Date(timemillis);
+		return dateFormat.format(date);
+	}
+
+	@PreDestroy
+	public void dispose() {
+		compositeDisposable.dispose();
 	}
 }
