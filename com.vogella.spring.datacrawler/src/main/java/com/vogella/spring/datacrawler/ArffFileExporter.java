@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.vogella.spring.data.entities.Bug;
+import com.vogella.spring.data.entities.Comment;
 import com.vogella.spring.data.repositories.BugRepository;
 import com.vogella.spring.datacrawler.communication.BugzillaController;
 
@@ -110,6 +112,8 @@ public class ArffFileExporter {
 
 		attributes.add(new Attribute("numberDependsOn"));
 
+		attributes.add(new Attribute("numberDuplicates"));
+
 		ArrayList<String> priorities = new ArrayList<>();
 		priorities.add("high");
 		priorities.add("medium");
@@ -146,6 +150,7 @@ public class ArffFileExporter {
 		instance.setValue(instances.attribute("numberCc"), bug.getCcList().size());
 		instance.setValue(instances.attribute("numberAdditionalLinks"), bug.getAdditionalLinks().size());
 		instance.setValue(instances.attribute("numberAttachments"), bug.getAttachments().size());
+		instance.setValue(instances.attribute("numberDuplicates"), getNumberOfDuplicates(bug.getComments()));
 		instance.setValue(instances.attribute("numberComments"), bug.getComments().size());
 		instance.setValue(instances.attribute("numberBlocks"), bug.getBlocks().size());
 		instance.setValue(instances.attribute("numberDependsOn"), bug.getDependsOn().size());
@@ -162,5 +167,20 @@ public class ArffFileExporter {
 		} else {
 			return "medium";
 		}
+	}
+
+	private int getNumberOfDuplicates(List<Comment> comments) {
+		// hacky method to get the number of duplicates for a bug report
+		int count = 0;
+		for (Comment c : comments) {
+			String text = c.getText();
+			if (text != null) {
+				if (text.contains("has been marked as a duplicate of this bug")) {
+					// this is the standard text used if a bug is marked as duplicate
+					count++;
+				}
+			}
+		}
+		return count;
 	}
 }

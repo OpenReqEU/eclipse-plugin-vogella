@@ -1,12 +1,16 @@
 package com.vogella.spring.datacrawler.communication.dto;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
+import com.vogella.spring.data.entities.Attachment;
 import com.vogella.spring.data.entities.Bug;
+import com.vogella.spring.data.entities.Comment;
 
 import lombok.Data;
 
@@ -74,11 +78,11 @@ public class BugDto {
 	@ElementList(entry = "see_also", inline = true, required = false)
 	Set<String> additionalLinks;
 
-//	@ElementList(entry = "long_desc", inline = true, required = false)
-//	List<CommentDto> commentDtos;
-//
-//	@ElementList(entry = "attachment", inline = true, required = false)
-//	List<AttachmentDto> attachmentDtos;
+	@ElementList(entry = "long_desc", inline = true, required = false)
+	List<CommentDto> commentDtos;
+
+	@ElementList(entry = "attachment", inline = true, required = false)
+	List<AttachmentDto> attachmentDtos;
 
 	@ElementList(entry = "dependson", inline = true, required = false)
 	Set<String> dependsOn;
@@ -112,29 +116,29 @@ public class BugDto {
 		bug.setCcList(getCcList());
 		bug.setAdditionalLinks(getAdditionalLinks());
 
-//		// TODO move
-//		if (getCommentDtos() != null) {
-//			List<Comment> comments = new ArrayList<>();
-//			getCommentDtos().forEach(commentDto -> {
-//				Comment comment = new Comment(commentDto.getCommentId(), commentDto.getCommentCount(),
-//						commentDto.getAuthor(), commentDto.getPublishTimestamp(), "", bug);
-//				comments.add(comment);
-//			});
-//			bug.setComments(comments);
-//		}
-//
-//		if (getAttachmentDtos() != null) {
-//			List<Attachment> attachments = new ArrayList<>();
-//			getAttachmentDtos().forEach(attachmentDto -> {
-//				Attachment attachment = new Attachment(attachmentDto.getAttachmentId(),
-//						attachmentDto.getCreatedTimestamp(), attachmentDto.getLastChangedTimestamp(),
-//						attachmentDto.getDescription(), attachmentDto.getFilename(), attachmentDto.getType(),
-//						attachmentDto.getSize(), attachmentDto.getAttacher(), attachmentDto.getIsObsolete(),
-//						attachmentDto.getIsPatch(), bug);
-//				attachments.add(attachment);
-//			});
-//			bug.setAttachments(attachments);
-//		}
+		// TODO move
+		if (getCommentDtos() != null) {
+			List<Comment> comments = new ArrayList<>();
+			getCommentDtos().forEach(commentDto -> {
+				Comment comment = new Comment(commentDto.getCommentId(), commentDto.getCommentCount(),
+						commentDto.getAuthor(), commentDto.getPublishTimestamp(), commentDto.getText(), bug);
+				comments.add(comment);
+			});
+			bug.setComments(comments);
+		}
+
+		if (getAttachmentDtos() != null) {
+			List<Attachment> attachments = new ArrayList<>();
+			getAttachmentDtos().forEach(attachmentDto -> {
+				Attachment attachment = new Attachment(attachmentDto.getAttachmentId(),
+						attachmentDto.getCreatedTimestamp(), attachmentDto.getLastChangedTimestamp(),
+						attachmentDto.getDescription(), attachmentDto.getFilename(), attachmentDto.getType(),
+						attachmentDto.getSize(), attachmentDto.getAttacher(), attachmentDto.getIsObsolete(),
+						attachmentDto.getIsPatch(), bug);
+				attachments.add(attachment);
+			});
+			bug.setAttachments(attachments);
+		}
 		return bug;
 	}
 }

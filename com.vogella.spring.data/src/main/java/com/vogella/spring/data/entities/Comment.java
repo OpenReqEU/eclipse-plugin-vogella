@@ -1,5 +1,6 @@
 package com.vogella.spring.data.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,7 +28,7 @@ public class Comment {
 		this.commentCount = commentCount;
 		this.author = author;
 		this.publishTimestamp = publishTimestamp;
-//		this.text = text;
+		this.text = text;
 		this.bug = bug;
 	}
 
@@ -39,8 +40,8 @@ public class Comment {
 	private String author;
 	private String publishTimestamp;
 	
-//	@Column(length=65535)
-//	private String text;
+	@Column(length=65535)
+	private String text;
 	
 	@ManyToOne
 	@JsonBackReference

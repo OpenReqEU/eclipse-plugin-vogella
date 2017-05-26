@@ -3,7 +3,7 @@ package com.vogella.spring.datacrawler.communication;
 import java.util.List;
 
 import com.vogella.spring.datacrawler.communication.dto.BugDtoWrapper;
-import com.vogella.spring.datacrawler.communication.dto.BugIdDtoWrapper;
+import com.vogella.spring.datacrawler.communication.dto.BugIdsDto;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
@@ -24,11 +24,11 @@ public interface BugzillaApi {
 	 * @return An Observable that emits the last changed open bug IDs
 	 */
 	@GET("buglist.cgi?classification=Eclipse&product=Platform&component=UI&columnlist=bug_id&order=changeddate%20DESC%2C&bug_status=__open__&chfield=%5BBug%20creation%5D&chfieldto=Now&ctype=rdf")
-	Observable<BugIdDtoWrapper> getBugIdsSince(@Query("chfieldfrom") String from);
+	Observable<BugIdsDto> getBugIdsSince(@Query("chfieldfrom") String from);
 
 	// the following method is only used to request an equal amount of bugs for
 	// each
 	// priority to train a classifier
 	@GET("buglist.cgi?classification=Eclipse&product=Platform&component=UI&columnlist=bug_id&limit=700&order=changeddate%20DESC%2C&bug_status=__closed__&ctype=rdf")
-	Observable<BugIdDtoWrapper> getBugIdsForPriority(@Query("priority") String prio1, @Query("priority") String prio2);
+	Observable<BugIdsDto> getBugIdsForPriority(@Query("priority") String prio1, @Query("priority") String prio2);
 }

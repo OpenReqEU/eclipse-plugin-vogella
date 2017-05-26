@@ -10,6 +10,8 @@ import javax.annotation.PreDestroy;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.simpleframework.xml.convert.AnnotationStrategy;
+import org.simpleframework.xml.core.Persister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +20,7 @@ import com.vogella.spring.data.repositories.BugRepository;
 import com.vogella.spring.datacrawler.ArffFileExporter;
 import com.vogella.spring.datacrawler.KeyValueStore;
 import com.vogella.spring.datacrawler.communication.dto.BugDtoWrapper;
-import com.vogella.spring.datacrawler.communication.dto.BugIdDto;
-import com.vogella.spring.datacrawler.communication.dto.BugIdDtoWrapper;
+import com.vogella.spring.datacrawler.communication.dto.BugIdsDto;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
@@ -53,14 +54,16 @@ public class BugzillaController {
 
 	private void initBugzillaApi() {
 		HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-		// httpLoggingInterceptor.setLevel(Level.BODY);
+		// httpLoggingInterceptor.setLevel(okhttp3.logging.HttpLoggingInterceptor.Level.BODY);
 
 		OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor)
 				.connectTimeout(3, TimeUnit.SECONDS).readTimeout(1, TimeUnit.MINUTES).build();
 
+
 		Retrofit retrofitClient = new Retrofit.Builder().baseUrl(BugzillaApi.BASE_URL)
 				.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-				.addConverterFactory(SimpleXmlConverterFactory.create()).client(okHttpClient).build();
+				.addConverterFactory(SimpleXmlConverterFactory.create(new Persister(new AnnotationStrategy())))
+				.client(okHttpClient).build();
 
 		api = retrofitClient.create(BugzillaApi.class);
 	}
@@ -69,7 +72,7 @@ public class BugzillaController {
 	 * Loads bugs for the training set.
 	 */
 	public void loadBugsForTrainingSet() {
-		Observable<BugIdDtoWrapper> observable = Observable.concat(api.getBugIdsForPriority("P1", "P2"),
+		Observable<BugIdsDto> observable = Observable.concat(api.getBugIdsForPriority("P1", "P2"),
 				api.getBugIdsForPriority("P3", null), api.getBugIdsForPriority("P4", "P5"));
 		loadBugs(observable);
 	}
@@ -79,7 +82,7 @@ public class BugzillaController {
 	 */
 	public void loadLatestCreatedBugs() {
 		String lastSynced = keyValueStore.getValue(KeyValueStore.LAST_SYNC_BUGS_KEY);
-		Observable<BugIdDtoWrapper> observable = api
+		Observable<BugIdsDto> observable = api
 				.getBugIdsSince(lastSynced == null ? getFormattedTimestamp(System.currentTimeMillis()) : lastSynced);
 		loadBugs(observable);
 	}
@@ -89,7 +92,7 @@ public class BugzillaController {
 	 */
 	public void loadInitialBugs() {
 		long timestamp = System.currentTimeMillis() + (30 * 24 * 60 * 60 * 1000);
-		Observable<BugIdDtoWrapper> observable = api.getBugIdsSince(getFormattedTimestamp(timestamp));
+		Observable<BugIdsDto> observable = api.getBugIdsSince(getFormattedTimestamp(timestamp));
 		loadBugs(observable);
 	}
 
@@ -102,16 +105,16 @@ public class BugzillaController {
 	 * @param observable
 	 *            an Observable to request the bug IDs
 	 */
-	private void loadBugs(Observable<BugIdDtoWrapper> observable) {
+	private void loadBugs(Observable<BugIdsDto> observable) {
 		compositeDisposable.add(
-				observable.subscribeOn(Schedulers.io()).flatMap((wrapper) -> Observable.just(wrapper.getBugIdDtos()))
-						.subscribeWith(new DisposableObserver<List<BugIdDto>>() {
+				observable.subscribeOn(Schedulers.io()).flatMap((wrapper) -> Observable.just(wrapper.getBugIds()))
+						.subscribeWith(new DisposableObserver<List<Integer>>() {
 
 							List<Integer> idList = new ArrayList<>();
 
 							@Override
-							public void onNext(List<BugIdDto> result) {
-								result.forEach(bugIdTo -> idList.add(bugIdTo.getId()));
+							public void onNext(List<Integer> result) {
+								idList.addAll(result);
 							}
 
 							@Override

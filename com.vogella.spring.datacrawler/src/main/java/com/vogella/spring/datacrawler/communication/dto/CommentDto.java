@@ -21,6 +21,6 @@ public class CommentDto {
 	@Element(name="bug_when")
 	private String publishTimestamp;
 	
-//	@Element(name="thetext")
-//	private String text;	
+	@Element(name="thetext", required=false)
+	private String text;	
 }
