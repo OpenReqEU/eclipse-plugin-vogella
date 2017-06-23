@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import com.vogella.spring.data.entities.Bug;
 import com.vogella.spring.data.entities.Comment;
 import com.vogella.spring.data.repositories.BugRepository;
-import com.vogella.spring.datacrawler.communication.BugzillaController;
 
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -34,7 +33,7 @@ import weka.core.Instances;
 @Component
 public class ArffFileExporter {
 
-	private static final Logger logger = Logger.getLogger(BugzillaController.class.getName());
+	private static final Logger logger = Logger.getLogger(ArffFileExporter.class.getName());
 
 	@Autowired
 	BugRepository bugRepository;
@@ -71,8 +70,10 @@ public class ArffFileExporter {
 	private ArrayList<Attribute> getAttributes() {
 		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 
+		attributes.add(new Attribute("id"));
+
 		// // string
-		// attributes.add(new Attribute("title", true));
+		attributes.add(new Attribute("title", true));
 
 		// nominal
 		attributes.add(new Attribute("component", ((ArrayList<String>) bugRepository.findAllDistinctComponents())));
@@ -93,26 +94,26 @@ public class ArffFileExporter {
 		attributes.add(new Attribute("operationSystem",
 				((ArrayList<String>) bugRepository.findAllDistinctOperationSystems())));
 
-		// attributes.add(new Attribute("status", true));
-		//
-		// attributes.add(new Attribute("resolution", true));
+		attributes.add(new Attribute("status", true));
+
+		attributes.add(new Attribute("resolution", true));
 
 		attributes.add(new Attribute("milestone", ((ArrayList<String>) bugRepository.findAllDistinctMilestones())));
 
 		// numeric
-		attributes.add(new Attribute("numberCc"));
+		attributes.add(new Attribute("countCc"));
 
-		attributes.add(new Attribute("numberAdditionalLinks"));
+		attributes.add(new Attribute("countAdditionalLinks"));
 
-		attributes.add(new Attribute("numberAttachments"));
+		attributes.add(new Attribute("countAttachments"));
 
-		attributes.add(new Attribute("numberComments"));
+		attributes.add(new Attribute("countComments"));
 
-		attributes.add(new Attribute("numberBlocks"));
+		attributes.add(new Attribute("countBlocks"));
 
-		attributes.add(new Attribute("numberDependsOn"));
+		attributes.add(new Attribute("countDependsOn"));
 
-		attributes.add(new Attribute("numberDuplicates"));
+		attributes.add(new Attribute("countDuplicates"));
 
 		ArrayList<String> priorities = new ArrayList<>();
 		priorities.add("high");
@@ -131,7 +132,8 @@ public class ArffFileExporter {
 		Instance instance = new DenseInstance(instances.numAttributes());
 		instance.setDataset(instances);
 
-		// instance.setValue(instances.attribute("title"), bug.getTitle());
+		instance.setValue(instances.attribute("id"), bug.getBugIdBugzilla());
+		instance.setValue(instances.attribute("title"), bug.getTitle());
 		instance.setValue(instances.attribute("component"), bug.getComponent());
 		instance.setValue(instances.attribute("reporter"), bug.getReporter());
 		instance.setValue(instances.attribute("assignedTo"), bug.getAssignedTo());
@@ -144,8 +146,8 @@ public class ArffFileExporter {
 		instance.setValue(instances.attribute("version"), bug.getVersion());
 		instance.setValue(instances.attribute("reportedPlatform"), bug.getReportedPlatform());
 		instance.setValue(instances.attribute("operationSystem"), bug.getOperationSystem());
-		// instance.setValue(instances.attribute("status"), bug.getStatus());
-		// instance.setValue(instances.attribute("resolution"), bug.getResolution());
+		instance.setValue(instances.attribute("status"), bug.getStatus());
+		instance.setValue(instances.attribute("resolution"), bug.getResolution() == null ? "" : bug.getResolution());
 		instance.setValue(instances.attribute("milestone"), bug.getMilestone());
 		instance.setValue(instances.attribute("numberCc"), bug.getCcList().size());
 		instance.setValue(instances.attribute("numberAdditionalLinks"), bug.getAdditionalLinks().size());

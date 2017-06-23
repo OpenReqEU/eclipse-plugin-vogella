@@ -106,8 +106,8 @@ public class BugzillaController {
 	 *            an Observable to request the bug IDs
 	 */
 	private void loadBugs(Observable<BugIdsDto> observable) {
-		compositeDisposable.add(
-				observable.subscribeOn(Schedulers.io()).flatMap((wrapper) -> Observable.just(wrapper.getBugIds()))
+		compositeDisposable
+				.add(observable.subscribeOn(Schedulers.io()).flatMap((wrapper) -> Observable.just(wrapper.getBugIds()))
 						.subscribeWith(new DisposableObserver<List<Integer>>() {
 
 							List<Integer> idList = new ArrayList<>();
@@ -124,6 +124,7 @@ public class BugzillaController {
 
 							@Override
 							public void onComplete() {
+								logger.log(Level.INFO, "Loaded bug ids:" + idList.size());
 								loadBugDetailsForBugIds(idList);
 							}
 						}));
@@ -143,7 +144,7 @@ public class BugzillaController {
 					@Override
 					public void onNext(BugDtoWrapper result) {
 						loadedBugs += result.getBugDtos().size();
-						logger.log(Level.INFO, "Loaded bugs:" + loadedBugs);
+						logger.log(Level.INFO, "Loaded bug details:" + loadedBugs);
 
 						ArrayList<Bug> bugs = new ArrayList<>();
 						result.getBugDtos().forEach(bugDto -> bugs.add(bugDto.getBugFromBugDto()));
