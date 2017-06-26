@@ -31,4 +31,7 @@ public interface BugzillaApi {
 	// priority to train a classifier
 	@GET("buglist.cgi?classification=Eclipse&product=Platform&component=UI&columnlist=bug_id&limit=700&order=changeddate%20DESC%2C&bug_status=__closed__&ctype=rdf")
 	Observable<BugIdsDto> getBugIdsForPriority(@Query("priority") String prio1, @Query("priority") String prio2);
+
+	@GET("buglist.cgi?classification=Eclipse&product=Platform&component=UI&columnlist=bug_id&limit=100&order=changeddate%20DESC%2C&bug_status=__open__&ctype=rdf")
+	Observable<BugIdsDto> getBugs();
 }

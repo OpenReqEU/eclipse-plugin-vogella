@@ -2,28 +2,19 @@ buildscript {
 	repositories {
 		mavenCentral()
 	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.3.RELEASE")
-	}
 }
 
 
 apply plugin: 'java-library'
 apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
 apply plugin: 'maven-publish'
 
 repositories {
-	maven {
-		url 'https://oss.sonatype.org/content/repositories/snapshots/'
-	} 
     jcenter()
 }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-data-rest')
-	compileOnly('org.projectlombok:lombok')
+	compileOnly('org.projectlombok:lombok:1.16.16')
 }
 
 publishing {
@@ -37,4 +28,9 @@ publishing {
         }
     }
 }
+
+task copyJar(type: Copy, group:'build' , description:'Copy jar to Eclipse plugin lib folder') {
+    from 'build/libs/com.vogella.spring.data.jar'
+    into "../com.vogella.prioritizer.eclipseplugin/lib"
+}  
 

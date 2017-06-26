@@ -1,16 +1,11 @@
 package com.vogella.spring.datacrawler.communication.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
-
-import com.vogella.spring.data.entities.Attachment;
-import com.vogella.spring.data.entities.Bug;
-import com.vogella.spring.data.entities.Comment;
 
 import lombok.Data;
 
@@ -89,56 +84,4 @@ public class BugDto {
 
 	@ElementList(entry = "blocks", inline = true, required = false)
 	Set<String> blocks;
-
-	public Bug getBugFromBugDto() {
-		// TODO move
-		Bug bug = new Bug();
-		bug.setBugIdBugzilla(getBugDtoId());
-		bug.setTitle(getTitle());
-		bug.setClassification(getClassification());
-		bug.setProduct(getProduct());
-		bug.setComponent(getComponent());
-		bug.setReporter(getReporter());
-		bug.setAssignedTo(getAssignedTo());
-		bug.setCreationTimestamp(getCreationTimestamp());
-		bug.setLastChangeTimestamp(getLastChangeTimestamp());
-		bug.setResolution(getResolution());
-		bug.setPriority(getPriority());
-		bug.setSeverity(getSeverity());
-		bug.setStatus(getStatus());
-		bug.setVersion(getVersion());
-		bug.setReportedPlatform(getReportedPlatform());
-		bug.setOperationSystem(getOperationSystem());
-		bug.setMilestone(getMilestone());
-		bug.setVotes(getVotes());
-		bug.setDependsOn(getDependsOn());
-		bug.setBlocks(getBlocks());
-		bug.setCcList(getCcList());
-		bug.setAdditionalLinks(getAdditionalLinks());
-
-		// TODO move
-		if (getCommentDtos() != null) {
-			List<Comment> comments = new ArrayList<>();
-			getCommentDtos().forEach(commentDto -> {
-				Comment comment = new Comment(commentDto.getCommentId(), commentDto.getCommentCount(),
-						commentDto.getAuthor(), commentDto.getPublishTimestamp(), commentDto.getText(), bug);
-				comments.add(comment);
-			});
-			bug.setComments(comments);
-		}
-
-		if (getAttachmentDtos() != null) {
-			List<Attachment> attachments = new ArrayList<>();
-			getAttachmentDtos().forEach(attachmentDto -> {
-				Attachment attachment = new Attachment(attachmentDto.getAttachmentId(),
-						attachmentDto.getCreatedTimestamp(), attachmentDto.getLastChangedTimestamp(),
-						attachmentDto.getDescription(), attachmentDto.getFilename(), attachmentDto.getType(),
-						attachmentDto.getSize(), attachmentDto.getAttacher(), attachmentDto.getIsObsolete(),
-						attachmentDto.getIsPatch(), bug);
-				attachments.add(attachment);
-			});
-			bug.setAttachments(attachments);
-		}
-		return bug;
-	}
 }

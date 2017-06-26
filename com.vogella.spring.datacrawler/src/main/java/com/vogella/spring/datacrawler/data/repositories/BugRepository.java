@@ -1,11 +1,11 @@
-package com.vogella.spring.data.repositories;
+package com.vogella.spring.datacrawler.data.repositories;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import com.vogella.spring.data.entities.Bug;
+import com.vogella.spring.datacrawler.data.entities.Bug;
 
 public interface BugRepository extends CrudRepository<Bug, String> {
 

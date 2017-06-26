@@ -15,12 +15,13 @@ import org.simpleframework.xml.core.Persister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.vogella.spring.data.entities.Bug;
-import com.vogella.spring.data.repositories.BugRepository;
-import com.vogella.spring.datacrawler.ArffFileExporter;
 import com.vogella.spring.datacrawler.KeyValueStore;
 import com.vogella.spring.datacrawler.communication.dto.BugDtoWrapper;
 import com.vogella.spring.datacrawler.communication.dto.BugIdsDto;
+import com.vogella.spring.datacrawler.data.DtoToJpaConverter;
+import com.vogella.spring.datacrawler.data.entities.Bug;
+import com.vogella.spring.datacrawler.data.repositories.BugRepository;
+import com.vogella.spring.datacrawler.fileexporter.ArffFileExporter;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
@@ -72,9 +73,10 @@ public class BugzillaController {
 	 * Loads bugs for the training set.
 	 */
 	public void loadBugsForTrainingSet() {
-		Observable<BugIdsDto> observable = Observable.concat(api.getBugIdsForPriority("P1", "P2"),
-				api.getBugIdsForPriority("P3", null), api.getBugIdsForPriority("P4", "P5"));
-		loadBugs(observable);
+		// Observable<BugIdsDto> observable =
+		// Observable.concat(api.getBugIdsForPriority("P1", "P2"),
+		// api.getBugIdsForPriority("P3", null), api.getBugIdsForPriority("P4", "P5"));
+		loadBugs(api.getBugs());
 	}
 
 	/**
@@ -147,7 +149,7 @@ public class BugzillaController {
 						logger.log(Level.INFO, "Loaded bug details:" + loadedBugs);
 
 						ArrayList<Bug> bugs = new ArrayList<>();
-						result.getBugDtos().forEach(bugDto -> bugs.add(bugDto.getBugFromBugDto()));
+						result.getBugDtos().forEach(bugDto -> bugs.add(DtoToJpaConverter.getBugFromBugDto(bugDto)));
 						bugRepository.save(bugs);
 					}
 
@@ -160,7 +162,7 @@ public class BugzillaController {
 					public void onComplete() {
 						keyValueStore.setValue(KeyValueStore.LAST_SYNC_BUGS_KEY,
 								getFormattedTimestamp(System.currentTimeMillis()));
-						fileexporter.exportBugData();
+						// fileexporter.exportBugData();
 					}
 				}));
 	}

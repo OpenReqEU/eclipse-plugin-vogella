@@ -1,4 +1,4 @@
-package com.vogella.spring.datacrawler;
+package com.vogella.spring.datacrawler.fileexporter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,9 +12,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.vogella.spring.data.entities.Bug;
-import com.vogella.spring.data.entities.Comment;
-import com.vogella.spring.data.repositories.BugRepository;
+import com.vogella.spring.datacrawler.data.entities.Bug;
+import com.vogella.spring.datacrawler.data.entities.Comment;
+import com.vogella.spring.datacrawler.data.repositories.BugRepository;
 
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -149,7 +149,7 @@ public class ArffFileExporter {
 		instance.setValue(instances.attribute("status"), bug.getStatus());
 		instance.setValue(instances.attribute("resolution"), bug.getResolution() == null ? "" : bug.getResolution());
 		instance.setValue(instances.attribute("milestone"), bug.getMilestone());
-		instance.setValue(instances.attribute("numberCc"), bug.getCcList().size());
+		instance.setValue(instances.attribute("numberCc"), bug.getCcList() == null ? 0 : bug.getCcList().size());
 		instance.setValue(instances.attribute("numberAdditionalLinks"), bug.getAdditionalLinks().size());
 		instance.setValue(instances.attribute("numberAttachments"), bug.getAttachments().size());
 		instance.setValue(instances.attribute("numberDuplicates"), getNumberOfDuplicates(bug.getComments()));

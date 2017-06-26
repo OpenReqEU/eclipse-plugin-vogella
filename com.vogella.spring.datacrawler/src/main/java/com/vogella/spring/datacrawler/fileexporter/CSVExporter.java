@@ -1,10 +1,9 @@
-package com.vogella.spring.datacrawler;
+package com.vogella.spring.datacrawler.fileexporter;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,9 +15,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.vogella.spring.data.entities.Bug;
-import com.vogella.spring.data.entities.Comment;
-import com.vogella.spring.data.repositories.BugRepository;
+import com.vogella.spring.datacrawler.data.entities.Bug;
+import com.vogella.spring.datacrawler.data.entities.Comment;
+import com.vogella.spring.datacrawler.data.repositories.BugRepository;
 
 @Component
 public class CSVExporter {
@@ -146,21 +145,12 @@ public class CSVExporter {
 		builder.append("\n");
 	}
 
-	private String convertTimestamp(String lastChangeTimestamp) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+	private String convertTimestamp(long timestamp) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		Calendar calendar = Calendar.getInstance();
-
-		try {
-			calendar.setTime(sdf.parse(lastChangeTimestamp));
-
-			sdf.applyPattern("yyyy-MM-dd HH:mm:ss");
-			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-			return sdf.format(new Date(calendar.getTimeInMillis()));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
+		calendar.setTimeInMillis(timestamp);
+		return sdf.format(new Date(calendar.getTimeInMillis()));
 	}
 
 	private int getCountDuplicates(List<Comment> comments) {

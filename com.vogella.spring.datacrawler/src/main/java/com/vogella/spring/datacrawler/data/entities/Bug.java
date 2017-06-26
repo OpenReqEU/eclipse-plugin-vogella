@@ -1,4 +1,4 @@
-package com.vogella.spring.data.entities;
+package com.vogella.spring.datacrawler.data.entities;
 
 import java.util.List;
 import java.util.Set;
@@ -33,8 +33,8 @@ public class Bug {
 	private String component;
 	private String reporter;
 	private String assignedTo;
-	private String creationTimestamp;
-	private String lastChangeTimestamp;
+	private long creationTimestamp;
+	private long lastChangeTimestamp;
 	private String version;
 	private String reportedPlatform;
 	private String operationSystem;
