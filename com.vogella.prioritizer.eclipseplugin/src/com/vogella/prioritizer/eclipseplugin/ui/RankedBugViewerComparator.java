@@ -74,6 +74,41 @@ public class RankedBugViewerComparator extends ViewerComparator {
 				rc = p1.getVotes() >= p2.getVotes() ? 1 : -1;
 			}
 			break;
+		case 8:
+			if (p1.getCountCC() == p2.getCountCC()) {
+				rc = 0;
+			} else {
+				rc = p1.getCountCC() >= p2.getCountCC() ? 1 : -1;
+			}
+			break;
+		case 9:
+			if (p1.getCountAttachments() == p2.getCountAttachments()) {
+				rc = 0;
+			} else {
+				rc = p1.getCountAttachments() >= p2.getCountAttachments() ? 1 : -1;
+			}
+			break;
+		case 10:
+			if (p1.getCountBlocks() == p2.getCountBlocks()) {
+				rc = 0;
+			} else {
+				rc = p1.getCountBlocks() >= p2.getCountBlocks() ? 1 : -1;
+			}
+			break;
+		case 11:
+			if (p1.getCountDependsOn() == p2.getCountDependsOn()) {
+				rc = 0;
+			} else {
+				rc = p1.getCountDependsOn() >= p2.getCountDependsOn() ? 1 : -1;
+			}
+			break;
+		case 12:
+			if (p1.getCountDuplicates() == p2.getCountDuplicates()) {
+				rc = 0;
+			} else {
+				rc = p1.getCountDuplicates() >= p2.getCountDuplicates() ? 1 : -1;
+			}
+			break;
 		case 13:
 			rc = p1.getTitle().compareTo(p2.getTitle());
 			break;
