@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.part.ViewPart;
 
 import com.vogella.prioritizer.eclipseplugin.communication.CommunicationController;
 import com.vogella.prioritizer.eclipseplugin.ui.BugFilter;
@@ -34,7 +35,7 @@ import com.vogella.spring.data.entities.RankedBug;
 
 import io.reactivex.observers.DisposableObserver;
 
-public class PrioritizerView {
+public class PrioritizerView extends ViewPart {
 
 	@Inject
 	private CommunicationController ctrl;
@@ -65,7 +66,7 @@ public class PrioritizerView {
 		statusLabel = new Label(parent, SWT.NONE);
 		statusLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 
-		Text searchText = new Text(parent, SWT.BORDER | SWT.ICON_SEARCH);
+		Text searchText = new Text(parent, SWT.BORDER | SWT.SEARCH | SWT.NO_SCROLL);
 	
 		GridData searchTextGridData = new GridData(SWT.FILL, SWT.CENTER, false, false);
 		searchTextGridData.horizontalSpan = 2;
@@ -95,6 +96,70 @@ public class PrioritizerView {
 		final Table table = tableViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+	}
+
+	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
+		final TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		final TableColumn column = viewerColumn.getColumn();
+		column.setText(title);
+		column.setWidth(bound);
+		column.setResizable(true);
+		column.setMoveable(true);
+		column.addSelectionListener(getSelectionAdapter(column, colNumber));
+		return viewerColumn;
+	}
+
+	private SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
+		SelectionAdapter selectionAdapter = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				comparator.setColumn(index);
+				tableViewer.getTable().setSortDirection(comparator.getDirection());
+				tableViewer.getTable().setSortColumn(column);
+				tableViewer.refresh();
+			}
+		};
+		return selectionAdapter;
+	}
+
+	@Focus
+	public void setFocus() {
+		loadButton.setFocus();
+	}
+
+	private DisposableObserver<java.util.List<RankedBug>> getObserver() {
+		return new DisposableObserver<java.util.List<RankedBug>>() {
+
+			java.util.List<RankedBug> bugs = new ArrayList<RankedBug>();
+
+			@Override
+			public void onComplete() {
+				Display.getDefault().asyncExec(() -> {
+					if (bugs.isEmpty()) {
+						statusLabel.setText("No issues available");
+					} else {
+						SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
+						statusLabel.setText("Last sync with server: " + sdf.format(new Date()));
+					}
+					statusLabel.requestLayout();
+					tableViewer.setInput(bugs);
+				});
+			}
+
+			@Override
+			public void onError(Throwable e) {
+				e.printStackTrace();
+				Display.getDefault().asyncExec(() -> {
+					statusLabel.setText("Could not connect to server");
+					statusLabel.requestLayout();
+				});
+			}
+
+			@Override
+			public void onNext(java.util.List<RankedBug> result) {
+				result.forEach(bugs::add);
+			}
+		};
 	}
 
 	private void createColumns(TableViewer tableViewer) {
@@ -224,69 +289,5 @@ public class PrioritizerView {
 				return rankedBug.getTitle();
 			}
 		});
-	}
-
-	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
-		final TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		final TableColumn column = viewerColumn.getColumn();
-		column.setText(title);
-		column.setWidth(bound);
-		column.setResizable(true);
-		column.setMoveable(true);
-		column.addSelectionListener(getSelectionAdapter(column, colNumber));
-		return viewerColumn;
-	}
-
-	private SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
-		SelectionAdapter selectionAdapter = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				comparator.setColumn(index);
-				tableViewer.getTable().setSortDirection(comparator.getDirection());
-				tableViewer.getTable().setSortColumn(column);
-				tableViewer.refresh();
-			}
-		};
-		return selectionAdapter;
-	}
-
-	@Focus
-	public void setFocus() {
-		loadButton.setFocus();
-	}
-
-	private DisposableObserver<java.util.List<RankedBug>> getObserver() {
-		return new DisposableObserver<java.util.List<RankedBug>>() {
-
-			java.util.List<RankedBug> bugs = new ArrayList<RankedBug>();
-
-			@Override
-			public void onComplete() {
-				Display.getDefault().asyncExec(() -> {
-					if (bugs.isEmpty()) {
-						statusLabel.setText("No issues available");
-					} else {
-						SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
-						statusLabel.setText("Last sync with server: " + sdf.format(new Date()));
-					}
-					statusLabel.requestLayout();
-					tableViewer.setInput(bugs);
-				});
-			}
-
-			@Override
-			public void onError(Throwable e) {
-				e.printStackTrace();
-				Display.getDefault().asyncExec(() -> {
-					statusLabel.setText("Could not connect to server");
-					statusLabel.requestLayout();
-				});
-			}
-
-			@Override
-			public void onNext(java.util.List<RankedBug> result) {
-				result.forEach(bugs::add);
-			}
-		};
 	}
 }

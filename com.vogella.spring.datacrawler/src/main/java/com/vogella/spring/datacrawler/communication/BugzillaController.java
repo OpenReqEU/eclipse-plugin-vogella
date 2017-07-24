@@ -24,8 +24,10 @@ import com.vogella.spring.datacrawler.data.repositories.BugRepository;
 import com.vogella.spring.datacrawler.fileexporter.ArffFileExporter;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -84,9 +86,9 @@ public class BugzillaController {
 	 */
 	public void loadLatestCreatedBugs() {
 		String lastSynced = keyValueStore.getValue(KeyValueStore.LAST_SYNC_BUGS_KEY);
-		Observable<BugIdsDto> observable = api
+		Single<BugIdsDto> single = api
 				.getBugIdsSince(lastSynced == null ? getFormattedTimestamp(System.currentTimeMillis()) : lastSynced);
-		loadBugs(observable);
+		loadBugs(single);
 	}
 
 	/**
@@ -94,8 +96,8 @@ public class BugzillaController {
 	 */
 	public void loadInitialBugs() {
 		long timestamp = System.currentTimeMillis() + (30 * 24 * 60 * 60 * 1000);
-		Observable<BugIdsDto> observable = api.getBugIdsSince(getFormattedTimestamp(timestamp));
-		loadBugs(observable);
+		Single<BugIdsDto> single = api.getBugIdsSince(getFormattedTimestamp(timestamp));
+		loadBugs(single);
 	}
 
 	/**
@@ -104,30 +106,23 @@ public class BugzillaController {
 	 * This method first request the bug IDs and, if successful, requests the bug
 	 * details for each of the IDs.
 	 * 
-	 * @param observable
+	 * @param single
 	 *            an Observable to request the bug IDs
 	 */
-	private void loadBugs(Observable<BugIdsDto> observable) {
+	private void loadBugs(Single<BugIdsDto> single) {
 		compositeDisposable
-				.add(observable.subscribeOn(Schedulers.io()).flatMap((wrapper) -> Observable.just(wrapper.getBugIds()))
-						.subscribeWith(new DisposableObserver<List<Integer>>() {
-
-							List<Integer> idList = new ArrayList<>();
+				.add(single.subscribeOn(Schedulers.io()).flatMap((wrapper) -> Single.just(wrapper.getBugIds()))
+						.subscribeWith(new DisposableSingleObserver<List<Integer>>() {
 
 							@Override
-							public void onNext(List<Integer> result) {
-								idList.addAll(result);
+							public void onSuccess(List<Integer> t) {
+								logger.log(Level.INFO, "Loaded bug ids:" + t.size());
+								loadBugDetailsForBugIds(t);
 							}
 
 							@Override
 							public void onError(Throwable e) {
 								e.printStackTrace();
-							}
-
-							@Override
-							public void onComplete() {
-								logger.log(Level.INFO, "Loaded bug ids:" + idList.size());
-								loadBugDetailsForBugIds(idList);
 							}
 						}));
 	}
@@ -192,7 +187,7 @@ public class BugzillaController {
 	 */
 	private List<List<Integer>> splitList(List<Integer> bugIds) {
 		List<List<Integer>> splittedLists = new ArrayList<List<Integer>>();
-		int subListLength = 500;
+		int subListLength = 25;
 		for (int i = 0; i < bugIds.size(); i += subListLength) {
 			splittedLists.add(bugIds.subList(i, Math.min(bugIds.size(), i + subListLength)));
 		}

@@ -43,11 +43,7 @@ public class RankedBugViewerComparator extends ViewerComparator {
 		int rc = 0;
 		switch (propertyIndex) {
 		case 0:
-			if (p1.getBugIdBugzilla() == p2.getBugIdBugzilla()) {
-				rc = 0;
-			} else {
-				rc = p1.getBugIdBugzilla() >= p2.getBugIdBugzilla() ? 1 : -1;
-			}
+			rc = compareInteger(p1.getBugIdBugzilla(), p2.getBugIdBugzilla());
 			break;
 		case 1:
 			rc = compareTimestamps(p1, p2);
@@ -68,46 +64,22 @@ public class RankedBugViewerComparator extends ViewerComparator {
 			rc = p1.getStatus().compareTo(p2.getStatus());
 			break;
 		case 7:
-			if (p1.getVotes() == p2.getVotes()) {
-				rc = 0;
-			} else {
-				rc = p1.getVotes() >= p2.getVotes() ? 1 : -1;
-			}
+			rc = compareInteger(p1.getVotes(), p2.getVotes());
 			break;
 		case 8:
-			if (p1.getCountCC() == p2.getCountCC()) {
-				rc = 0;
-			} else {
-				rc = p1.getCountCC() >= p2.getCountCC() ? 1 : -1;
-			}
+			rc = compareInteger(p1.getCountCC(), p2.getCountCC());
 			break;
 		case 9:
-			if (p1.getCountAttachments() == p2.getCountAttachments()) {
-				rc = 0;
-			} else {
-				rc = p1.getCountAttachments() >= p2.getCountAttachments() ? 1 : -1;
-			}
+			rc = compareInteger(p1.getCountAttachments(), p2.getCountAttachments());
 			break;
 		case 10:
-			if (p1.getCountBlocks() == p2.getCountBlocks()) {
-				rc = 0;
-			} else {
-				rc = p1.getCountBlocks() >= p2.getCountBlocks() ? 1 : -1;
-			}
+			rc = compareInteger(p1.getCountBlocks(), p2.getCountBlocks());
 			break;
 		case 11:
-			if (p1.getCountDependsOn() == p2.getCountDependsOn()) {
-				rc = 0;
-			} else {
-				rc = p1.getCountDependsOn() >= p2.getCountDependsOn() ? 1 : -1;
-			}
+			rc = compareInteger(p1.getCountDependsOn(), p2.getCountDependsOn());
 			break;
 		case 12:
-			if (p1.getCountDuplicates() == p2.getCountDuplicates()) {
-				rc = 0;
-			} else {
-				rc = p1.getCountDuplicates() >= p2.getCountDuplicates() ? 1 : -1;
-			}
+			rc = compareInteger(p1.getCountDuplicates(), p2.getCountDuplicates());
 			break;
 		case 13:
 			rc = p1.getTitle().compareTo(p2.getTitle());
@@ -141,6 +113,14 @@ public class RankedBugViewerComparator extends ViewerComparator {
 			return 0;
 		} else {
 			return p1Timestamp >= p2Timestamp ? 1 : -1;
+		}
+	}
+
+	private int compareInteger(int firstValue, int secondValue) {
+		if (firstValue == secondValue) {
+			return 0;
+		} else {
+			return firstValue >= secondValue ? 1 : -1;
 		}
 	}
 }
