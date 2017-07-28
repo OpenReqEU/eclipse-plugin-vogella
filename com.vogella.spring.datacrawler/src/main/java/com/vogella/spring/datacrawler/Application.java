@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import com.vogella.spring.datacrawler.communication.BugzillaController;
-import com.vogella.spring.datacrawler.data.repositories.BugRepository;
+import com.daweiser.keywordextractor.KeywordExtractor;
+import com.vogella.spring.datacrawler.issueextractor.BugzillaController;
 
 @SpringBootApplication
 @EnableScheduling
@@ -18,9 +18,14 @@ public class Application {
 	}
 
 	@Bean
-	public CommandLineRunner jpaSample(BugRepository bugRepo, BugzillaController bugController) {
+	public CommandLineRunner jpaSample(BugzillaController bugController) {
 		return (args) -> {
 			bugController.loadBugsForTrainingSet();
 		};
+	}
+	
+	@Bean
+	public KeywordExtractor keywordExtractor() {
+		return new KeywordExtractor();
 	}
 }

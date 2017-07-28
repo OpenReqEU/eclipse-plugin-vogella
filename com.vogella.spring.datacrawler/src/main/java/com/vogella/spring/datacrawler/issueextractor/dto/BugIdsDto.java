@@ -1,11 +1,11 @@
-package com.vogella.spring.datacrawler.communication.dto;
+package com.vogella.spring.datacrawler.issueextractor.dto;
 
 import java.util.List;
 
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.convert.Convert;
 
-import com.vogella.spring.datacrawler.communication.BugIdsConverter;
+import com.vogella.spring.datacrawler.issueextractor.BugIdsConverter;
 
 import lombok.Data;
 

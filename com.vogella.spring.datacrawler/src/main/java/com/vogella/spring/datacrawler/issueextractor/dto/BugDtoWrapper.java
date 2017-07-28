@@ -1,4 +1,4 @@
-package com.vogella.spring.datacrawler.communication.dto;
+package com.vogella.spring.datacrawler.issueextractor.dto;
 
 import java.util.List;
 

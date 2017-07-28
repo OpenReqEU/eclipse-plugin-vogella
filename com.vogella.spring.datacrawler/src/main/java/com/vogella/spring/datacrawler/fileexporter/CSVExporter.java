@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.log4j.Level;
@@ -15,9 +14,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.vogella.spring.datacrawler.data.entities.Bug;
-import com.vogella.spring.datacrawler.data.entities.Comment;
-import com.vogella.spring.datacrawler.data.repositories.BugRepository;
+import com.vogella.spring.datacrawler.entities.Bug;
+import com.vogella.spring.datacrawler.repositories.BugRepository;
 
 @Component
 public class CSVExporter {
@@ -50,8 +48,10 @@ public class CSVExporter {
 	private void addColumns(StringBuilder builder) {
 		builder.append("id");
 		builder.append(",");
-		builder.append("title");
-		builder.append(",");
+//		builder.append("title");
+//		builder.append(",");
+//		builder.append("description");
+//		builder.append(",");
 		builder.append("component");
 		builder.append(",");
 		builder.append("reporter");
@@ -99,8 +99,10 @@ public class CSVExporter {
 	private void addBugData(StringBuilder builder, Bug bug) {
 		builder.append(bug.getBugIdBugzilla());
 		builder.append(",");
-		builder.append(bug.getTitle().replace(",", ".").replace("\"", ""));
-		builder.append(",");
+//		builder.append(bug.getTitle().replace(",", ".").replace("\"", ""));
+//		builder.append(",");
+//		builder.append(bug.getDescription().replace(",", ".").replace("\"", ""));
+//		builder.append(",");
 		builder.append(bug.getComponent());
 		builder.append(",");
 		builder.append(bug.getReporter());
@@ -123,19 +125,20 @@ public class CSVExporter {
 		builder.append(",");
 		builder.append(bug.getMilestone());
 		builder.append(",");
-		builder.append(bug.getCcList().size());
+
+		builder.append(bug.getCountCC());
 		builder.append(",");
-		builder.append(bug.getAdditionalLinks().size());
+		builder.append(bug.getCountAdditionalLinks());
 		builder.append(",");
-		builder.append(bug.getAttachments().size());
+		builder.append(bug.getCountAttachments());
 		builder.append(",");
-		builder.append(bug.getComments().size());
+		builder.append(bug.getCountComments());
 		builder.append(",");
-		builder.append(bug.getBlocks().size());
+		builder.append(bug.getCountBlocks());
 		builder.append(",");
-		builder.append(bug.getDependsOn().size());
+		builder.append(bug.getCountDependsOn());
 		builder.append(",");
-		builder.append(getCountDuplicates(bug.getComments()));
+		builder.append(bug.getCountDuplicates());
 		builder.append(",");
 		builder.append(bug.getPriority());
 		builder.append(",");
@@ -151,20 +154,6 @@ public class CSVExporter {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(timestamp);
 		return sdf.format(new Date(calendar.getTimeInMillis()));
-	}
-
-	private int getCountDuplicates(List<Comment> comments) {
-		int count = 0;
-		for (Comment c : comments) {
-			String text = c.getText();
-			if (text != null) {
-				if (text.contains("has been marked as a duplicate of this bug")) {
-					// this is the standard text used if a bug is marked as duplicate
-					count++;
-				}
-			}
-		}
-		return count;
 	}
 
 	private void writeToFile(StringBuilder builder) {

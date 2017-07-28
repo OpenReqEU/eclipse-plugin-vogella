@@ -1,4 +1,4 @@
-package com.vogella.spring.datacrawler.service;
+package com.vogella.spring.datacrawler.restcontroller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vogella.spring.data.entities.RankedBug;
-import com.vogella.spring.datacrawler.data.entities.Bug;
-import com.vogella.spring.datacrawler.data.entities.Comment;
-import com.vogella.spring.datacrawler.data.repositories.BugRepository;
+import com.vogella.spring.datacrawler.entities.Bug;
+import com.vogella.spring.datacrawler.repositories.BugRepository;
 
 @RestController
 public class BugRestController {
@@ -35,7 +34,7 @@ public class BugRestController {
 	}
 
 	private List<RankedBug> getRankedBugs(List<Bug> bugs) {
-		List<RankedBug> rankedBugs = new ArrayList<RankedBug>();
+		List<RankedBug> rankedBugs = new ArrayList<>();
 		bugs.forEach(bug -> {
 			RankedBug rankedBug = new RankedBug();
 			rankedBug.setBugIdBugzilla(bug.getBugIdBugzilla());
@@ -49,11 +48,11 @@ public class BugRestController {
 			rankedBug.setVotes(bug.getVotes());
 			rankedBug.setCreated(convertTimestamp(bug.getCreationTimestamp()));
 			rankedBug.setLastChanged(convertTimestamp(bug.getLastChangeTimestamp()));
-			rankedBug.setCountAttachments(bug.getAttachments().size());
-			rankedBug.setCountBlocks(bug.getBlocks().size());
-			rankedBug.setCountCC(bug.getCcList().size());
-			rankedBug.setCountDependsOn(bug.getDependsOn().size());
-			rankedBug.setCountDuplicates(getCountDuplicates(bug.getComments()));
+			rankedBug.setCountAttachments(bug.getCountAttachments());
+			rankedBug.setCountBlocks(bug.getCountBlocks());
+			rankedBug.setCountCC(bug.getCountCC());
+			rankedBug.setCountDependsOn(bug.getCountDependsOn());
+			rankedBug.setCountDuplicates(bug.getCountDuplicates());
 			rankedBugs.add(rankedBug);
 		});
 
@@ -67,19 +66,4 @@ public class BugRestController {
 		calendar.setTimeInMillis(millis);
 		return sdf.format(new Date(calendar.getTimeInMillis()));
 	}
-
-	private int getCountDuplicates(List<Comment> comments) {
-		int count = 0;
-		for (Comment c : comments) {
-			String text = c.getText();
-			if (text != null) {
-				if (text.contains("has been marked as a duplicate of this bug")) {
-					// this is the standard text used if a bug is marked as duplicate
-					count++;
-				}
-			}
-		}
-		return count;
-	}
-
 }

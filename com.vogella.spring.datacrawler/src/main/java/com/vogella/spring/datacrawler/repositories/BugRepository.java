@@ -1,13 +1,13 @@
-package com.vogella.spring.datacrawler.data.repositories;
+package com.vogella.spring.datacrawler.repositories;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import com.vogella.spring.datacrawler.data.entities.Bug;
+import com.vogella.spring.datacrawler.entities.Bug;
 
-public interface BugRepository extends CrudRepository<Bug, String> {
+public interface BugRepository extends CrudRepository<Bug, Integer> {
 
 	@Query(value = "SELECT DISTINCT component FROM Bug")
 	List<String> findAllDistinctComponents();
@@ -35,4 +35,6 @@ public interface BugRepository extends CrudRepository<Bug, String> {
 
 	@Query(value = "SELECT DISTINCT assignedTo FROM Bug")
 	List<String> findAllDistinctAssignedTo();
+	
+	List<Bug> findByAssignedTo(String assignedTo);
 }

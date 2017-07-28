@@ -1,5 +1,7 @@
-package com.vogella.spring.datacrawler.communication.dto;
+package com.vogella.spring.datacrawler.issueextractor.dto;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -68,20 +70,20 @@ public class BugDto {
 	private int votes;
 
 	@ElementList(entry = "cc", inline = true, required = false)
-	Set<String> ccList;
+	Set<String> ccList = new HashSet<>();
 
 	@ElementList(entry = "see_also", inline = true, required = false)
-	Set<String> additionalLinks;
+	Set<String> additionalLinks = new HashSet<>();
 
 	@ElementList(entry = "long_desc", inline = true, required = false)
-	List<CommentDto> commentDtos;
+	List<CommentDto> commentDtos = new ArrayList<>();
 
 	@ElementList(entry = "attachment", inline = true, required = false)
-	List<AttachmentDto> attachmentDtos;
+	List<AttachmentDto> attachmentDtos = new ArrayList<>();
 
 	@ElementList(entry = "dependson", inline = true, required = false)
-	Set<String> dependsOn;
+	Set<String> dependsOn = new HashSet<>();
 
 	@ElementList(entry = "blocks", inline = true, required = false)
-	Set<String> blocks;
+	Set<String> blocks = new HashSet<>();
 }

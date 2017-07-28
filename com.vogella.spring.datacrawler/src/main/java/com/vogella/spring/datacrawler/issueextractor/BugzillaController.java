@@ -1,4 +1,4 @@
-package com.vogella.spring.datacrawler.communication;
+package com.vogella.spring.datacrawler.issueextractor;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,12 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.vogella.spring.datacrawler.KeyValueStore;
-import com.vogella.spring.datacrawler.communication.dto.BugDtoWrapper;
-import com.vogella.spring.datacrawler.communication.dto.BugIdsDto;
-import com.vogella.spring.datacrawler.data.DtoToJpaConverter;
-import com.vogella.spring.datacrawler.data.entities.Bug;
-import com.vogella.spring.datacrawler.data.repositories.BugRepository;
+import com.vogella.spring.datacrawler.entities.Bug;
 import com.vogella.spring.datacrawler.fileexporter.ArffFileExporter;
+import com.vogella.spring.datacrawler.issueextractor.dto.BugDtoWrapper;
+import com.vogella.spring.datacrawler.issueextractor.dto.BugIdsDto;
+import com.vogella.spring.datacrawler.repositories.BugRepository;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -43,14 +42,18 @@ public class BugzillaController {
 	private CompositeDisposable compositeDisposable = new CompositeDisposable();
 	private BugzillaApi api;
 	private BugRepository bugRepository;
-	private ArffFileExporter fileexporter;
 	private KeyValueStore keyValueStore;
+	
+	@Autowired
+	private DtoToJpaConverter dtoToJpaConverter;
 
 	@Autowired
-	public BugzillaController(BugRepository bugRepository, ArffFileExporter fileexporter,
+	private ArffFileExporter fileexporter;
+
+	@Autowired
+	public BugzillaController(BugRepository bugRepository,
 			KeyValueStore datacrawlerPreferences) {
 		this.bugRepository = bugRepository;
-		this.fileexporter = fileexporter;
 		this.keyValueStore = datacrawlerPreferences;
 		initBugzillaApi();
 	}
@@ -61,7 +64,6 @@ public class BugzillaController {
 
 		OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor)
 				.connectTimeout(3, TimeUnit.SECONDS).readTimeout(1, TimeUnit.MINUTES).build();
-
 
 		Retrofit retrofitClient = new Retrofit.Builder().baseUrl(BugzillaApi.BASE_URL)
 				.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -74,10 +76,11 @@ public class BugzillaController {
 	/**
 	 * Loads bugs for the training set.
 	 */
-	public void loadBugsForTrainingSet() {
-		// Observable<BugIdsDto> observable =
-		// Observable.concat(api.getBugIdsForPriority("P1", "P2"),
-		// api.getBugIdsForPriority("P3", null), api.getBugIdsForPriority("P4", "P5"));
+	public void loadBugsForTrainingSet() {		
+		List<Observable<BugIdsDto>> observables = new ArrayList<>();
+		observables.add(api.getBugIdsForUserExclude("user"));
+		observables.add(api.getBugIdsForUser("user"));
+//		loadBugs(Observable.concat(observables));
 		loadBugs(api.getBugs());
 	}
 
@@ -98,6 +101,40 @@ public class BugzillaController {
 		long timestamp = System.currentTimeMillis() + (30 * 24 * 60 * 60 * 1000);
 		Single<BugIdsDto> single = api.getBugIdsSince(getFormattedTimestamp(timestamp));
 		loadBugs(single);
+	}
+
+	/**
+	 * Method to request bugs.
+	 * 
+	 * This method first request the bug IDs and, if successful, requests the bug
+	 * details for each of the IDs.
+	 * 
+	 * @param observable
+	 *            an Observable to request the bug IDs
+	 */
+	private void loadBugs(Observable<BugIdsDto> observable) {
+		compositeDisposable
+				.add(observable.subscribeOn(Schedulers.io()).flatMap((wrapper) -> Observable.just(wrapper.getBugIds()))
+						.subscribeWith(new DisposableObserver<List<Integer>>() {
+
+							List<Integer> ids = new ArrayList<>();
+
+							@Override
+							public void onNext(List<Integer> t) {
+								ids.addAll(t);
+							}
+
+							@Override
+							public void onError(Throwable e) {
+								e.printStackTrace();
+							}
+
+							@Override
+							public void onComplete() {
+								logger.log(Level.INFO, "Loaded bug ids:" + ids.size());
+								loadBugDetailsForBugIds(ids);
+							}
+						}));
 	}
 
 	/**
@@ -144,7 +181,7 @@ public class BugzillaController {
 						logger.log(Level.INFO, "Loaded bug details:" + loadedBugs);
 
 						ArrayList<Bug> bugs = new ArrayList<>();
-						result.getBugDtos().forEach(bugDto -> bugs.add(DtoToJpaConverter.getBugFromBugDto(bugDto)));
+						result.getBugDtos().forEach(bugDto -> bugs.add(dtoToJpaConverter.getBugFromBugDto(bugDto)));
 						bugRepository.save(bugs);
 					}
 
@@ -157,7 +194,7 @@ public class BugzillaController {
 					public void onComplete() {
 						keyValueStore.setValue(KeyValueStore.LAST_SYNC_BUGS_KEY,
 								getFormattedTimestamp(System.currentTimeMillis()));
-						// fileexporter.exportBugData();
+//						 fileexporter.exportBugData();
 					}
 				}));
 	}
@@ -187,7 +224,7 @@ public class BugzillaController {
 	 */
 	private List<List<Integer>> splitList(List<Integer> bugIds) {
 		List<List<Integer>> splittedLists = new ArrayList<List<Integer>>();
-		int subListLength = 25;
+		int subListLength = 500;
 		for (int i = 0; i < bugIds.size(); i += subListLength) {
 			splittedLists.add(bugIds.subList(i, Math.min(bugIds.size(), i + subListLength)));
 		}

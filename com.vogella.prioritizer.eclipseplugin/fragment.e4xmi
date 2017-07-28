@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmlns:ui="http://www.eclipse.org/ui/2010/UIModel/application/ui" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_EI7oACerEeWxCPrV0pAZQQ" featurename="descriptors" parentElementId="org.eclipse.e4.legacy.ide.application">
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="test.partDescFragment.ASampleE4View" label="Prioritizer View" iconURI="platform:/plugin/com.vogella.prioritizer.eclipseplugin/icons/Sample.png" tooltip="" category="Prioritizer Category" contributionURI="bundleclass://com.vogella.prioritizer.eclipseplugin/com.vogella.prioritizer.eclipseplugin.parts.PrioritizerView">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="com.vogella.prioritizer.prioritizerviewid" label="Prioritizer View" iconURI="platform:/plugin/com.vogella.prioritizer.eclipseplugin/icons/Sample.png" tooltip="" category="Prioritizer Category" contributionURI="bundleclass://com.vogella.prioritizer.eclipseplugin/com.vogella.prioritizer.eclipseplugin.ui.parts.PrioritizerView">
       <tags>View</tags>
       <tags>categoryTag:Prioritizer Category</tags>
+      <handlers xmi:id="_utSD8HGIEeeCQbPwezkVPA" elementId="com.vogella.prioritizer.eclipseplugin.handler.0" contributionURI="bundleclass://com.vogella.prioritizer.eclipseplugin/com.vogella.prioritizer.eclipseplugin.ui.handler.RefreshHandler"/>
+      <toolbar xmi:id="_koqLsHE4Eee-g_xxxGjuPQ" elementId="com.vogella.prioritizer.eclipseplugin.toolbar.0">
+        <children xsi:type="menu:DirectToolItem" xmi:id="_lmz2AHE4Eee-g_xxxGjuPQ" elementId="com.vogella.prioritizer.eclipseplugin.directtoolitem.refresh" label="Refresh" iconURI="platform:/plugin/com.vogella.prioritizer.eclipseplugin/icons/nav_refresh.png" contributionURI="bundleclass://com.vogella.prioritizer.eclipseplugin/com.vogella.prioritizer.eclipseplugin.ui.handler.RefreshHandler">
+          <visibleWhen xsi:type="ui:ImperativeExpression" xmi:id="_HAc4cHF_EeeCQbPwezkVPA"/>
+        </children>
+      </toolbar>
     </elements>
   </fragments>
 </fragment:ModelFragments>

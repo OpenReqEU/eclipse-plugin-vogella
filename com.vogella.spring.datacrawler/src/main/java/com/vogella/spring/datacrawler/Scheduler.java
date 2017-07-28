@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.vogella.spring.datacrawler.communication.BugzillaController;
+import com.vogella.spring.datacrawler.issueextractor.BugzillaController;
 
 @Service
 public class Scheduler {
@@ -12,9 +12,9 @@ public class Scheduler {
 	@Autowired
 	private BugzillaController controller;
 	
-	@Scheduled(cron = "0 0 23 ? * MON-FRI")
+	@Scheduled(cron = "0 0/2 * * * ?")
 	public void loadNewBugs() {
-		controller.loadLatestCreatedBugs();
+//		controller.loadLatestCreatedBugs();
 	}
 
 }

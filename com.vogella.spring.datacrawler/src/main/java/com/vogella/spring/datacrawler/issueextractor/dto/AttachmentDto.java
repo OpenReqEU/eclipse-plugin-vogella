@@ -1,4 +1,4 @@
-package com.vogella.spring.datacrawler.communication.dto;
+package com.vogella.spring.datacrawler.issueextractor.dto;
 
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;

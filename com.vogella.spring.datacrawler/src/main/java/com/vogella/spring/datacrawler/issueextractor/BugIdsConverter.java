@@ -1,4 +1,4 @@
-package com.vogella.spring.datacrawler.communication;
+package com.vogella.spring.datacrawler.issueextractor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import org.simpleframework.xml.convert.Converter;
 import org.simpleframework.xml.stream.InputNode;
 import org.simpleframework.xml.stream.OutputNode;
 
-import com.vogella.spring.datacrawler.communication.dto.BugIdsDto;
+import com.vogella.spring.datacrawler.issueextractor.dto.BugIdsDto;
 
 public class BugIdsConverter implements Converter<BugIdsDto> {
 	@Override

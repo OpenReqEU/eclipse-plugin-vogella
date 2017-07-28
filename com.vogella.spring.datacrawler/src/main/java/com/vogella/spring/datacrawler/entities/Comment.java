@@ -1,4 +1,4 @@
-package com.vogella.spring.datacrawler.data.entities;
+package com.vogella.spring.datacrawler.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,7 +21,7 @@ public class Comment {
 	
 	public Comment() {}
 	
-	public Comment( String commentId, String commentCount, String author, String publishTimestamp, String text,
+	public Comment( int commentId, int commentCount, String author, String publishTimestamp, String text,
 			Bug bug) {
 		super();
 		this.commentId = commentId;
@@ -35,8 +35,8 @@ public class Comment {
 	@Id 
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
-	private String commentId;
-	private String commentCount;
+	private int commentId;
+	private int commentCount;
 	private String author;
 	private String publishTimestamp;
 	

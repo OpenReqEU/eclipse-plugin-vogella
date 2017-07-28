@@ -36,6 +36,9 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-hateoas')
 	compile('org.springframework.boot:spring-boot-devtools')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	//compile group: 'org.apache.lucene', name: 'lucene-core', version: '6.6.0'
+	//compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '6.6.0'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '1.5.5.RELEASE'
 	
 	compile('io.reactivex.rxjava2:rxjava:2.1.1')
 	compile('com.squareup.retrofit2:retrofit:2.3.0')
@@ -43,6 +46,7 @@ dependencies {
 	compile('com.squareup.okhttp3:logging-interceptor:3.6.0')
 	compile('com.squareup.retrofit2:adapter-rxjava2:2.3.0')
 	compile('com.vogella.spring:data:0.1')
+	compile('com.daweiser:keyword-extractor:0.1')
 	compile('nz.ac.waikato.cms.weka:weka-stable:3.8.1')
 	
 	compile('com.h2database:h2')
