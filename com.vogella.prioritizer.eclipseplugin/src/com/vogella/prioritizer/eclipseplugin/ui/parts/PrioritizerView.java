@@ -10,7 +10,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.ui.di.Focus;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -57,6 +56,8 @@ public class PrioritizerView implements IUpdateView {
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 		GridLayout parentGridLayout = new GridLayout(1, true);
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, false, true);
+		parent.setLayoutData(gridData);
 		parent.setLayout(parentGridLayout);
 
 		createTopBar(parent);
@@ -66,13 +67,13 @@ public class PrioritizerView implements IUpdateView {
 
 	private void createTopBar(Composite parent) {
 		Composite panel = new Composite(parent, SWT.NONE);
-		GridLayout panelGridLayout = new GridLayout(5, false);
+		GridLayout panelGridLayout = new GridLayout(3, false);
 		GridData panelGridData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		panel.setLayoutData(panelGridData);
 		panel.setLayout(panelGridLayout);
 
 		Button tempButton = new Button(panel, SWT.PUSH);
-		tempButton.setLayoutData(GridDataFactory.fillDefaults().create());
+		tempButton.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false));
 		tempButton.setText("Load");
 		tempButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -81,10 +82,15 @@ public class PrioritizerView implements IUpdateView {
 			}
 		});
 
-		Label linkLabel = new Label(panel, SWT.NONE);
-		linkLabel.setText("Link:");
+		Composite linkPanel = new Composite(panel, SWT.NONE);
+		linkPanel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+		linkPanel.setLayout(new GridLayout(2, false));
 
-		issueLink = new Link(panel,SWT.WRAP);
+		Label linkLabel = new Label(linkPanel, SWT.NONE);
+		linkLabel.setText("Open in Browser:");
+
+		issueLink = new Link(linkPanel, SWT.WRAP);
+		issueLink.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true));
 		issueLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -97,11 +103,15 @@ public class PrioritizerView implements IUpdateView {
 			}
 		});
 
-		Label statusText = new Label(panel, SWT.NONE);
+		Composite statusPanel = new Composite(panel, SWT.NONE);
+		statusPanel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+		statusPanel.setLayout(new GridLayout(2, false));
+
+		Label statusText = new Label(statusPanel, SWT.NONE);
 		statusText.setText("Status:");
 
-		statusMessage = new Label(panel, SWT.NONE);
-		statusMessage.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
+		statusMessage = new Label(statusPanel, SWT.NONE);
+		statusMessage.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true));
 		statusMessage.setText("---");
 	}
 
@@ -135,8 +145,9 @@ public class PrioritizerView implements IUpdateView {
 				Object selection = structuredSelection.getFirstElement();
 				if (selection instanceof RankedBug) {
 					RankedBug rankedBug = (RankedBug) selection;
-					String urlString = "https://bugs.eclipse.org/bugs/show_bug.cgi?id=" + rankedBug.getBugIdBugzilla();
-					issueLink.setText("<a>" + urlString + "</a>");
+					String url = String.format("<a href=\"https://bugs.eclipse.org/bugs/show_bug.cgi?id=%s\">Bug %s</a>",
+							rankedBug.getBugIdBugzilla(), rankedBug.getBugIdBugzilla());
+					issueLink.setText(url);
 					issueLink.getParent().layout();
 				}
 			}
@@ -187,14 +198,14 @@ public class PrioritizerView implements IUpdateView {
 			}
 		});
 
-//		col = createTableViewerColumn("Created", 150, 10);
-//		col.setLabelProvider(new ColumnLabelProvider() {
-//			@Override
-//			public String getText(Object element) {
-//				RankedBug rankedBug = (RankedBug) element;
-//				return rankedBug.getCreated();
-//			}
-//		});
+		// col = createTableViewerColumn("Created", 150, 10);
+		// col.setLabelProvider(new ColumnLabelProvider() {
+		// @Override
+		// public String getText(Object element) {
+		// RankedBug rankedBug = (RankedBug) element;
+		// return rankedBug.getCreated();
+		// }
+		// });
 
 		col = createTableViewerColumn("Last Changed", 150, 20);
 		col.setLabelProvider(new ColumnLabelProvider() {
@@ -214,14 +225,14 @@ public class PrioritizerView implements IUpdateView {
 			}
 		});
 
-//		col = createTableViewerColumn("Reporter", 100, 40);
-//		col.setLabelProvider(new ColumnLabelProvider() {
-//			@Override
-//			public String getText(Object element) {
-//				RankedBug rankedBug = (RankedBug) element;
-//				return rankedBug.getReporter();
-//			}
-//		});
+		// col = createTableViewerColumn("Reporter", 100, 40);
+		// col.setLabelProvider(new ColumnLabelProvider() {
+		// @Override
+		// public String getText(Object element) {
+		// RankedBug rankedBug = (RankedBug) element;
+		// return rankedBug.getReporter();
+		// }
+		// });
 
 		col = createTableViewerColumn("Assigned To", 100, 50);
 		col.setLabelProvider(new ColumnLabelProvider() {
@@ -232,14 +243,14 @@ public class PrioritizerView implements IUpdateView {
 			}
 		});
 
-//		col = createTableViewerColumn("Status", 100, 60);
-//		col.setLabelProvider(new ColumnLabelProvider() {
-//			@Override
-//			public String getText(Object element) {
-//				RankedBug rankedBug = (RankedBug) element;
-//				return rankedBug.getStatus();
-//			}
-//		});
+		// col = createTableViewerColumn("Status", 100, 60);
+		// col.setLabelProvider(new ColumnLabelProvider() {
+		// @Override
+		// public String getText(Object element) {
+		// RankedBug rankedBug = (RankedBug) element;
+		// return rankedBug.getStatus();
+		// }
+		// });
 
 		col = createTableViewerColumn("Votes", 60, 70);
 		col.setLabelProvider(new ColumnLabelProvider() {
@@ -259,14 +270,14 @@ public class PrioritizerView implements IUpdateView {
 			}
 		});
 
-//		col = createTableViewerColumn("Attachments", 95, 90);
-//		col.setLabelProvider(new ColumnLabelProvider() {
-//			@Override
-//			public String getText(Object element) {
-//				RankedBug rankedBug = (RankedBug) element;
-//				return String.valueOf(rankedBug.getCountAttachments());
-//			}
-//		});
+		// col = createTableViewerColumn("Attachments", 95, 90);
+		// col.setLabelProvider(new ColumnLabelProvider() {
+		// @Override
+		// public String getText(Object element) {
+		// RankedBug rankedBug = (RankedBug) element;
+		// return String.valueOf(rankedBug.getCountAttachments());
+		// }
+		// });
 
 		col = createTableViewerColumn("Blocks", 60, 100);
 		col.setLabelProvider(new ColumnLabelProvider() {
@@ -277,14 +288,14 @@ public class PrioritizerView implements IUpdateView {
 			}
 		});
 
-//		col = createTableViewerColumn("Depends On", 95, 110);
-//		col.setLabelProvider(new ColumnLabelProvider() {
-//			@Override
-//			public String getText(Object element) {
-//				RankedBug rankedBug = (RankedBug) element;
-//				return String.valueOf(rankedBug.getCountDependsOn());
-//			}
-//		});
+		// col = createTableViewerColumn("Depends On", 95, 110);
+		// col.setLabelProvider(new ColumnLabelProvider() {
+		// @Override
+		// public String getText(Object element) {
+		// RankedBug rankedBug = (RankedBug) element;
+		// return String.valueOf(rankedBug.getCountDependsOn());
+		// }
+		// });
 
 		col = createTableViewerColumn("Duplicates", 80, 120);
 		col.setLabelProvider(new ColumnLabelProvider() {
