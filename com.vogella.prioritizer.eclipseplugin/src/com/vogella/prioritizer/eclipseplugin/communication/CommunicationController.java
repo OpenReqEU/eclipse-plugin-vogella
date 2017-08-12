@@ -40,6 +40,10 @@ public class CommunicationController {
 	}
 
 	public void requestUiUpdate(IUpdateView updateView) {
+		if(disposable.isDisposed()) {
+			disposable = new CompositeDisposable();
+		}
+		
 		disposable.add(api.getBugs().subscribeOn(Schedulers.io())
 				.subscribeWith(new DisposableSingleObserver<List<RankedBug>>() {
 
@@ -55,7 +59,7 @@ public class CommunicationController {
 					}
 				}));
 	}
-
+	
 	@PreDestroy
 	private void onDestroy() {
 		disposable.dispose();

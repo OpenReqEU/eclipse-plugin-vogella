@@ -45,43 +45,43 @@ public class RankedBugViewerComparator extends ViewerComparator {
 		case 0:
 			rc = compareInteger(p1.getBugIdBugzilla(), p2.getBugIdBugzilla());
 			break;
-		case 1:
-			rc = compareTimestamps(p1, p2);
+		case 10:
+			rc = compareTimestamps(p1.getCreated(), p2.getCreated());
 			break;
-		case 2:
-			rc = compareTimestamps(p1, p2);
+		case 20:
+			rc = compareTimestamps(p1.getLastChanged(), p2.getLastChanged());
 			break;
-		case 3:
+		case 30:
 			rc = p1.getComponent().compareTo(p2.getComponent());
 			break;
-		case 4:
+		case 40:
 			rc = p1.getReporter().compareTo(p2.getReporter());
 			break;
-		case 5:
+		case 50:
 			rc = p1.getAssignedTo().compareTo(p2.getAssignedTo());
 			break;
-		case 6:
+		case 60:
 			rc = p1.getStatus().compareTo(p2.getStatus());
 			break;
-		case 7:
+		case 70:
 			rc = compareInteger(p1.getVotes(), p2.getVotes());
 			break;
-		case 8:
+		case 80:
 			rc = compareInteger(p1.getCountCC(), p2.getCountCC());
 			break;
-		case 9:
+		case 90:
 			rc = compareInteger(p1.getCountAttachments(), p2.getCountAttachments());
 			break;
-		case 10:
+		case 100:
 			rc = compareInteger(p1.getCountBlocks(), p2.getCountBlocks());
 			break;
-		case 11:
+		case 110:
 			rc = compareInteger(p1.getCountDependsOn(), p2.getCountDependsOn());
 			break;
-		case 12:
+		case 120:
 			rc = compareInteger(p1.getCountDuplicates(), p2.getCountDuplicates());
 			break;
-		case 13:
+		case 130:
 			rc = p1.getTitle().compareTo(p2.getTitle());
 			break;
 		default:
@@ -106,9 +106,9 @@ public class RankedBugViewerComparator extends ViewerComparator {
 		return 0l;
 	}
 
-	private int compareTimestamps(RankedBug rankedBug1, RankedBug rankedBug2) {
-		long p1Timestamp = convertTimestamp(rankedBug1.getCreated());
-		long p2Timestamp = convertTimestamp(rankedBug2.getCreated());
+	private int compareTimestamps(String firstTimestamp, String secondTimestamp) {
+		long p1Timestamp = convertTimestamp(firstTimestamp);
+		long p2Timestamp = convertTimestamp(secondTimestamp);
 		if (p1Timestamp == p2Timestamp) {
 			return 0;
 		} else {
