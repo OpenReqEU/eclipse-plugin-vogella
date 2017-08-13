@@ -39,30 +39,24 @@ public class ArffFileExporter {
 	BugRepository bugRepository;
 	@Autowired
 	BugService bugService;
-	
+
 	private String user = "none";
 	private Map<String, Integer> allKeywordsForUser;
 
 	public ArffFileExporter() {
 	}
 
-	public void exportBugData() {
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				logger.log(Level.INFO, "Start to create file");
-				allKeywordsForUser = bugService.findAllKeywordsForUser(user);
-				Instances instances = new Instances("MyRelation", getAttributes(), 0);
-				bugRepository.findAll().forEach(bug -> instances.add(getInstance(bug, instances)));
-				writeToFile(instances);
-				logger.log(Level.INFO, "File created");
-			}
-		});
-		t.run();
+	public void exportData() {
+		logger.log(Level.INFO, "Start to create file");
+		allKeywordsForUser = bugService.findAllKeywordsForUser(user);
+		Instances instances = new Instances("MyRelation", getAttributes(), 0);
+		bugRepository.findAll().forEach(bug -> instances.add(getInstance(bug, instances)));
+		writeToFile(instances);
+		logger.log(Level.INFO, "File created");
 	}
 
 	private void writeToFile(Instances instances) {
-		File file = new File("exportedBugData.arff");
+		File file = new File("/home/david/Desktop/exportedBugData.arff");
 		try {
 			FileWriter fw = new FileWriter(file);
 			PrintWriter pw = new PrintWriter(fw);
@@ -76,7 +70,7 @@ public class ArffFileExporter {
 	private ArrayList<Attribute> getAttributes() {
 		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 
-//		attributes.add(new Attribute("bug_id"));
+		// attributes.add(new Attribute("bug_id"));
 
 		// // string
 		attributes.add(new Attribute("bug_title", true));
@@ -86,8 +80,9 @@ public class ArffFileExporter {
 		//
 		attributes.add(new Attribute("bug_reporter", ((ArrayList<String>) bugRepository.findAllDistinctReporters())));
 		//
-//		attributes.add(new Attribute("assignedTo", ((ArrayList<String>) bugRepository.findAllDistinctAssignedTo())));
-		
+		// attributes.add(new Attribute("assignedTo", ((ArrayList<String>)
+		// bugRepository.findAllDistinctAssignedTo())));
+
 		ArrayList<String> posValues = new ArrayList<String>();
 		posValues.add("true");
 		posValues.add("false");
@@ -113,8 +108,8 @@ public class ArffFileExporter {
 		attributes.add(new Attribute("bug_severity", ((ArrayList<String>) bugRepository.findAllDistinctSeverities())));
 
 		attributes.add(new Attribute("bug_votes"));
-		
-		for(String key : allKeywordsForUser.keySet()) {
+
+		for (String key : allKeywordsForUser.keySet()) {
 			attributes.add(new Attribute(key));
 		}
 
@@ -125,12 +120,12 @@ public class ArffFileExporter {
 		Instance instance = new DenseInstance(instances.numAttributes());
 		instance.setDataset(instances);
 
-//		instance.setValue(instances.attribute("bug_id"), bug.getBugIdBugzilla());
+		// instance.setValue(instances.attribute("bug_id"), bug.getBugIdBugzilla());
 		instance.setValue(instances.attribute("bug_title"), bug.getTitle());
 
 		instance.setValue(instances.attribute("bug_component"), bug.getComponent());
 		instance.setValue(instances.attribute("bug_reporter"), bug.getReporter());
-		instance.setValue(instances.attribute("assignedTo"), bug.getAssignedTo().equals(user) ? "true" :"false");
+		instance.setValue(instances.attribute("assignedTo"), bug.getAssignedTo().equals(user) ? "true" : "false");
 
 		instance.setValue(instances.attribute("bug_priority"), bug.getPriority());
 		instance.setValue(instances.attribute("bug_severity"), bug.getSeverity());
@@ -145,9 +140,9 @@ public class ArffFileExporter {
 		instance.setValue(instances.attribute("bug_votes"), bug.getVotes());
 
 		Map<String, Integer> keywordMap = bug.getKeywords();
-		for(String key : allKeywordsForUser.keySet()) {
+		for (String key : allKeywordsForUser.keySet()) {
 			int frequency = 0;
-			if(keywordMap.containsKey(key)) {
+			if (keywordMap.containsKey(key)) {
 				frequency = keywordMap.get(key);
 			}
 			instance.setValue(instances.attribute(key), frequency);

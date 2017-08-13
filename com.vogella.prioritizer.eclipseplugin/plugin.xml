@@ -58,7 +58,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="com.vogella.prioritizer.eclipseplugin.ui.RefreshHandler"
+            defaultHandler="com.vogella.prioritizer.eclipseplugin.RefreshHandler"
             id="com.vogella.prioritizer.eclipseplugin.commands.Refresh"
             name="Refresh">
       </command>

@@ -48,14 +48,15 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 
 	Controller controller;
 
-	private Group inputGroup;
+	private Group additionalInformationGroup;
+	private Group emailGroup;
 	private Button enableRecommenderButton;
 	private Button enableComponentSelectionButton;
 	private Combo platformComponentsCombo;
 	private Button enableTargetMilestoneSelection;
 	private Combo targetMilestonesCombo;
 
-	private Text userEmailText;
+	private Text emailText;
 
 	@Override
 	public void init(IWorkbench workbench) {
@@ -71,6 +72,7 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 				.setSelection(getPreferenceStore().getBoolean(PreferenceKeys.KEY_ENABLE_COMPONENT_SELECTION));
 		platformComponentsCombo.select(getPreferenceStore().getInt(PreferenceKeys.KEY_COMPONENT_SELECTION_INDEX));
 		targetMilestonesCombo.select(getPreferenceStore().getInt(PreferenceKeys.KEY_MILESTONE_SELECTION_INDEX));
+		emailText.setText(getPreferenceStore().getString(PreferenceKeys.KEY_USER_EMAIL));
 	}
 
 	@Override
@@ -94,13 +96,13 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 		GridLayout gridLayout = null;
 		GridData gridData = null;
 
-		inputGroup = new Group(parent, SWT.BORDER | SWT.WRAP);
+		emailGroup = new Group(parent, SWT.BORDER | SWT.WRAP);
 		gridLayout = new GridLayout();
-		inputGroup.setLayout(gridLayout);
-		inputGroup.setText("Provide E-Mail Address");
-		inputGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		emailGroup.setLayout(gridLayout);
+		emailGroup.setText("Provide E-Mail Address");
+		emailGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Link explanation = new Link(inputGroup, SWT.WRAP);
+		Link explanation = new Link(emailGroup, SWT.WRAP);
 		explanation.setText(
 				"Please provide the E-Mail address you use at <a href=\"https://bugs.eclipse.org\">https://bugs.eclipse.org</a> to get recommendations based on your previously resolved issues.");
 		explanation.addSelectionListener(new SelectionAdapter() {
@@ -118,34 +120,34 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 		gridData.widthHint = 400;
 		explanation.setLayoutData(gridData);
 
-		Composite emailPanel = new Composite(inputGroup, SWT.NONE);
+		Composite emailPanel = new Composite(emailGroup, SWT.NONE);
 		gridLayout = new GridLayout(2, false);
 		emailPanel.setLayout(gridLayout);
 		emailPanel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 
 		new Label(emailPanel, SWT.NONE).setText("E-Mail:");
 
-		userEmailText = new Text(emailPanel, SWT.NONE);
-		userEmailText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+		emailText = new Text(emailPanel, SWT.NONE);
+		emailText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 	}
 
 	private void createInputPanel(Composite composite) {
 		GridLayout gridLayout = null;
 		GridData gridData = null;
 
-		inputGroup = new Group(composite, SWT.BORDER | SWT.WRAP);
+		additionalInformationGroup = new Group(composite, SWT.BORDER | SWT.WRAP);
 		gridLayout = new GridLayout();
-		inputGroup.setLayout(gridLayout);
-		inputGroup.setText("Provide additional information");
-		inputGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		additionalInformationGroup.setLayout(gridLayout);
+		additionalInformationGroup.setText("Provide additional information");
+		additionalInformationGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Label explanation = new Label(inputGroup, SWT.WRAP);
+		Label explanation = new Label(additionalInformationGroup, SWT.WRAP);
 		explanation.setText("To get better recommendations, you can provide additional information here.");
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.widthHint = 400;
 		explanation.setLayoutData(gridData);
 
-		enableComponentSelectionButton = new Button(inputGroup, SWT.CHECK);
+		enableComponentSelectionButton = new Button(additionalInformationGroup, SWT.CHECK);
 		enableComponentSelectionButton.setText("Specify Eclipse Platform Component");
 		enableComponentSelectionButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -155,7 +157,7 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 			}
 		});
 
-		platformComponentsCombo = new Combo(inputGroup, SWT.NONE);
+		platformComponentsCombo = new Combo(additionalInformationGroup, SWT.NONE);
 		gridData = new GridData();
 		gridData.horizontalIndent = 8;
 		platformComponentsCombo.setLayoutData(gridData);
@@ -163,7 +165,7 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 			platformComponentsCombo.add(platform);
 		}
 
-		enableTargetMilestoneSelection = new Button(inputGroup, SWT.CHECK);
+		enableTargetMilestoneSelection = new Button(additionalInformationGroup, SWT.CHECK);
 		enableTargetMilestoneSelection.setText("Specify Target Milestone of Issue");
 		enableTargetMilestoneSelection.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -173,7 +175,7 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 			}
 		});
 
-		targetMilestonesCombo = new Combo(inputGroup, SWT.NONE);
+		targetMilestonesCombo = new Combo(additionalInformationGroup, SWT.NONE);
 		gridData = new GridData();
 		gridData.horizontalIndent = 8;
 		targetMilestonesCombo.setLayoutData(gridData);
@@ -209,20 +211,23 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 				targetMilestonesCombo.getItem(targetMilestonesCombo.getSelectionIndex()));
 		getPreferenceStore().setValue(PreferenceKeys.KEY_MILESTONE_SELECTION_INDEX,
 				targetMilestonesCombo.getSelectionIndex());
-		getPreferenceStore().setValue(PreferenceKeys.KEY_USER_EMAIL, userEmailText.getText());
-		if (!userEmailText.getText().isEmpty()) {
-			controller.generateModel(userEmailText.getText());
+		getPreferenceStore().setValue(PreferenceKeys.KEY_USER_EMAIL, emailText.getText());
+		if (!emailText.getText().isEmpty()) {
+			// TODO
+			controller.requestModel(emailText.getText());
 		}
 		return super.performOk();
 	}
 
 	private void handleEnabledState() {
-		inputGroup.setEnabled(enableRecommenderButton.getSelection());
+		additionalInformationGroup.setEnabled(enableRecommenderButton.getSelection());
 		enableComponentSelectionButton.setEnabled(enableRecommenderButton.getSelection());
 		platformComponentsCombo.setEnabled(enableComponentSelectionButton.isEnabled()
 				&& enableComponentSelectionButton.getSelection() && enableRecommenderButton.getSelection());
 		enableTargetMilestoneSelection.setEnabled(enableRecommenderButton.getSelection());
 		targetMilestonesCombo.setEnabled(enableTargetMilestoneSelection.isEnabled()
 				&& enableTargetMilestoneSelection.getSelection() && enableRecommenderButton.getSelection());
+		emailGroup.setEnabled(enableRecommenderButton.getSelection());
+		emailText.setEnabled(enableRecommenderButton.getSelection());
 	}
 }

@@ -15,8 +15,6 @@ import org.simpleframework.xml.core.Persister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.vogella.spring.datacrawler.KeyValueStore;
-import com.vogella.spring.datacrawler.fileexporter.ArffFileExporter;
 import com.vogella.spring.datacrawler.issueextractor.dto.BugDtoWrapper;
 import com.vogella.spring.datacrawler.issueextractor.dto.BugIdsDto;
 import com.vogella.spring.datacrawler.services.BugService;
@@ -40,17 +38,12 @@ public class BugzillaController {
 
 	private CompositeDisposable compositeDisposable = new CompositeDisposable();
 	private BugzillaApi api;
-	private KeyValueStore keyValueStore;
 	
 	@Autowired
 	private BugService bugService;
 
 	@Autowired
-	private ArffFileExporter fileexporter;
-
-	@Autowired
-	public BugzillaController(KeyValueStore datacrawlerPreferences) {
-		this.keyValueStore = datacrawlerPreferences;
+	public BugzillaController() {
 		initBugzillaApi();
 	}
 
@@ -70,12 +63,15 @@ public class BugzillaController {
 	}
 
 	/**
-	 * Loads bugs for the training set.
+	 * Loads bugs for the training set for a specific user.
+	 * 
+	 * @param user
+	 *            the user to load the bugs for
 	 */
-	public void loadBugsForTrainingSet() {		
+	public void loadBugsForTrainingSet(String user) {
 		List<Observable<BugIdsDto>> observables = new ArrayList<>();
-		observables.add(api.getBugIdsForUserExclude("user"));
-		observables.add(api.getBugIdsForUser("user"));
+		observables.add(api.getBugIdsForUserExclude(user));
+		observables.add(api.getBugIdsForUser(user));
 //		loadBugs(Observable.concat(observables));
 		loadBugs(api.getBugs());
 	}
@@ -83,20 +79,9 @@ public class BugzillaController {
 	/**
 	 * Loads latest created bugs.
 	 */
-	public void loadLatestCreatedBugs() {
-		String lastSynced = keyValueStore.getValue(KeyValueStore.LAST_SYNC_BUGS_KEY);
-		Single<BugIdsDto> single = api
-				.getBugIdsSince(lastSynced == null ? getFormattedTimestamp(System.currentTimeMillis()) : lastSynced);
-		loadBugs(single);
-	}
-
-	/**
-	 * Loads an initial set of bugs.
-	 */
-	public void loadInitialBugs() {
-		long timestamp = System.currentTimeMillis() + (30 * 24 * 60 * 60 * 1000);
-		Single<BugIdsDto> single = api.getBugIdsSince(getFormattedTimestamp(timestamp));
-		loadBugs(single);
+	public void loadBugsSince(String timestamp) {
+		loadBugs(api
+				.getBugIdsSince(timestamp));
 	}
 
 	/**
@@ -185,9 +170,7 @@ public class BugzillaController {
 
 					@Override
 					public void onComplete() {
-						keyValueStore.setValue(KeyValueStore.LAST_SYNC_BUGS_KEY,
-								getFormattedTimestamp(System.currentTimeMillis()));
-//						 fileexporter.exportBugData();
+						System.out.println("Finished loading bugs");
 					}
 				}));
 	}

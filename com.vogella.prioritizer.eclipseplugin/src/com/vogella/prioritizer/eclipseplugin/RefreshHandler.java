@@ -1,4 +1,4 @@
-package com.vogella.prioritizer.eclipseplugin.ui;
+package com.vogella.prioritizer.eclipseplugin;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;

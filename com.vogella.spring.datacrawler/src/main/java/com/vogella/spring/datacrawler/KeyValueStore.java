@@ -26,10 +26,12 @@ public class KeyValueStore {
 	}
 
 	public String getValue(String key) {
+		log.debug("Get value for key: " + key);
 		return properties.getProperty(key);
 	}
 
 	public String setValue(String key, String value) {
+		log.debug("Set value for key: " + key);
 		return (String) properties.setProperty(key, value);
 	}
 }

@@ -23,7 +23,7 @@ public class Controller {
 		void setError();
 	}
 
-	public void generateModel(String email) {
+	public void requestModel(String email) {
 		UserAccount userAccount = new UserAccount();
 		userAccount.setEmail(email);
 		communicationController.postUserAccount(userAccount, new DisposableSingleObserver<Model>() {

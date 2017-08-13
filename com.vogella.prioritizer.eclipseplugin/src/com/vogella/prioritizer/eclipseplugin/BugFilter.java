@@ -1,4 +1,4 @@
-package com.vogella.prioritizer.eclipseplugin.ui;
+package com.vogella.prioritizer.eclipseplugin;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;

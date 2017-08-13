@@ -29,10 +29,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import com.vogella.prioritizer.eclipseplugin.BugFilter;
 import com.vogella.prioritizer.eclipseplugin.Controller;
+import com.vogella.prioritizer.eclipseplugin.RankedBugViewerComparator;
 import com.vogella.prioritizer.eclipseplugin.Controller.IUpdateView;
-import com.vogella.prioritizer.eclipseplugin.ui.BugFilter;
-import com.vogella.prioritizer.eclipseplugin.ui.RankedBugViewerComparator;
 import com.vogella.spring.data.entities.RankedBug;
 
 public class PrioritizerWorkbenchView extends ViewPart implements IUpdateView {

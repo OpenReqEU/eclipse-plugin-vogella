@@ -20,7 +20,7 @@ public class Application {
 	@Bean
 	public CommandLineRunner jpaSample(BugzillaController bugController) {
 		return (args) -> {
-			bugController.loadBugsForTrainingSet();
+			bugController.loadBugsForTrainingSet("user");
 		};
 	}
 	

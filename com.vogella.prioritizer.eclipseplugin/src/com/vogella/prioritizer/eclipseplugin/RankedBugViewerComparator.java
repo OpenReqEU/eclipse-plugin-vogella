@@ -1,4 +1,4 @@
-package com.vogella.prioritizer.eclipseplugin.ui;
+package com.vogella.prioritizer.eclipseplugin;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
