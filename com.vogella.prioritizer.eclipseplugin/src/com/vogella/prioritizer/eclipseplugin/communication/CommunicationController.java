@@ -1,14 +1,13 @@
 package com.vogella.prioritizer.eclipseplugin.communication;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PreDestroy;
-import javax.inject.Singleton;
 
-import org.eclipse.e4.core.di.annotations.Creatable;
-
-import com.vogella.prioritizer.eclipseplugin.ui.parts.IUpdateView;
+import com.vogella.spring.data.entities.Model;
 import com.vogella.spring.data.entities.RankedBug;
+import com.vogella.spring.data.entities.UserAccount;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -18,19 +17,29 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-@Creatable
-@Singleton
 public class CommunicationController {
 
 	private PrioritizerApi api;
 	private CompositeDisposable disposable = new CompositeDisposable();
 
-	public CommunicationController() {
+	private static CommunicationController instance;
+
+	public static CommunicationController getInstance() {
+		if (instance == null) {
+			instance = new CommunicationController();
+		}
+		return instance;
+	}
+
+	private CommunicationController() {
 		initApi();
 	}
 
 	private void initApi() {
-		OkHttpClient okHttpClient = new OkHttpClient().newBuilder().build();
+
+		// TODO: remove timeout (for model generation)
+		OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+				.readTimeout(30, TimeUnit.SECONDS).build();
 
 		Retrofit retrofit = new Retrofit.Builder().baseUrl(PrioritizerApi.BASE_URL).client(okHttpClient)
 				.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -39,27 +48,22 @@ public class CommunicationController {
 		api = retrofit.create(PrioritizerApi.class);
 	}
 
-	public void requestUiUpdate(IUpdateView updateView) {
-		if(disposable.isDisposed()) {
+	public void postUserAccount(UserAccount userAccount, DisposableSingleObserver<Model> observer) {
+		checkDisposable();
+		disposable.add(api.postAccount(userAccount).subscribeOn(Schedulers.io()).subscribeWith(observer));
+	}
+
+	public void getIssues(DisposableSingleObserver<List<RankedBug>> observer) {
+		checkDisposable();
+		disposable.add(api.getBugs().subscribeOn(Schedulers.io()).subscribeWith(observer));
+	}
+
+	private void checkDisposable() {
+		if (disposable.isDisposed()) {
 			disposable = new CompositeDisposable();
 		}
-		
-		disposable.add(api.getBugs().subscribeOn(Schedulers.io())
-				.subscribeWith(new DisposableSingleObserver<List<RankedBug>>() {
-
-					@Override
-					public void onError(Throwable arg0) {
-						updateView.setError();
-					}
-
-					@Override
-					public void onSuccess(List<RankedBug> bugs) {
-						updateView.updateView(bugs);
-
-					}
-				}));
 	}
-	
+
 	@PreDestroy
 	private void onDestroy() {
 		disposable.dispose();

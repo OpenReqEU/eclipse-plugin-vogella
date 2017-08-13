@@ -16,11 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.vogella.spring.datacrawler.KeyValueStore;
-import com.vogella.spring.datacrawler.entities.Bug;
 import com.vogella.spring.datacrawler.fileexporter.ArffFileExporter;
 import com.vogella.spring.datacrawler.issueextractor.dto.BugDtoWrapper;
 import com.vogella.spring.datacrawler.issueextractor.dto.BugIdsDto;
-import com.vogella.spring.datacrawler.repositories.BugRepository;
+import com.vogella.spring.datacrawler.services.BugService;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -41,19 +40,16 @@ public class BugzillaController {
 
 	private CompositeDisposable compositeDisposable = new CompositeDisposable();
 	private BugzillaApi api;
-	private BugRepository bugRepository;
 	private KeyValueStore keyValueStore;
 	
 	@Autowired
-	private DtoToJpaConverter dtoToJpaConverter;
+	private BugService bugService;
 
 	@Autowired
 	private ArffFileExporter fileexporter;
 
 	@Autowired
-	public BugzillaController(BugRepository bugRepository,
-			KeyValueStore datacrawlerPreferences) {
-		this.bugRepository = bugRepository;
+	public BugzillaController(KeyValueStore datacrawlerPreferences) {
 		this.keyValueStore = datacrawlerPreferences;
 		initBugzillaApi();
 	}
@@ -179,10 +175,7 @@ public class BugzillaController {
 					public void onNext(BugDtoWrapper result) {
 						loadedBugs += result.getBugDtos().size();
 						logger.log(Level.INFO, "Loaded bug details:" + loadedBugs);
-
-						ArrayList<Bug> bugs = new ArrayList<>();
-						result.getBugDtos().forEach(bugDto -> bugs.add(dtoToJpaConverter.getBugFromBugDto(bugDto)));
-						bugRepository.save(bugs);
+						bugService.saveBugDtos(result.getBugDtos());
 					}
 
 					@Override

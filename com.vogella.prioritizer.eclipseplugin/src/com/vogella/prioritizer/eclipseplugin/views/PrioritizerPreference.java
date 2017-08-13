@@ -1,4 +1,7 @@
-package com.vogella.prioritizer.eclipseplugin.ui;
+package com.vogella.prioritizer.eclipseplugin.views;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.PreferencePage;
@@ -13,10 +16,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 import com.vogella.prioritizer.eclipseplugin.Activator;
+import com.vogella.prioritizer.eclipseplugin.Controller;
 
 public class PrioritizerPreference extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -25,12 +33,10 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 		private static final String KEY_ENABLE_COMPONENT_SELECTION = "enableComponentSelection";
 		private static final String KEY_COMPONENT_SELECTION = "componentSelection";
 		private static final String KEY_COMPONENT_SELECTION_INDEX = "componentSelectionIndex";
-		private static final String KEY_USER_ID = "userID";
 		private static final String KEY_ENABLE_MILESTONE_SELECTION = "enableMilestoneSelection";
 		private static final String KEY_MILESTONE_SELECTION = "milestoneSelection";
 		private static final String KEY_MILESTONE_SELECTION_INDEX = "milestoneSelectionIndex";
-		private static final String KEY_ENABLE_DATE_SELECTION = "enableDateSelection";
-		private static final String KEY_IS_OLDEST_FIRST = "isNewestFirst";
+		private static final String KEY_USER_EMAIL = "userEmail";
 	}
 
 	private String[] platformComponentEntries = new String[] { "UI", "SWT", "Debug", "Releng", "Compare", "Team", "IDE",
@@ -38,25 +44,25 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 			"Website", "WebDAV", "Scripting" };
 
 	private String[] targetMilestoneEntries = new String[] { "4.7", "4.7 RC1", "4.7 RC2", "4.7 RC3", "4.7 RC4",
-			"4.7 RC4a", "4.7.1", "4.8", "4.8 M1", "4.8 M2", "4.8 M3", "4.8 M4",
-			"4.8 M5", "4.8 M6", "4.8 M7" };
+			"4.7 RC4a", "4.7.1", "4.8", "4.8 M1", "4.8 M2", "4.8 M3", "4.8 M4", "4.8 M5", "4.8 M6", "4.8 M7" };
+
+	Controller controller;
 
 	private Group inputGroup;
 	private Button enableRecommenderButton;
 	private Button enableComponentSelectionButton;
 	private Combo platformComponentsCombo;
-	private Label userIdLabel;
 	private Button enableTargetMilestoneSelection;
 	private Combo targetMilestonesCombo;
-	private Button enableRecommendByDateButton;
-	private Button newestFirstRadioButton;
-	private Button oldestFirstRadioButton;
+
+	private Text userEmailText;
 
 	@Override
 	public void init(IWorkbench workbench) {
 		noDefaultAndApplyButton();
 		setDescription("Prioritizer Settings");
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		controller = new Controller();
 	}
 
 	private void initPreferences() {
@@ -65,13 +71,6 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 				.setSelection(getPreferenceStore().getBoolean(PreferenceKeys.KEY_ENABLE_COMPONENT_SELECTION));
 		platformComponentsCombo.select(getPreferenceStore().getInt(PreferenceKeys.KEY_COMPONENT_SELECTION_INDEX));
 		targetMilestonesCombo.select(getPreferenceStore().getInt(PreferenceKeys.KEY_MILESTONE_SELECTION_INDEX));
-		String userId = getPreferenceStore().getString(PreferenceKeys.KEY_USER_ID);
-		userIdLabel.setText(userId.isEmpty() ? "---" : userId);
-		enableRecommendByDateButton
-				.setSelection(getPreferenceStore().getBoolean(PreferenceKeys.KEY_ENABLE_DATE_SELECTION));
-		newestFirstRadioButton.setSelection(!getPreferenceStore().getBoolean(PreferenceKeys.KEY_IS_OLDEST_FIRST));
-		oldestFirstRadioButton.setSelection(getPreferenceStore().getBoolean(PreferenceKeys.KEY_IS_OLDEST_FIRST));
-
 	}
 
 	@Override
@@ -84,26 +83,50 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 		composite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true));
 
 		createEnableRecommenderPreference(composite);
-		createUserIdPanel(composite);
+		createEmailPanel(composite);
 		createInputPanel(composite);
 		initPreferences();
 		handleEnabledState();
 		return composite;
 	}
 
-	private void createUserIdPanel(Composite parent) {
-		Composite panel = new Composite(parent, SWT.NONE);
-		GridLayout panelLayout = new GridLayout(3, true);
-		panelLayout.marginWidth = 0;
-		panelLayout.marginHeight = 0;
-		panel.setLayout(panelLayout);
+	private void createEmailPanel(Composite parent) {
+		GridLayout gridLayout = null;
+		GridData gridData = null;
 
-		new Label(panel, SWT.NONE).setText("Your unique user id: ");
-		userIdLabel = new Label(panel, SWT.NONE);
-		Button resetUserData = new Button(panel, SWT.PUSH);
-		GridData buttonGridData = GridDataFactory.fillDefaults().create();
-		resetUserData.setLayoutData(buttonGridData);
-		resetUserData.setText("Reset");
+		inputGroup = new Group(parent, SWT.BORDER | SWT.WRAP);
+		gridLayout = new GridLayout();
+		inputGroup.setLayout(gridLayout);
+		inputGroup.setText("Provide E-Mail Address");
+		inputGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Link explanation = new Link(inputGroup, SWT.WRAP);
+		explanation.setText(
+				"Please provide the E-Mail address you use at <a href=\"https://bugs.eclipse.org\">https://bugs.eclipse.org</a> to get recommendations based on your previously resolved issues.");
+		explanation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e);
+				try {
+					PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(e.text));
+				} catch (PartInitException | MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.widthHint = 400;
+		explanation.setLayoutData(gridData);
+
+		Composite emailPanel = new Composite(inputGroup, SWT.NONE);
+		gridLayout = new GridLayout(2, false);
+		emailPanel.setLayout(gridLayout);
+		emailPanel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+
+		new Label(emailPanel, SWT.NONE).setText("E-Mail:");
+
+		userEmailText = new Text(emailPanel, SWT.NONE);
+		userEmailText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 	}
 
 	private void createInputPanel(Composite composite) {
@@ -157,26 +180,6 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 		for (String targetMilestone : targetMilestoneEntries) {
 			targetMilestonesCombo.add(targetMilestone);
 		}
-
-		enableRecommendByDateButton = new Button(inputGroup, SWT.CHECK);
-		enableRecommendByDateButton.setText("Recommend Issues based on their age");
-		enableRecommendByDateButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleEnabledState();
-				super.widgetSelected(e);
-			}
-		});
-
-		Composite dateRadioComposite = new Composite(inputGroup, SWT.NONE);
-		gridLayout = new GridLayout(2, true);
-		dateRadioComposite.setLayout(gridLayout);
-		dateRadioComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-		newestFirstRadioButton = new Button(dateRadioComposite, SWT.RADIO);
-		newestFirstRadioButton.setText("Newest first");
-		oldestFirstRadioButton = new Button(dateRadioComposite, SWT.RADIO);
-		oldestFirstRadioButton.setText("Oldest first");
 	}
 
 	private void createEnableRecommenderPreference(Composite composite) {
@@ -206,25 +209,20 @@ public class PrioritizerPreference extends PreferencePage implements IWorkbenchP
 				targetMilestonesCombo.getItem(targetMilestonesCombo.getSelectionIndex()));
 		getPreferenceStore().setValue(PreferenceKeys.KEY_MILESTONE_SELECTION_INDEX,
 				targetMilestonesCombo.getSelectionIndex());
-		getPreferenceStore().setValue(PreferenceKeys.KEY_ENABLE_DATE_SELECTION,
-				enableRecommendByDateButton.getSelection());
-		getPreferenceStore().setValue(PreferenceKeys.KEY_IS_OLDEST_FIRST, oldestFirstRadioButton.getSelection());
+		getPreferenceStore().setValue(PreferenceKeys.KEY_USER_EMAIL, userEmailText.getText());
+		if (!userEmailText.getText().isEmpty()) {
+			controller.generateModel(userEmailText.getText());
+		}
 		return super.performOk();
 	}
 
 	private void handleEnabledState() {
 		inputGroup.setEnabled(enableRecommenderButton.getSelection());
 		enableComponentSelectionButton.setEnabled(enableRecommenderButton.getSelection());
-		platformComponentsCombo.setEnabled(
-				enableComponentSelectionButton.isEnabled() && enableComponentSelectionButton.getSelection()
-						&& enableRecommenderButton.getSelection());
+		platformComponentsCombo.setEnabled(enableComponentSelectionButton.isEnabled()
+				&& enableComponentSelectionButton.getSelection() && enableRecommenderButton.getSelection());
 		enableTargetMilestoneSelection.setEnabled(enableRecommenderButton.getSelection());
 		targetMilestonesCombo.setEnabled(enableTargetMilestoneSelection.isEnabled()
 				&& enableTargetMilestoneSelection.getSelection() && enableRecommenderButton.getSelection());
-		enableRecommendByDateButton.setEnabled(enableRecommenderButton.getSelection());
-		newestFirstRadioButton.setEnabled(enableRecommendByDateButton.isEnabled()
-				&& enableRecommendByDateButton.getSelection() && enableRecommenderButton.getSelection());
-		oldestFirstRadioButton.setEnabled(enableRecommendByDateButton.isEnabled()
-				&& enableRecommendByDateButton.getSelection() && enableRecommenderButton.getSelection());
 	}
 }

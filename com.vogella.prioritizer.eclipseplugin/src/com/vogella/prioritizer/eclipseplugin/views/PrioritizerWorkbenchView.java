@@ -1,4 +1,4 @@
-package com.vogella.prioritizer.eclipseplugin.ui.parts;
+package com.vogella.prioritizer.eclipseplugin.views;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -6,10 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -21,7 +17,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -29,31 +24,36 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.ViewPart;
 
-import com.vogella.prioritizer.eclipseplugin.communication.CommunicationController;
+import com.vogella.prioritizer.eclipseplugin.Controller;
+import com.vogella.prioritizer.eclipseplugin.Controller.IUpdateView;
 import com.vogella.prioritizer.eclipseplugin.ui.BugFilter;
 import com.vogella.prioritizer.eclipseplugin.ui.RankedBugViewerComparator;
 import com.vogella.spring.data.entities.RankedBug;
 
-public class PrioritizerView implements IUpdateView {
+public class PrioritizerWorkbenchView extends ViewPart implements IUpdateView {
 
-	@Inject
-	private CommunicationController ctrl;
-
+	private Controller ctrl;
 	private TableViewer tableViewer;
-
 	private Label statusMessage;
-
 	private Link issueLink;
 
 	public void refresh() {
 		tableViewer.getTable().removeAll();
-		ctrl.requestUiUpdate(this);
+		ctrl.getIssuesForCurrentUser(this);
 	}
 
-	@PostConstruct
+	@Override
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+		ctrl = new Controller();
+	}
+	
+	@Override
 	public void createPartControl(Composite parent) {
 		GridLayout parentGridLayout = new GridLayout(1, true);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, false, true);
@@ -67,20 +67,10 @@ public class PrioritizerView implements IUpdateView {
 
 	private void createTopBar(Composite parent) {
 		Composite panel = new Composite(parent, SWT.NONE);
-		GridLayout panelGridLayout = new GridLayout(3, false);
+		GridLayout panelGridLayout = new GridLayout(2, false);
 		GridData panelGridData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		panel.setLayoutData(panelGridData);
 		panel.setLayout(panelGridLayout);
-
-		Button tempButton = new Button(panel, SWT.PUSH);
-		tempButton.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false));
-		tempButton.setText("Load");
-		tempButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				refresh();
-			}
-		});
 
 		Composite linkPanel = new Composite(panel, SWT.NONE);
 		linkPanel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
@@ -183,7 +173,7 @@ public class PrioritizerView implements IUpdateView {
 		};
 	}
 
-	@Focus
+	@Override
 	public void setFocus() {
 		tableViewer.getTable().setFocus();
 	}

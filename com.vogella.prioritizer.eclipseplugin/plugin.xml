@@ -3,20 +3,65 @@
 <plugin>
 
    <extension
-         id="com.vogella.prioritizer.eclipseplugin.fragment"
-         point="org.eclipse.e4.workbench.model">
-      <fragment
-            apply="always"
-            uri="fragment.e4xmi">
-      </fragment>
+         point="org.eclipse.ui.views">
+      <category
+            name="Prioritizer Category"
+            id="com.vogella.prioritizer.eclipseplugin">
+      </category>
+      <view
+            name="Prioritizer View"
+            inject="true"
+            icon="icons/sample.png"
+            category="com.vogella.prioritizer.eclipseplugin"
+            class="com.vogella.prioritizer.eclipseplugin.views.PrioritizerWorkbenchView"
+            id="com.vogella.prioritizer.eclipseplugin.views.WorkbenchView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="right"
+               id="com.vogella.prioritizer.eclipseplugin.views.WorkbenchView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="com.vogella.prioritizer.eclipseplugin.ui.PrioritizerPreference"
-            id="com.vogella.prioritizer.eclipseplugin.page4"
+            class="com.vogella.prioritizer.eclipseplugin.views.PrioritizerPreference"
+            id="com.vogella.prioritizer.eclipseplugin.page2"
             name="Prioritizer">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:com.vogella.prioritizer.eclipseplugin.views.WorkbenchView">
+         <command
+               commandId="com.vogella.prioritizer.eclipseplugin.commands.Refresh"
+               icon="icons/nav_refresh.png"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="com.vogella.prioritizer.eclipseplugin.ui.RefreshHandler"
+            id="com.vogella.prioritizer.eclipseplugin.commands.Refresh"
+            name="Refresh">
+      </command>
    </extension>
 
 </plugin>
