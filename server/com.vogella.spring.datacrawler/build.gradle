@@ -43,7 +43,6 @@ dependencies {
 	compile('com.squareup.retrofit2:converter-simplexml:2.3.0')
 	compile('com.squareup.okhttp3:logging-interceptor:3.6.0')
 	compile('com.squareup.retrofit2:adapter-rxjava2:2.3.0')
-	compile('com.vogella.spring:data:0.1')
 	compile('com.daweiser:keyword-extractor:0.1')
 	compile('nz.ac.waikato.cms.weka:weka-stable:3.8.1')
 	
@@ -54,4 +53,6 @@ dependencies {
 	
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
+
+	compile project('com.vogella.spring.data')
 }
