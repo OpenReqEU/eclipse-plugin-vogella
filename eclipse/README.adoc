@@ -1,0 +1,17 @@
+== Eclipse Open Req Client
+
+This is the Eclipse client, which is supposed to show the Results of the Open Req Server in the Eclipse IDE.
+
+== Building the Project
+
+The Project can be built by using following command:
+
+[source, console]
+----
+$ cd openreq/eclipse/
+$ ./mvnw clean verify
+----
+
+This will generate a p2 update site in the _openreq/eclipse/com.vogella.prioritizer.updatesite/target/repository_ folder.
+
+This p2 update site can be used to install the openreq client into the Eclipse IDE.
