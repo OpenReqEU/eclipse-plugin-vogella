@@ -1,0 +1,87 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.standardout:bnd-platform:1.5.0'
+	}
+}
+
+apply plugin: 'org.standardout.bnd-platform'
+
+repositories {
+	jcenter()
+	maven {
+		url 'https://dl.bintray.com/simon-scholz/RxJava-Extensions/'
+	}
+}
+
+platform {
+
+	// Set a proper path to your eclipse installation (necessary for building a p2 updatesite)
+	eclipseHome = new File('/home/simon/eclipse/eclipse-photon')
+
+	// configure proper names for the p2 update site
+	categoryId = 'Open-Req-Eclipse-Libs'
+	categoryName = 'Open Req Eclipse Libs'
+
+	featureId = 'All-Open-Req-Eclipse-Libs'
+	featureName = 'All Open Req Eclipse Libs'
+	featureVersion = '0.1.0.'
+	featureProvider = 'vogella GmbH'
+
+	defaultQualifier = ''
+	useBndHashQualifiers = false
+	useFeatureHashQualifiers = false
+	defaultQualifierMap.prefix = ''
+
+	feature(id: 'RxJava-OSGi', name: 'RxJava OSGi', version: '2.0.6') {
+		plugin('io.reactivex.rxjava2:rxjava:2.0.6')
+	}
+
+	feature(id: 'RxSWT-OSGi', name: 'RxSWT OSGi', version: '0.1.0') {
+		plugin('io.reactivex.swt:rxswt:0.1.0') {
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.ppc64'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.win32.win32.x86_64'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.win32.win32.x86'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.s390'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.aarch64'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.x86_64'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.aix.ppc'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.aix.ppc64'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.solaris.x86_64'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.ppc64le'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.cocoa.macosx.x86_64'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.solaris.sparcv9'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.ppc'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.hpux.ia64'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.x86'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.arm'
+			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.s390x'
+		}
+	}
+	
+	feature(id: 'RxSWT-OSGi', name: 'RxSWT OSGi', version: '0.1.0') {
+		// Convert the retrofit artifact to OSGi, make android.os optional and handle the split package problems in OSGi
+		plugin('com.squareup.retrofit2:retrofit:2.3.0'){
+			bnd {
+				optionalImport 'android.os'
+				optionalImport 'android.net'
+		    	}
+		}
+	
+		// Convert the retrofit gson converter artifact to OSGi and handle the split package problems in OSGi
+		plugin('com.squareup.retrofit2:converter-gson:2.3.0')
+	
+		// Convert okhttp3 artifact to OSGi without android
+		plugin('com.squareup.okhttp3:okhttp:3.8.0') {
+			bnd{
+				optionalImport 'android.util'
+			}
+		}
+	}
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '4.5.1'
+}
