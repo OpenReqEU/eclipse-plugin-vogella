@@ -35,8 +35,8 @@ platform {
 	useFeatureHashQualifiers = false
 	defaultQualifierMap.prefix = ''
 
-	feature(id: 'RxJava-OSGi', name: 'RxJava OSGi', version: '2.0.6') {
-		plugin('io.reactivex.rxjava2:rxjava:2.0.6')
+	feature(id: 'RxJava-OSGi', name: 'RxJava OSGi', version: '2.1.9') {
+		plugin('io.reactivex.rxjava2:rxjava:2.1.9')
 	}
 
 	feature(id: 'RxSWT-OSGi', name: 'RxSWT OSGi', version: '0.1.0') {
@@ -61,7 +61,7 @@ platform {
 		}
 	}
 	
-	feature(id: 'RxSWT-OSGi', name: 'RxSWT OSGi', version: '0.1.0') {
+	feature(id: 'Retrofit2.3.0', name: 'Retrofit 2.3.0', version: '2.3.0') {
 		// Convert the retrofit artifact to OSGi, make android.os optional and handle the split package problems in OSGi
 		plugin('com.squareup.retrofit2:retrofit:2.3.0'){
 			bnd {
