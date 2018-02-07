@@ -1,8 +1,5 @@
-package com.vogella.spring.data.entities;
+package com.vogella.prioritizer.eclipseplugin.model;
 
-import lombok.Data;
-
-@Data
 public class RankedBug {
 
 	private int bugIdBugzilla;
