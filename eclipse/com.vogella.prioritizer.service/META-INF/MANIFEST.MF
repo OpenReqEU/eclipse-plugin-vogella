@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Service
+Bundle-SymbolicName: com.vogella.prioritizer.service
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: VOGELLA
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: com.vogella.prioritizer.core.service,
+ org.osgi.service.component.annotations;version="1.3.0";resolution:=optional
+Require-Bundle: com.squareup.retrofit2.converter-gson;bundle-version="2.3.0",
+ com.squareup.retrofit2.retrofit;bundle-version="2.3.0",
+ io.reactivex.rxjava2.rxjava;bundle-version="2.1.9",
+ com.squareup.retrofit2.adapter-rxjava2;bundle-version="2.3.0",
+ com.squareup.okhttp3.okhttp;bundle-version="3.8.0"
+Service-Component: OSGI-INF/com.vogella.prioritizer.service.PrioritizerServiceImpl.xml
+Bundle-ActivationPolicy: lazy
