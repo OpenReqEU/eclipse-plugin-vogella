@@ -72,6 +72,9 @@ platform {
 	
 		// Convert the retrofit gson converter artifact to OSGi and handle the split package problems in OSGi
 		plugin('com.squareup.retrofit2:converter-gson:2.3.0')
+
+		// lets retrofit return RxJava types
+		plugin('com.squareup.retrofit2:adapter-rxjava2:2.3.0')
 	
 		// Convert okhttp3 artifact to OSGi without android
 		plugin('com.squareup.okhttp3:okhttp:3.8.0') {
