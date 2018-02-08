@@ -11,6 +11,6 @@ public interface BugzillaApi {
 	String BASE_URL = "https://bugs.eclipse.org/bugs/";
 
 	@GET("rest/bug")
-	Single<BugResponse> getBugsOfAssignee(@Query("assigned_to") String assignee);
+	Single<BugResponse> getBugsOfAssignee(@Query("assigned_to") String assignee, @Query("limit") int limit, @Query("status") String status);
 
 }
