@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="platform" sequenceNumber="0">
+<?pde version="3.8"?><target name="platform" sequenceNumber="9">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.equinox.sdk.feature.group" version="3.13.2.v20171108-1834"/>
 <unit id="org.eclipse.sdk.ide" version="4.7.2.M20171130-0510"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.7"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="Retrofit2.3.0.feature.group" version="2.3.0"/>
+<unit id="RxJava-OSGi.feature.group" version="2.1.9"/>
+<unit id="RxSWT-OSGi.feature.group" version="0.1.0"/>
+<repository location="https://dl.bintray.com/vogellacompany/OpenReq-Eclipse/"/>
 </location>
 </locations>
 </target>
