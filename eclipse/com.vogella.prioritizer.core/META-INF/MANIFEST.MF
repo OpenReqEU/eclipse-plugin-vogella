@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Core
+Bundle-SymbolicName: com.vogella.prioritizer.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: VOGELLA
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: com.vogella.prioritizer.core.service
+Require-Bundle: io.reactivex.rxjava2.rxjava
