@@ -1,0 +1,21 @@
+== Generate 3rd party update site for Eclipse dependencies
+
+This Gradle script is used to generate a p2 update site for 3rd party dependencies of the Prioritizer Eclipse plug-in.
+
+By using the following command a p2 update site can be generated:
+
+[source, console]
+----
+$ cd openreq/eclipse/dependencies
+$ ./gradlew updateSiteZip
+----
+
+Dependencies which are currently added:
+
+* RxJava
+* RxSWT
+* Retrofit with RxJava Adapter and GSON converter
+
+The latest update site is available here:
+
+https://dl.bintray.com/vogellacompany/OpenReq-Eclipse/
