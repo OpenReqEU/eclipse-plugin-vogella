@@ -9,6 +9,7 @@ The following technologies are used:
 * Gradle (-> http://www.vogella.com/tutorials/Gradle/article.html)
 * Eclipse RCP (-> http://www.vogella.com/tutorials/EclipseRCP/article.html)
 * Maven Tycho (-> http://www.vogella.com/tutorials/EclipseTycho/article.html)
+* XChart (-> https://github.com/timmolter/xchart)
 
 [[running-with-gradle]]
 === Running the Spring Boot application
@@ -71,6 +72,10 @@ In older Eclipse IDE distributions the _Reload Target Platform_ link was called 
 After the target platform has been set the _Prioritizer-Plugin.launch_ launch configuration can be started by opening the _eclipse_ project and right clicking on the _Prioritizer-Plugin.launch_ file and clicking on the _Run as > Prioritizer-Plugin_ menu entry.
 
 image::launch-file.png[]
+
+=== Using the Eclipse Prioritizer plug-in
+
+
 
 === What does the application currently do?
 
