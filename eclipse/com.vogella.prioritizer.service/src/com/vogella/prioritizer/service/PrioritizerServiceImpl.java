@@ -1,10 +1,15 @@
 package com.vogella.prioritizer.service;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.osgi.service.component.annotations.Component;
 
 import com.vogella.prioritizer.core.service.PrioritizerService;
+import com.vogella.prioritizer.core.service.model.Bug;
 
 import io.reactivex.Single;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -15,7 +20,11 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	private PrioritizerApi prioritizerApi;
 
 	public PrioritizerServiceImpl() {
-		Retrofit retrofit = new Retrofit.Builder().baseUrl("http://localhost:8080")
+
+		final OkHttpClient httpClient = new OkHttpClient.Builder().readTimeout(60, TimeUnit.SECONDS)
+				.connectTimeout(60, TimeUnit.SECONDS).build();
+
+		Retrofit retrofit = new Retrofit.Builder().baseUrl("http://localhost:8080").client(httpClient)
 				.addConverterFactory(GsonConverterFactory.create())
 				.addCallAdapterFactory(RxJava2CallAdapterFactory.create()).build();
 		prioritizerApi = retrofit.create(PrioritizerApi.class);
@@ -26,6 +35,11 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 		return prioritizerApi.getKeywordImageBytes(assignee, limit).map(response -> {
 			return response.bytes();
 		});
+	}
+
+	@Override
+	public Single<List<Bug>> getSuitableBugs(String assignee, int limit) {
+		return prioritizerApi.getSuitableBugs(assignee, limit);
 	}
 
 }

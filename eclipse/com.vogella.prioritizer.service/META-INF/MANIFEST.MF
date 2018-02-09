@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: VOGELLA
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.vogella.prioritizer.core.service,
+ com.vogella.prioritizer.core.service.model,
  org.osgi.service.component.annotations;version="1.3.0";resolution:=optional
 Require-Bundle: com.squareup.retrofit2.converter-gson;bundle-version="2.3.0",
  com.squareup.retrofit2.retrofit;bundle-version="2.3.0",
