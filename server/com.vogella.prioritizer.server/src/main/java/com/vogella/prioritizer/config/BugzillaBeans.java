@@ -1,4 +1,4 @@
-package com.vogella.prioritizer.config;
+	package com.vogella.prioritizer.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
