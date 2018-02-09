@@ -7,7 +7,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -34,9 +36,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.osgi.service.prefs.BackingStoreException;
 
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
+import com.vogella.prioritizer.core.preferences.Preferences;
 import com.vogella.prioritizer.core.service.PrioritizerService;
 import com.vogella.prioritizer.ui.nattable.BugColumnPropertyAccessor;
 import com.vogella.prioritizer.ui.nattable.BugHeaderDataProvider;
@@ -48,20 +53,25 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.swt.schedulers.SwtSchedulers;
 
+@SuppressWarnings("restriction")
 public class PrioritizerView {
 
 	public static enum ViewType {
 		MAIN, SETTINGS
 	}
 
+	@Inject
+	@Preference
+	private IEclipsePreferences preferences;
+
+	@Inject
+	private PrioritizerService prioritizerService;
+
 	private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
 	private StackLayout stackLayout;
 
 	private ResourceManager resourceManager;
-
-	@Inject
-	private PrioritizerService prioritizerService;
 
 	private Composite settingsComposite;
 
@@ -76,20 +86,17 @@ public class PrioritizerView {
 		stackLayout = new StackLayout();
 		parent.setLayout(stackLayout);
 
+		createNatTable(parent);
+
+		createSettings(parent);
+	}
+
+	private void createNatTable(Composite parent) {
+
 		mainComposite = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().applyTo(mainComposite);
 
 		stackLayout.topControl = mainComposite;
-
-		createNatTable();
-
-		settingsComposite = new Composite(parent, SWT.NONE);
-		GridLayoutFactory.fillDefaults().applyTo(settingsComposite);
-
-		createSettings();
-	}
-
-	private void createNatTable() {
 
 		EventList<Bug> eventList = new BasicEventList<>(50);
 
@@ -117,7 +124,8 @@ public class PrioritizerView {
 		NatTable natTable = new NatTable(mainComposite, compositeLayer);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(natTable);
 
-		Single<List<Bug>> suitableBugs = prioritizerService.getSuitableBugs("simon.scholz@vogella.com", 30);
+		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
+		Single<List<Bug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, 30);
 
 		compositeDisposable.add(suitableBugs.subscribeOn(Schedulers.io())
 				.observeOn(SwtSchedulers.from(mainComposite.getDisplay())).subscribe(bugsFromServer -> {
@@ -128,11 +136,36 @@ public class PrioritizerView {
 				}));
 	}
 
-	private void createSettings() {
+	private void createSettings(Composite parent) {
+		settingsComposite = new Composite(parent, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(settingsComposite);
+
+		Composite settingsPanel = new Composite(settingsComposite, SWT.NONE);
+
+		Label emailLabel = new Label(settingsPanel, SWT.FLAT);
+		emailLabel.setText("Email");
+
+		Text emailText = new Text(settingsPanel, SWT.BORDER);
+		emailText.setText("simon.scholz@vogella.com");
+		emailText.setToolTipText("Email");
+		emailText.setMessage("Email");
+		emailText.addModifyListener(event -> {
+			preferences.put(Preferences.USER_EMAIL, emailText.getText());
+			try {
+				preferences.flush();
+			} catch (BackingStoreException e) {
+				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
+			}
+		});
+		
+		GridLayoutFactory.fillDefaults().generateLayout(settingsPanel);
+		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);
+
 		Label imgLabel = new Label(settingsComposite, SWT.FLAT);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(imgLabel);
 
-		Single<byte[]> keywordImage = prioritizerService.getKeyWordImage("simon.scholz@vogella.com", 200);
+		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
+		Single<byte[]> keywordImage = prioritizerService.getKeyWordImage(userEmail, 200);
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.io())
 				.observeOn(SwtSchedulers.from(settingsComposite.getDisplay())).subscribe(imageBytes -> {
