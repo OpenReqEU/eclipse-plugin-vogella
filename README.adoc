@@ -3,11 +3,12 @@
 The following technologies are used:
 
 * Spring Boot (-> http://www.vogella.com/tutorials/Spring/article.html)
-* H2 Database (-> http://www.vogella.com/tutorials/EclipseLink/article.html)
 * Lombok (-> http://www.vogella.com/tutorials/Lombok/article.html)
 * RxJava 2.x (-> http://www.vogella.com/tutorials/RxJava/article.html)
 * Retrofit (-> http://www.vogella.com/tutorials/Retrofit/article.html)
 * Gradle (-> http://www.vogella.com/tutorials/Gradle/article.html)
+* Eclipse RCP
+* Maven Tycho
 
 [[running-with-gradle]]
 === Running the Spring Boot application
@@ -16,19 +17,56 @@ In order to run the Spring Boot application the following has to be run on the c
 
 [source, console]
 ----
-./gradlew bRun
+$ cd openreq/server/com.vogella.prioritizer.server
+$ ./gradlew bRun
 ----
 
 This can also be run from the IDE by using the Eclipse Buildship 2.x tooling.
 
+=== Installing the Eclipse Plugin
+
+Tip: Since the Eclipse plug-in is under active development you should consider starting it from the Eclipse IDE <<Eclise-Plugin-Running-From-IDE>>.
+
+To install the Eclipse Plugin into the Eclipse IDE the following packages have to be installed:
+
+* All features from the NatTable Update Site - http://download.eclipse.org/nattable/releases/1.5.0/repository/
+* All features from the vogella OpenReq 3rd party dependencies - https://dl.bintray.com/vogellacompany/OpenReq-Eclipse/
+
+Since the actual Eclipse plugin has not been released yet the update site has to be generated like this:
+
+[source, console]
+----
+$ cd openreq/eclipse
+$ ./mvnw clean verify
+----
+
+This will generate an update site for the Prioritizer Eclipse Plugin in the _openreq/eclipse/com.vogella.prioritizer.updatesite/target/repository_ folder.
+
+image::local_update_site.png[]
+
+Just press on the btn:[Local] and point to the update site folder.
+
+This will list the required features, which have to be installed.
+
+[[Eclise-Plugin-Running-From-IDE]]
+=== Running the Eclipse Plugin from the IDE
+
+Import all projects from the openreq git repository into your Eclipse IDE.
+
+Then open the _com.vogella.prioritizer.target.target_ file inside the _com.vogella.prioritizer.target_ project.
+This will load all necessary dependencies for the project.
+
+image::set_target_platform.png[]
+
+After the target platform has been set the _Prioritizer-Plugin.launch_ launch configuration can be started by opening the _eclipse_ project and right clicking on the _Prioritizer-Plugin.launch_ file and clicking on the menu:Run as[Prioritizer-Plugin] menu entry.
+
+image::launch-file.png[]
+
 === What does the application currently do?
 
-When starting the application (-> <<running-with-gradle>>) a CommandLineRunner is used to save bugs from Eclipse Bugzilla into a H2 database by using Spring Data.
 
-Saving bugs from Eclipse Bugzilla is also scheduled by using a @Scheduled(cron = "0 0 23 ? * MON-FRI") annotation for the `saveBugs` method of the `BugzillaCommunicationController` class.
 
 === What's next?
 
-* Support querying from bugzilla 5.x by using the new JSON API
-** Use a Retrofit json converter for this
-* ...
+
+
