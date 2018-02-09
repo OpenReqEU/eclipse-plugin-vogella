@@ -61,7 +61,7 @@ This will load all necessary dependencies for the project.
 
 image::set_target_platform.png[]
 
-After the target platform has been set the _Prioritizer-Plugin.launch_ launch configuration can be started by opening the _eclipse_ project and right clicking on the _Prioritizer-Plugin.launch_ file and clicking on the menu:Run as[Prioritizer-Plugin] menu entry.
+After the target platform has been set the _Prioritizer-Plugin.launch_ launch configuration can be started by opening the _eclipse_ project and right clicking on the _Prioritizer-Plugin.launch_ file and clicking on the _Run as > Prioritizer-Plugin_ menu entry.
 
 image::launch-file.png[]
 
