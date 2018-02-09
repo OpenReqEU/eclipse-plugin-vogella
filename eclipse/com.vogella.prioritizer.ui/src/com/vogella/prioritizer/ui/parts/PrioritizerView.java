@@ -79,6 +79,12 @@ public class PrioritizerView {
 
 	private ViewType currentViewType = ViewType.MAIN;
 
+	private Label imgLabel;
+
+	private EventList<Bug> eventList;
+
+	private NatTable natTable;
+
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 		resourceManager = new LocalResourceManager(JFaceResources.getResources(), parent);
@@ -98,7 +104,7 @@ public class PrioritizerView {
 
 		stackLayout.topControl = mainComposite;
 
-		EventList<Bug> eventList = new BasicEventList<>(50);
+		eventList = new BasicEventList<>(50);
 
 		ListDataProvider<Bug> dataProvider = new ListDataProvider<>(eventList, new BugColumnPropertyAccessor());
 		DataLayer dataLayer = new DataLayer(dataProvider);
@@ -121,14 +127,19 @@ public class PrioritizerView {
 		compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, columnHeaderLayer, 0, 0);
 		compositeLayer.setChildLayer(GridRegion.BODY, viewportLayer, 0, 1);
 
-		NatTable natTable = new NatTable(mainComposite, compositeLayer);
+		natTable = new NatTable(mainComposite, compositeLayer);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(natTable);
 
+		subscribeBugTable();
+	}
+
+	private void subscribeBugTable() {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
 		Single<List<Bug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, 30);
 
 		compositeDisposable.add(suitableBugs.subscribeOn(Schedulers.io())
 				.observeOn(SwtSchedulers.from(mainComposite.getDisplay())).subscribe(bugsFromServer -> {
+					eventList.clear();
 					eventList.addAll(bugsFromServer);
 					natTable.refresh(true);
 				}, err -> {
@@ -161,9 +172,13 @@ public class PrioritizerView {
 		GridLayoutFactory.fillDefaults().generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);
 
-		Label imgLabel = new Label(settingsComposite, SWT.FLAT);
+		imgLabel = new Label(settingsComposite, SWT.FLAT);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(imgLabel);
 
+		subscribeChart();
+	}
+
+	private void subscribeChart() {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
 		Single<byte[]> keywordImage = prioritizerService.getKeyWordImage(userEmail, 200);
 
@@ -203,5 +218,12 @@ public class PrioritizerView {
 			stackLayout.topControl = settingsComposite;
 			settingsComposite.getParent().layout();
 		}
+	}
+
+	@Inject
+	@Optional
+	public void refresh(@UIEventTopic(Events.REFRESH) boolean refresh) {
+		subscribeBugTable();
+		subscribeChart();
 	}
 }
