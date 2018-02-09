@@ -10,7 +10,9 @@
 	</properties>
 
 	<modules>
-		<module>com.vogella.prioritizer.eclipseplugin</module>
+		<module>com.vogella.prioritizer.core</module>
+		<module>com.vogella.prioritizer.ui</module>
+		<module>com.vogella.prioritizer.service</module>
 		<module>com.vogella.prioritizer.feature</module>
 		<module>com.vogella.prioritizer.target</module>	
 		<module>com.vogella.prioritizer.updatesite</module>	
