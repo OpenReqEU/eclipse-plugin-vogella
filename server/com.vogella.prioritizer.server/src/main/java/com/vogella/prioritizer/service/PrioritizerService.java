@@ -22,6 +22,10 @@ import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.BitmapEncoder.BitmapFormat;
 import org.knowm.xchart.PieChart;
 import org.knowm.xchart.PieChartBuilder;
+import org.knowm.xchart.PieSeries.PieSeriesRenderStyle;
+import org.knowm.xchart.style.PieStyler.AnnotationType;
+import org.knowm.xchart.style.Styler;
+import org.knowm.xchart.style.colors.BaseSeriesColors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -49,7 +53,7 @@ public class PrioritizerService {
 
 	public Collection<Bug> findSuitableBugs(String assignee, int limit) throws JSONException, IOException {
 		Single<BugResponse> bugResponse = bugzillaApi.getRecentOpenBugs(limit);
-		
+
 		List<String> keywords = getKeywords(assignee, 50);
 
 		List<Bug> bugs = bugResponse.blockingGet().getBugs();
@@ -63,14 +67,14 @@ public class PrioritizerService {
 			priorityBug.setCommentCount(commentCount);
 
 			priorityBug.setCcCount(bug.getCc().size());
-			
+
 			priorityBug.setSeverity(bug.getSeverity());
-			
+
 			priorityBug.setBlockingIssuesCount(bug.getBlocks().size());
-			
+
 			long foundKeyWords = keywords.stream().filter(keyword -> bug.getSummary().contains(keyword)).count();
 			priorityBug.setUserKeywordMatchCount(foundKeyWords);
-			
+
 			priorityBugs.put(priorityBug, bug);
 		}
 
@@ -110,7 +114,8 @@ public class PrioritizerService {
 		List<String> keywords = getKeywords(assignee, limit);
 
 		// Create Chart
-		PieChart chart = new PieChartBuilder().width(800).height(600).build();
+		PieChart chart = new PieChartBuilder().width(800).height(600).title("Keywords of already fixed bugs by " + assignee)
+				.build();
 
 		// Series
 		keywords.stream().sorted((o1, o2) -> {
@@ -127,10 +132,23 @@ public class PrioritizerService {
 			chart.addSeries(keyword, frequency);
 		});
 
-		chart.getStyler().setCircular(false);
-		chart.getStyler().setPlotBorderVisible(false);
-		chart.getStyler().setChartTitleBoxVisible(false);
-		chart.getStyler().setChartTitleVisible(false);
+		chart.getStyler().setLegendVisible(true);
+		chart.getStyler().setLegendPosition(Styler.LegendPosition.OutsideE);
+		chart.getStyler().setLegendLayout(Styler.LegendLayout.Vertical);
+
+		chart.getStyler().setAnnotationType(AnnotationType.LabelAndPercentage);
+		chart.getStyler().setAnnotationDistance(.82);
+
+		chart.getStyler().setPlotContentSize(1);
+
+		chart.getStyler().setDefaultSeriesRenderStyle(PieSeriesRenderStyle.Pie);
+
+		chart.getStyler().setDecimalPattern("#");
+
+		chart.getStyler().setSeriesColors(new BaseSeriesColors().getSeriesColors());
+
+		chart.getStyler().setSumVisible(true);
+		chart.getStyler().setSumFontSize(18f);
 
 		return BitmapEncoder.getBitmapBytes(chart, BitmapFormat.PNG);
 	}
