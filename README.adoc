@@ -13,7 +13,7 @@ The following technologies are used:
 [[running-with-gradle]]
 === Running the Spring Boot application
 
-In order to run the Spring Boot application the following has to be run on the command line, while being inside the com.vogella.spring.datacrawler directory:
+In order to run the Spring Boot application the following has to be run on the command line:
 
 [source, console]
 ----
