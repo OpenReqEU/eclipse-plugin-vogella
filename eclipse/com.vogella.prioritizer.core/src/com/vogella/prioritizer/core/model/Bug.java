@@ -1,4 +1,4 @@
-package com.vogella.prioritizer.core.service.model;
+package com.vogella.prioritizer.core.model;
 
 import java.util.Date;
 import java.util.List;

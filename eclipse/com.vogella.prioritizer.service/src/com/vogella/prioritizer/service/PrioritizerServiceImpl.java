@@ -5,8 +5,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.service.PrioritizerService;
-import com.vogella.prioritizer.core.service.model.Bug;
 
 import io.reactivex.Single;
 import okhttp3.OkHttpClient;

@@ -2,7 +2,7 @@ package com.vogella.prioritizer.service;
 
 import java.util.List;
 
-import com.vogella.prioritizer.core.service.model.Bug;
+import com.vogella.prioritizer.core.model.Bug;
 
 import io.reactivex.Single;
 import okhttp3.ResponseBody;

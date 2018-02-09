@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.eclipse.nebula.widgets.nattable.data.IColumnPropertyAccessor;
 
-import com.vogella.prioritizer.core.service.model.Bug;
+import com.vogella.prioritizer.core.model.Bug;
 
 public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<Bug> {
 
