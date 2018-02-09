@@ -137,6 +137,9 @@ public class PrioritizerView {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
 		Single<List<Bug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, 30);
 
+		eventList.clear();
+		eventList.add(Bug.LOADING_DATA_FAKE_BUG);
+
 		compositeDisposable.add(suitableBugs.subscribeOn(Schedulers.io())
 				.observeOn(SwtSchedulers.from(mainComposite.getDisplay())).subscribe(bugsFromServer -> {
 					eventList.clear();
@@ -168,7 +171,7 @@ public class PrioritizerView {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
-		
+
 		GridLayoutFactory.fillDefaults().generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);
 

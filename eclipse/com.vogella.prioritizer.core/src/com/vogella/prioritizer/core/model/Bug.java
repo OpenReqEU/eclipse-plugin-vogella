@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 public class Bug {
+	
+	public static final Bug LOADING_DATA_FAKE_BUG = new Bug("Loading data...");
+	
 	private int id;
 	private String resolution;
 	private boolean is_open;
@@ -14,6 +17,15 @@ public class Bug {
 	private String product;
 	private String component;
 	private String severity;
+
+	public Bug() {
+	}
+	
+	public Bug(String summary) {
+		this.summary = summary;
+	}
+	
+	
 
 	public int getId() {
 		return id;
