@@ -7,8 +7,8 @@ The following technologies are used:
 * RxJava 2.x (-> http://www.vogella.com/tutorials/RxJava/article.html)
 * Retrofit (-> http://www.vogella.com/tutorials/Retrofit/article.html)
 * Gradle (-> http://www.vogella.com/tutorials/Gradle/article.html)
-* Eclipse RCP
-* Maven Tycho
+* Eclipse RCP (-> http://www.vogella.com/tutorials/EclipseRCP/article.html)
+* Maven Tycho (-> http://www.vogella.com/tutorials/EclipseTycho/article.html)
 
 [[running-with-gradle]]
 === Running the Spring Boot application
