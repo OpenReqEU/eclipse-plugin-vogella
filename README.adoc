@@ -25,7 +25,10 @@ This can also be run from the IDE by using the Eclipse Buildship 2.x tooling.
 
 === Installing the Eclipse Plugin
 
-Tip: Since the Eclipse plug-in is under active development you should consider starting it from the Eclipse IDE <<Eclise-Plugin-Running-From-IDE>>.
+[TIP]
+====
+Since the Eclipse plug-in is under active development you should consider starting it from the Eclipse IDE <<Eclise-Plugin-Running-From-IDE>>.
+====
 
 To install the Eclipse Plugin into the Eclipse IDE the following packages have to be installed:
 
