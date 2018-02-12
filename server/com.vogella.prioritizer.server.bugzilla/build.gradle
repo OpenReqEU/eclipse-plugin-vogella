@@ -1,0 +1,24 @@
+plugins { id "io.spring.dependency-management" version "1.0.4.RELEASE" }
+
+dependencyManagement {
+    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
+}
+
+jar {
+	baseName = 'com.vogella.prioritizer.server.bugzilla'
+	version = '0.1.0'
+}
+
+dependencies {
+
+	compile('org.springframework.boot:spring-boot-starter-web')
+
+	compile('io.reactivex.rxjava2:rxjava:2.1.9')
+	compile('com.squareup.retrofit2:retrofit:2.3.0')
+	compile('com.squareup.retrofit2:adapter-rxjava2:2.3.0')
+	compile('com.squareup.retrofit2:converter-jackson:2.3.0')
+
+	compile('org.json:json:20180130')
+
+	compileOnly('org.projectlombok:lombok')
+}

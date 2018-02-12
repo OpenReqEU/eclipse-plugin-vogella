@@ -114,8 +114,8 @@ public class PrioritizerService {
 		List<String> keywords = getKeywords(assignee, limit);
 
 		// Create Chart
-		PieChart chart = new PieChartBuilder().width(800).height(600).title("Keywords of already fixed bugs by " + assignee)
-				.build();
+		PieChart chart = new PieChartBuilder().width(800).height(600)
+				.title("Keywords of already fixed bugs by " + assignee).build();
 
 		// Series
 		keywords.stream().sorted((o1, o2) -> {

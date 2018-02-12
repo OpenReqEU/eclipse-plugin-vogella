@@ -1,0 +1,25 @@
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+
+	repositories {
+		jcenter()
+		maven {
+			url 'https://oss.sonatype.org/content/repositories/snapshots/'
+		}
+	}
+
+	ext {
+		springBootVersion = '1.5.9.RELEASE'
+	}
+	
+	buildscript {
+    		repositories { jcenter() }
+	}
+
+	sourceCompatibility = 1.8
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '4.5.1'
+}
