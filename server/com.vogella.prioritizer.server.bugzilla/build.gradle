@@ -1,4 +1,13 @@
-plugins { id "io.spring.dependency-management" version "1.0.4.RELEASE" }
+buildscript {
+    repositories {
+        maven { url 'https://repo.spring.io/plugins-snapshot' }
+    }
+    dependencies {
+        classpath 'io.spring.gradle:dependency-management-plugin:1.0.5.BUILD-SNAPSHOT'
+    }
+}
+
+apply plugin: 'io.spring.dependency-management'
 
 dependencyManagement {
     imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
@@ -11,11 +20,11 @@ jar {
 
 dependencies {
 
-	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-webflux:2.0.0.RC1')
 
 	compile('io.reactivex.rxjava2:rxjava:2.1.9')
 	compile('com.squareup.retrofit2:retrofit:2.3.0')
-	compile('com.squareup.retrofit2:adapter-rxjava2:2.3.0')
+	compile('com.jakewharton.retrofit:retrofit2-reactor-adapter:2.1.0')
 	compile('com.squareup.retrofit2:converter-jackson:2.3.0')
 
 	compile('org.json:json:20180130')

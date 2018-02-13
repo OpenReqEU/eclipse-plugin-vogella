@@ -3,10 +3,10 @@
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.jakewharton.retrofit2.adapter.reactor.ReactorCallAdapterFactory;
 import com.vogella.prioritizer.bugzilla.BugzillaApi;
 
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 @Configuration
@@ -18,7 +18,7 @@ public class BugzillaBeans {
 	public BugzillaApi getBugzillaApi() {
 		if (null == retrofit) {
 			retrofit = new Retrofit.Builder().baseUrl(BugzillaApi.BASE_URL)
-					.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+					.addCallAdapterFactory(ReactorCallAdapterFactory.create())
 					.addConverterFactory(JacksonConverterFactory.create()).build();
 		}
 
