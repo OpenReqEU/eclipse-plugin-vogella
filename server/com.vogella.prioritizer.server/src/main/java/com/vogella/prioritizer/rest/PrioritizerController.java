@@ -1,8 +1,5 @@
 package com.vogella.prioritizer.rest;
 
-import java.io.IOException;
-
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,18 +21,18 @@ class PrioritizerController {
 
 	@GetMapping("/findSuitableBugs")
 	public Flux<Bug> findSuitableBugs(@RequestParam("assignee") String assignee,
-			@RequestParam(name = "limit", required = false, defaultValue = "50") int limit) throws IOException, JSONException {
+			@RequestParam(name = "limit", required = false, defaultValue = "50") int limit) {
 		return prioritizerService.findSuitableBugs(assignee, limit);
 	}
 
 	@GetMapping(value = "/getChart", produces = MediaType.IMAGE_PNG_VALUE)
 	public @ResponseBody Mono<byte[]> getKeywordImage(@RequestParam("assignee") String assignee,
-			@RequestParam(name = "limit", required = false, defaultValue = "200") int limit) throws IOException {
+			@RequestParam(name = "limit", required = false, defaultValue = "200") int limit) {
 		return prioritizerService.getKeywordImage(assignee, limit);
 	}
 	
 	@GetMapping("/commentCount")
-	public Mono<Integer> getCommentCount(int bugId) throws JSONException, IOException {
+	public Mono<Integer> getCommentCount(int bugId) {
 		return prioritizerService.getCommentCount(bugId);
 	}
 }

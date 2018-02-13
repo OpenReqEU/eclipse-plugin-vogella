@@ -15,7 +15,6 @@ import org.apache.lucene.analysis.WordlistLoader;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.BitmapEncoder.BitmapFormat;
@@ -51,7 +50,7 @@ public class PrioritizerService {
 		stopWordSet = WordlistLoader.getWordSet(new FileReader(file));
 	}
 
-	public Flux<Bug> findSuitableBugs(String assignee, int limit) throws JSONException, IOException {
+	public Flux<Bug> findSuitableBugs(String assignee, int limit) {
 		Mono<BugResponse> bugResponse = bugzillaApi.getRecentOpenBugs(limit);
 
 		return bugResponse.flatMapIterable(bR -> {
@@ -118,7 +117,7 @@ public class PrioritizerService {
 		});
 	}
 
-	public Mono<byte[]> getKeywordImage(String assignee, int limit) throws IOException {
+	public Mono<byte[]> getKeywordImage(String assignee, int limit) {
 		Flux<String> keywordFlux = getKeywords(assignee, limit);
 
 		return keywordFlux.collectList().map(keywords -> {
