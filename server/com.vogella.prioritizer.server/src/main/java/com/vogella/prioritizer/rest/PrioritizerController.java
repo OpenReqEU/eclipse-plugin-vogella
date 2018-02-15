@@ -1,6 +1,5 @@
 package com.vogella.prioritizer.rest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,8 +15,11 @@ import reactor.core.publisher.Mono;
 @RestController
 class PrioritizerController {
 
-	@Autowired
 	private PrioritizerService prioritizerService;
+
+	public PrioritizerController(PrioritizerService prioritizerService) {
+		this.prioritizerService = prioritizerService;
+	}
 
 	@GetMapping("/findSuitableBugs")
 	public Flux<Bug> findSuitableBugs(@RequestParam("assignee") String assignee,
