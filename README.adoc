@@ -18,7 +18,7 @@ In order to run the Spring Boot application the following has to be run on the c
 
 [source, console]
 ----
-$ cd openreq/server/com.vogella.prioritizer.server
+$ cd openreq/server
 $ ./gradlew bRun
 ----
 
