@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vogella.prioritizer.bugzilla.model.Bug;
+import com.vogella.prioritizer.server.issue.api.model.Bug;
 import com.vogella.prioritizer.service.PrioritizerService;
 
 import reactor.core.publisher.Flux;
@@ -31,10 +31,5 @@ class PrioritizerController {
 	public @ResponseBody Mono<byte[]> getKeywordImage(@RequestParam("assignee") String assignee,
 			@RequestParam(name = "limit", required = false, defaultValue = "200") int limit) {
 		return prioritizerService.getKeywordImage(assignee, limit);
-	}
-	
-	@GetMapping("/commentCount")
-	public Mono<Integer> getCommentCount(int bugId) {
-		return prioritizerService.getCommentCount(bugId);
 	}
 }

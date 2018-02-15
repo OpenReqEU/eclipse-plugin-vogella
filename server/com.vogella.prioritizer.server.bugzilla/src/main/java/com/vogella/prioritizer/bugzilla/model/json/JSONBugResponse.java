@@ -1,4 +1,4 @@
-package com.vogella.prioritizer.bugzilla.model;
+package com.vogella.prioritizer.bugzilla.model.json;
 
 import java.util.List;
 
@@ -8,6 +8,6 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BugResponse {
-	List<Bug> bugs;
+public class JSONBugResponse {
+	List<JSONBugzillaBug> bugs;
 }

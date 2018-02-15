@@ -30,6 +30,4 @@ dependencies {
 	compile('org.json:json:20180130')
 
 	compileOnly('org.projectlombok:lombok')
-	
-	compile project (':com.vogella.prioritizer.server.issue.api')
 }

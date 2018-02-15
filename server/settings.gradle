@@ -1,5 +1,6 @@
 rootProject.name = 'openreq-prioritizer-server'
 
+include 'com.vogella.prioritizer.server.issue.api'
 include 'com.vogella.prioritizer.server.bugzilla'
 include 'com.vogella.prioritizer.server'
 

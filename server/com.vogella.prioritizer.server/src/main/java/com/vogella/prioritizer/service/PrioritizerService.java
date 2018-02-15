@@ -3,10 +3,14 @@ package com.vogella.prioritizer.service;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.function.BiFunction;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
@@ -14,8 +18,6 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.WordlistLoader;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.BitmapEncoder.BitmapFormat;
 import org.knowm.xchart.PieChart;
@@ -28,20 +30,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
-import com.vogella.prioritizer.bugzilla.BugzillaApi;
-import com.vogella.prioritizer.bugzilla.model.Bug;
-import com.vogella.prioritizer.bugzilla.model.BugResponse;
-import com.vogella.prioritizer.priority.PriorityBug;
+import com.vogella.prioritizer.server.issue.api.IssueService;
+import com.vogella.prioritizer.server.issue.api.model.Bug;
 
-import okhttp3.ResponseBody;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 @Service
 public class PrioritizerService {
 
 	@Autowired
-	private BugzillaApi bugzillaApi;
+	private IssueService issueApi;
 
 	private CharArraySet stopWordSet;
 
@@ -51,50 +52,80 @@ public class PrioritizerService {
 	}
 
 	public Flux<Bug> findSuitableBugs(String assignee, int limit) {
-		Mono<BugResponse> bugResponse = bugzillaApi.getRecentOpenBugs(limit);
 
-		return bugResponse.flatMapIterable(bR -> {
-			List<Bug> bugs = bR.getBugs();
+		Instant oneYearAgo = LocalDateTime.now().minusYears(1).toInstant(ZoneOffset.UTC);
+		Flux<Bug> newBugs = issueApi.getBugs(null, limit, "NEW", Date.from(oneYearAgo), null);
 
-			Flux<String> keywords = getKeywords(assignee, 50);
+		Mono<List<String>> keywords = getKeywords(assignee, limit);
 
-			TreeMap<PriorityBug, Bug> priorityBugs = new TreeMap<>();
+		return Flux
+				.combineLatest(keywords, newBugs, (BiFunction<List<String>, Bug, Tuple2<List<String>, Bug>>) Tuples::of)
+				.filter(tuple -> {
+					Bug t1 = tuple.getT2();
+					String summary = t1.getSummary();
+					List<String> t2 = tuple.getT1();
 
-			for (Bug bug : bugs) {
-				PriorityBug priorityBug = new PriorityBug();
+					for (String keyword : t2) {
+						if (summary.contains(keyword)) {
+							return false;
+						}
+					}
 
-				Mono<Integer> commentCount = getCommentCount(bug.getId());
-				priorityBug.setCommentCount(commentCount.block());
+					return true;
+				}).map(Tuple2::getT2).sort((o1, o2) -> {
+					float sum1 = getPrioritySum(o1);
+					float sum2 = getPrioritySum(o2);
 
-				priorityBug.setCcCount(bug.getCc().size());
+					return Float.compare(sum2, sum1);
+				});
 
-				priorityBug.setSeverity(bug.getSeverity());
+		// return newBugs;
 
-				priorityBug.setBlockingIssuesCount(bug.getBlocks().size());
-
-				long foundKeyWords = keywords.toStream().filter(keyword -> bug.getSummary().contains(keyword)).count();
-				priorityBug.setUserKeywordMatchCount(foundKeyWords);
-
-				priorityBugs.put(priorityBug, bug);
-			}
-
-			return priorityBugs.values();
-		});
+		// return bugResponse.flatMapIterable(bR -> {
+		// List<JSONBugzillaBug> bugs = bR.getBugs();
+		//
+		// Flux<String> keywords = getKeywords(assignee, 50);
+		//
+		// TreeMap<PriorityBug, JSONBugzillaBug> priorityBugs = new TreeMap<>();
+		//
+		// for (JSONBugzillaBug bug : bugs) {
+		// PriorityBug priorityBug = new PriorityBug();
+		//
+		// Mono<Integer> commentCount = getCommentCount(bug.getId());
+		// priorityBug.setCommentCount(commentCount.block());
+		//
+		// priorityBug.setCcCount(bug.getCc().size());
+		//
+		// priorityBug.setSeverity(bug.getSeverity());
+		//
+		// priorityBug.setBlockingIssuesCount(bug.getBlocks().size());
+		//
+		// long foundKeyWords = keywords.toStream().filter(keyword ->
+		// bug.getSummary().contains(keyword)).count();
+		// priorityBug.setUserKeywordMatchCount(foundKeyWords);
+		//
+		// priorityBugs.put(priorityBug, bug);
+		// }
+		//
+		// return priorityBugs.values();
+		// });
 	}
 
-	public Flux<String> getKeywords(String assignee, int limit) {
-		Mono<BugResponse> bugsOfAssignee = bugzillaApi.getBugsOfAssignee(assignee, limit, "RESOLVED");
+	private float getPrioritySum(Bug bug) {
+		float sum = 0;
 
-		return bugsOfAssignee.map(bR -> bR.getBugs()).map(bugList -> {
-			StringBuilder sb = new StringBuilder();
+		sum += bug.getComments().size() * 2;
+		sum += bug.getCc().size() * 1.8f;
+		sum += bug.getAttachments().size() * 1.6f;
+		sum += bug.getBlocks().size() * 1.4f;
 
-			for (Bug bug : bugList) {
-				String summary = bug.getSummary();
-				sb.append(summary);
-				sb.append(" ");
-			}
-			return sb.toString();
-		}).flatMapIterable(summariesAsText -> {
+		return sum;
+	}
+
+	public Mono<List<String>> getKeywords(String assignee, int limit) {
+		Flux<Bug> resolvedBugs = issueApi.getBugs(assignee, limit, "RESOLVED", null, null);
+
+		return resolvedBugs.map(Bug::getSummary).flatMapIterable(summariesAsText -> {
 			try (Analyzer analyzer = new StandardAnalyzer(stopWordSet)) {
 				try (TokenStream tokenStream = analyzer.tokenStream("contents", summariesAsText)) {
 
@@ -114,13 +145,13 @@ public class PrioritizerService {
 					throw new RuntimeException(e);
 				}
 			}
-		});
+		}).collectList();
 	}
 
 	public Mono<byte[]> getKeywordImage(String assignee, int limit) {
-		Flux<String> keywordFlux = getKeywords(assignee, limit);
+		Mono<List<String>> keywordFlux = getKeywords(assignee, limit);
 
-		return keywordFlux.collectList().map(keywords -> {
+		return keywordFlux.map(keywords -> {
 
 			// Create Chart
 			PieChart chart = new PieChartBuilder().width(800).height(600)
@@ -165,28 +196,5 @@ public class PrioritizerService {
 				throw new RuntimeException(e);
 			}
 		});
-	}
-
-	public Mono<Integer> getCommentCount(int bugId) {
-		Mono<ResponseBody> comments = bugzillaApi.getComments(bugId);
-		return comments.map(t -> {
-			try {
-				return t.string();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}).map(jsonString -> {
-
-			JSONObject rootJsonObject = new JSONObject(jsonString);
-
-			JSONObject bugsJsonObject = rootJsonObject.getJSONObject("bugs");
-
-			JSONObject commentIdJsonObject = bugsJsonObject.getJSONObject(String.valueOf(bugId));
-
-			JSONArray jsonArray = commentIdJsonObject.getJSONArray("comments");
-
-			return jsonArray.length();
-		});
-
 	}
 }
