@@ -19,6 +19,9 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.nebula.widgets.nattable.NatTable;
+import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
+import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
+import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.data.ListDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
@@ -26,9 +29,14 @@ import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
+import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.selection.RowSelectionModel;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 import org.eclipse.nebula.widgets.nattable.selection.config.DefaultRowSelectionLayerConfiguration;
+import org.eclipse.nebula.widgets.nattable.style.CellStyleAttributes;
+import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
+import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
+import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -110,12 +118,15 @@ public class PrioritizerView {
 		DataLayer dataLayer = new DataLayer(dataProvider);
 		dataLayer.setColumnPercentageSizing(true);
 		dataLayer.setColumnWidthPercentageByPosition(0, 10);
-		dataLayer.setColumnWidthPercentageByPosition(1, 40);
-		dataLayer.setColumnWidthPercentageByPosition(2, 25);
-		dataLayer.setColumnWidthPercentageByPosition(3, 25);
+		dataLayer.setColumnWidthPercentageByPosition(1, 60);
+		dataLayer.setColumnWidthPercentageByPosition(2, 15);
+		dataLayer.setColumnWidthPercentageByPosition(3, 15);
 		SelectionLayer selectionLayer = new SelectionLayer(dataLayer);
 		selectionLayer.setSelectionModel(new RowSelectionModel<>(selectionLayer, dataProvider, b -> b.getId()));
 		selectionLayer.addConfiguration(new DefaultRowSelectionLayerConfiguration());
+
+		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
+		dataLayer.setConfigLabelAccumulator(columnLabelAccumulator);
 
 		ViewportLayer viewportLayer = new ViewportLayer(selectionLayer);
 
@@ -127,8 +138,19 @@ public class PrioritizerView {
 		compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, columnHeaderLayer, 0, 0);
 		compositeLayer.setChildLayer(GridRegion.BODY, viewportLayer, 0, 1);
 
-		natTable = new NatTable(mainComposite, compositeLayer);
+		ConfigRegistry configRegistry = new ConfigRegistry();
+
+		Style style = new Style();
+		style.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT);
+
+		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, style, DisplayMode.NORMAL, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 1);
+
+		natTable = new NatTable(mainComposite, compositeLayer, false);
+		natTable.setConfigRegistry(configRegistry);
+		natTable.addConfiguration(new DefaultNatTableStyleConfiguration());
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(natTable);
+
+		natTable.configure();
 
 		subscribeBugTable();
 	}
@@ -162,8 +184,10 @@ public class PrioritizerView {
 		Label emailLabel = new Label(settingsPanel, SWT.FLAT);
 		emailLabel.setText("Email");
 
+		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
+
 		Text emailText = new Text(settingsPanel, SWT.BORDER);
-		emailText.setText("simon.scholz@vogella.com");
+		emailText.setText(userEmail);
 		emailText.setToolTipText("Email");
 		emailText.setMessage("Email");
 		emailText.addModifyListener(event -> {
@@ -178,10 +202,12 @@ public class PrioritizerView {
 		Label productLabel = new Label(settingsPanel, SWT.FLAT);
 		productLabel.setText("Product");
 
+		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
+
 		Text productText = new Text(settingsPanel, SWT.BORDER);
-		productText.setText("simon.scholz@vogella.com");
-		productText.setToolTipText("Email");
-		productText.setMessage("Email");
+		productText.setText(queryProduct);
+		productText.setToolTipText("Product");
+		productText.setMessage("Product");
 		productText.addModifyListener(event -> {
 			preferences.put(Preferences.QUERY_PRODUCT, productText.getText());
 			try {
@@ -194,10 +220,12 @@ public class PrioritizerView {
 		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
 		componentLabel.setText("Component");
 
+		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
+		
 		Text componentText = new Text(settingsPanel, SWT.BORDER);
-		componentText.setText("simon.scholz@vogella.com");
-		componentText.setToolTipText("Email");
-		componentText.setMessage("Email");
+		componentText.setText(queryComponent);
+		componentText.setToolTipText("Component");
+		componentText.setMessage("Component");
 		componentText.addModifyListener(event -> {
 			preferences.put(Preferences.QUERY_COMPONENT, componentText.getText());
 			try {
