@@ -14,9 +14,10 @@ public interface PrioritizerApi {
 
 	@GET("/getChart")
 	@Streaming
-	Single<ResponseBody> getKeywordImageBytes(@Query("assignee") String assignee, @Query("limit") int limit);
+	Single<ResponseBody> getKeywordImageBytes(@Query("assignee") String assignee, @Query("product") String product,
+			@Query("component") String component, @Query("limit") int limit);
 
 	@GET("/findSuitableBugs")
-	@Streaming
-	Single<List<Bug>> getSuitableBugs(@Query("assignee") String assignee, @Query("limit") int limit);
+	Single<List<Bug>> getSuitableBugs(@Query("assignee") String assignee, @Query("product") String product,
+			@Query("component") String component, @Query("limit") int limit);
 }

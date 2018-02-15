@@ -51,12 +51,12 @@ public class PrioritizerService {
 		stopWordSet = WordlistLoader.getWordSet(new FileReader(file));
 	}
 
-	public Flux<Bug> findSuitableBugs(String assignee, int limit) {
+	public Flux<Bug> findSuitableBugs(String assignee, String product, String component, int limit) {
 
 		Instant oneYearAgo = LocalDateTime.now().minusYears(1).toInstant(ZoneOffset.UTC);
-		Flux<Bug> newBugs = issueApi.getBugs(null, limit, "NEW", Date.from(oneYearAgo), null);
+		Flux<Bug> newBugs = issueApi.getBugs(null, limit, product, component, "NEW", Date.from(oneYearAgo), null);
 
-		Mono<List<String>> keywords = getKeywords(assignee, limit);
+		Mono<List<String>> keywords = getKeywords(assignee, product, component, limit);
 
 		return Flux
 				.combineLatest(keywords, newBugs, (BiFunction<List<String>, Bug, Tuple2<List<String>, Bug>>) Tuples::of)
@@ -78,37 +78,6 @@ public class PrioritizerService {
 
 					return Float.compare(sum2, sum1);
 				});
-
-		// return newBugs;
-
-		// return bugResponse.flatMapIterable(bR -> {
-		// List<JSONBugzillaBug> bugs = bR.getBugs();
-		//
-		// Flux<String> keywords = getKeywords(assignee, 50);
-		//
-		// TreeMap<PriorityBug, JSONBugzillaBug> priorityBugs = new TreeMap<>();
-		//
-		// for (JSONBugzillaBug bug : bugs) {
-		// PriorityBug priorityBug = new PriorityBug();
-		//
-		// Mono<Integer> commentCount = getCommentCount(bug.getId());
-		// priorityBug.setCommentCount(commentCount.block());
-		//
-		// priorityBug.setCcCount(bug.getCc().size());
-		//
-		// priorityBug.setSeverity(bug.getSeverity());
-		//
-		// priorityBug.setBlockingIssuesCount(bug.getBlocks().size());
-		//
-		// long foundKeyWords = keywords.toStream().filter(keyword ->
-		// bug.getSummary().contains(keyword)).count();
-		// priorityBug.setUserKeywordMatchCount(foundKeyWords);
-		//
-		// priorityBugs.put(priorityBug, bug);
-		// }
-		//
-		// return priorityBugs.values();
-		// });
 	}
 
 	private float getPrioritySum(Bug bug) {
@@ -122,8 +91,8 @@ public class PrioritizerService {
 		return sum;
 	}
 
-	public Mono<List<String>> getKeywords(String assignee, int limit) {
-		Flux<Bug> resolvedBugs = issueApi.getBugs(assignee, limit, "RESOLVED", null, null);
+	public Mono<List<String>> getKeywords(String assignee, String product, String component, int limit) {
+		Flux<Bug> resolvedBugs = issueApi.getBugs(assignee, limit, product, component, "RESOLVED", null, null);
 
 		return resolvedBugs.map(Bug::getSummary).flatMapIterable(summariesAsText -> {
 			try (Analyzer analyzer = new StandardAnalyzer(stopWordSet)) {
@@ -148,8 +117,8 @@ public class PrioritizerService {
 		}).collectList();
 	}
 
-	public Mono<byte[]> getKeywordImage(String assignee, int limit) {
-		Mono<List<String>> keywordFlux = getKeywords(assignee, limit);
+	public Mono<byte[]> getKeywordImage(String assignee, String product, String component, int limit) {
+		Mono<List<String>> keywordFlux = getKeywords(assignee, product, component, limit);
 
 		return keywordFlux.map(keywords -> {
 

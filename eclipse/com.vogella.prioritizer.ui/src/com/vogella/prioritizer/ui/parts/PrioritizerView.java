@@ -135,7 +135,10 @@ public class PrioritizerView {
 
 	private void subscribeBugTable() {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
-		Single<List<Bug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, 30);
+		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
+		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
+		Single<List<Bug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, queryProduct, queryComponent,
+				500);
 
 		eventList.clear();
 		eventList.add(Bug.LOADING_DATA_FAKE_BUG);
@@ -172,6 +175,38 @@ public class PrioritizerView {
 			}
 		});
 
+		Label productLabel = new Label(settingsPanel, SWT.FLAT);
+		productLabel.setText("Product");
+
+		Text productText = new Text(settingsPanel, SWT.BORDER);
+		productText.setText("simon.scholz@vogella.com");
+		productText.setToolTipText("Email");
+		productText.setMessage("Email");
+		productText.addModifyListener(event -> {
+			preferences.put(Preferences.QUERY_PRODUCT, productText.getText());
+			try {
+				preferences.flush();
+			} catch (BackingStoreException e) {
+				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
+			}
+		});
+
+		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
+		componentLabel.setText("Component");
+
+		Text componentText = new Text(settingsPanel, SWT.BORDER);
+		componentText.setText("simon.scholz@vogella.com");
+		componentText.setToolTipText("Email");
+		componentText.setMessage("Email");
+		componentText.addModifyListener(event -> {
+			preferences.put(Preferences.QUERY_COMPONENT, componentText.getText());
+			try {
+				preferences.flush();
+			} catch (BackingStoreException e) {
+				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
+			}
+		});
+
 		GridLayoutFactory.fillDefaults().generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);
 
@@ -183,7 +218,9 @@ public class PrioritizerView {
 
 	private void subscribeChart() {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
-		Single<byte[]> keywordImage = prioritizerService.getKeyWordImage(userEmail, 200);
+		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
+		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
+		Single<byte[]> keywordImage = prioritizerService.getKeyWordImage(userEmail, queryProduct, queryComponent, 200);
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.io())
 				.observeOn(SwtSchedulers.from(settingsComposite.getDisplay())).subscribe(imageBytes -> {

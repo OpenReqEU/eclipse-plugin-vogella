@@ -25,8 +25,6 @@ public class Bug {
 		this.summary = summary;
 	}
 	
-	
-
 	public int getId() {
 		return id;
 	}

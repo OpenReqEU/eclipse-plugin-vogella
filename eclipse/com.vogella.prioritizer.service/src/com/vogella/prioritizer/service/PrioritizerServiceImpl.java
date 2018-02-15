@@ -31,15 +31,15 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
-	public Single<byte[]> getKeyWordImage(String assignee, int limit) {
-		return prioritizerApi.getKeywordImageBytes(assignee, limit).map(response -> {
+	public Single<byte[]> getKeyWordImage(String assignee, String product, String component, int limit) {
+		return prioritizerApi.getKeywordImageBytes(assignee, product, component, limit).map(response -> {
 			return response.bytes();
 		});
 	}
 
 	@Override
-	public Single<List<Bug>> getSuitableBugs(String assignee, int limit) {
-		return prioritizerApi.getSuitableBugs(assignee, limit);
+	public Single<List<Bug>> getSuitableBugs(String assignee, String product, String component, int limit) {
+		return prioritizerApi.getSuitableBugs(assignee, product, component, limit);
 	}
 
 }

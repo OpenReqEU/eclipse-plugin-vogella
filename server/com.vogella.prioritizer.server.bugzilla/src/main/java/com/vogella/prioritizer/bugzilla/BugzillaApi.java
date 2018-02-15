@@ -18,9 +18,9 @@ public interface BugzillaApi {
 	Mono<JSONBugResponse> getBugById(@Path("bugId") long bugId);
 
 	@GET("rest/bug")
-	Mono<JSONBugResponse> getBugs(@Query("assigned_to") String assignee, @Query("limit") long limit,
-			@Query("status") String status, @Query("creation_time") Date creationTime,
-			@Query("last_change_time") Date lastChangeTime);
+	Mono<JSONBugResponse> getBugs(@Query("assigned_to") String assignee, @Query("product") String product,
+			@Query("component") String component, @Query("limit") long limit, @Query("status") String status,
+			@Query("creation_time") Date creationTime, @Query("last_change_time") Date lastChangeTime);
 
 	@GET("rest/bug/{bugId}/comment")
 	Mono<ResponseBody> getComments(@Path("bugId") long bugId);

@@ -9,7 +9,8 @@ import reactor.core.publisher.Mono;
 
 public interface IssueService {
 
-	Flux<Bug> getBugs(String assignee, long limit, String status, Date creationTime, Date lastChangeTime);
+	Flux<Bug> getBugs(String assignee, long limit, String product, String component, String status, Date creationTime,
+			Date lastChangeTime);
 
 	Mono<Bug> getBugById(int id);
 }
