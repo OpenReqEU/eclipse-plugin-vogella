@@ -148,7 +148,7 @@ public class PrioritizerService {
 			chart.getStyler().setAnnotationType(AnnotationType.LabelAndPercentage);
 			chart.getStyler().setAnnotationDistance(.82);
 
-			chart.getStyler().setPlotContentSize(1);
+			chart.getStyler().setPlotContentSize(.89);
 
 			chart.getStyler().setDefaultSeriesRenderStyle(PieSeriesRenderStyle.Pie);
 
