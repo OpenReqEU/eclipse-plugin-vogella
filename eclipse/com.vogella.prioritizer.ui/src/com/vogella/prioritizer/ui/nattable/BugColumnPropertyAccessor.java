@@ -9,7 +9,7 @@ import com.vogella.prioritizer.core.model.Bug;
 
 public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<Bug> {
 
-	private static final List<String> propertyNames = Arrays.asList("id", "summary", "platform", "component");
+	private static final List<String> propertyNames = Arrays.asList("id", "summary", "userpriority", "platform", "component");
 
 	@Override
 	public int getColumnCount() {
@@ -24,8 +24,10 @@ public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<Bug> {
 		case 1:
 			return bug.getSummary();
 		case 2:
-			return bug.getProduct();
+			return bug.getUserPriority();
 		case 3:
+			return bug.getProduct();
+		case 4:
 			return bug.getComponent();
 		}
 

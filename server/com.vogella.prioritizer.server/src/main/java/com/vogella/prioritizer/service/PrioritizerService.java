@@ -66,6 +66,9 @@ public class PrioritizerService {
 					Bug bug2 = o2.getT2();
 					float sum1 = getPrioritySum(bug1, kw);
 					float sum2 = getPrioritySum(bug2, kw);
+					
+					bug1.setUserPriority(sum1);
+					bug2.setUserPriority(sum2);
 
 					return Float.compare(sum2, sum1);
 				}).map(Tuple2::getT2);

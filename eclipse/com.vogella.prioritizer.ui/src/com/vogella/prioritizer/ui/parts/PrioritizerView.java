@@ -3,6 +3,8 @@ package com.vogella.prioritizer.ui.parts;
 import java.io.ByteArrayInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +30,7 @@ import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.data.ListDataProvider;
+import org.eclipse.nebula.widgets.nattable.data.convert.DefaultFloatDisplayConverter;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
@@ -82,7 +85,7 @@ public class PrioritizerView {
 
 	@Inject
 	private PrioritizerService prioritizerService;
-	
+
 	@Inject
 	private Logger log;
 
@@ -131,10 +134,11 @@ public class PrioritizerView {
 		ListDataProvider<Bug> dataProvider = new ListDataProvider<>(eventList, new BugColumnPropertyAccessor());
 		DataLayer dataLayer = new DataLayer(dataProvider);
 		dataLayer.setColumnPercentageSizing(true);
-		dataLayer.setColumnWidthPercentageByPosition(0, 10);
+		dataLayer.setColumnWidthPercentageByPosition(0, 7);
 		dataLayer.setColumnWidthPercentageByPosition(1, 60);
-		dataLayer.setColumnWidthPercentageByPosition(2, 15);
-		dataLayer.setColumnWidthPercentageByPosition(3, 15);
+		dataLayer.setColumnWidthPercentageByPosition(2, 11);
+		dataLayer.setColumnWidthPercentageByPosition(3, 11);
+		dataLayer.setColumnWidthPercentageByPosition(4, 11);
 		ColumnReorderLayer columnReorderLayer = new ColumnReorderLayer(dataLayer);
 		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
 		dataLayer.setConfigLabelAccumulator(columnLabelAccumulator);
@@ -184,6 +188,12 @@ public class PrioritizerView {
 				}
 			}
 		});
+
+		DefaultFloatDisplayConverter floatDisplayConverter = new DefaultFloatDisplayConverter(true);
+		NumberFormat formatter = new DecimalFormat("0.00");
+		floatDisplayConverter.setNumberFormat(formatter);
+		configRegistry.registerConfigAttribute(CellConfigAttributes.DISPLAY_CONVERTER, floatDisplayConverter,
+				DisplayMode.NORMAL, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 2);
 
 		natTable = new NatTable(mainComposite, compositeLayer, false);
 		natTable.setConfigRegistry(configRegistry);

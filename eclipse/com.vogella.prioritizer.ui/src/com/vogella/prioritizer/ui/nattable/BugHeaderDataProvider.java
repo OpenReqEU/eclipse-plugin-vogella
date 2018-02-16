@@ -12,8 +12,10 @@ public class BugHeaderDataProvider implements IDataProvider {
 		case 1:
 			return "Summary";
 		case 2:
-			return "Product";
+			return "Priority";
 		case 3:
+			return "Product";
+		case 4:
 			return "Component";
 		}
 		return "";
@@ -26,7 +28,7 @@ public class BugHeaderDataProvider implements IDataProvider {
 
 	@Override
 	public int getColumnCount() {
-		return 4;
+		return 5;
 	}
 
 	@Override

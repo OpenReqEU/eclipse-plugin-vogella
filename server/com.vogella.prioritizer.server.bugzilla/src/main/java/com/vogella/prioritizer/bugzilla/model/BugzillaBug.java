@@ -31,6 +31,7 @@ public class BugzillaBug implements Bug {
 	private List<String> keywords;
 	private List<Comment> comments;
 	private List<Attachment> attachments;
+	private float userPriority;
 	
 	public static Bug of(JSONBugzillaBug jsonBugzillaBug) {
 		BugzillaBug bugzillaBug = new BugzillaBug();

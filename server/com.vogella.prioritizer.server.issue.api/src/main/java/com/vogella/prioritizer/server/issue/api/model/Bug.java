@@ -76,5 +76,9 @@ public interface Bug {
 	List<Attachment> getAttachments();
 
 	void setAttachments(List<Attachment> attachments);
+	
+	public float getUserPriority();
+
+	public void setUserPriority(float userPriority);
 
 }
