@@ -83,5 +83,13 @@ image::launch-file.png[]
 
 === What's next?
 
+=== Sources
 
+http://bugzilla.readthedocs.io/en/latest/api/index.html
+
+http://blog.florian-hopf.de/2016/04/learning-lucene.html
+
+http://projectreactor.io/docs/core/release/reference/
+
+https://sanaulla.info/2017/09/15/using-gmail-as-smtp-server-from-java-spring-boot-apps/
 
