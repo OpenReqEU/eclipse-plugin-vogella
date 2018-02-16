@@ -121,7 +121,7 @@ public class PrioritizerService {
 
 			// Create Chart
 			PieChart chart = new PieChartBuilder().width(width).height(height)
-					.title("Keywords of already fixed bugs by " + assignee).build();
+					.title("Keywords of " + assignee).build();
 
 			// Series
 			keywords.stream().sorted((o1, o2) -> {
