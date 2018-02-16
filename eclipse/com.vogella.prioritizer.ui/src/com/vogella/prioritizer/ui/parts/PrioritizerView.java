@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -81,6 +82,9 @@ public class PrioritizerView {
 
 	@Inject
 	private PrioritizerService prioritizerService;
+	
+	@Inject
+	private Logger log;
 
 	@Inject
 	private BrowserService browserService;
@@ -175,6 +179,7 @@ public class PrioritizerView {
 					URL url = new URL("https://bugs.eclipse.org/bugs/show_bug.cgi?id=" + String.valueOf(cellData));
 					browserService.openExternalBrowser(url);
 				} catch (MalformedURLException | CoreException e) {
+					log.error(e);
 					MessageDialog.openError(natTable.getShell(), "Error", e.getMessage());
 				}
 			}
@@ -209,6 +214,7 @@ public class PrioritizerView {
 					eventList.addAll(bugsFromServer);
 					natTable.refresh(true);
 				}, err -> {
+					log.error(err);
 					MessageDialog.openError(mainComposite.getShell(), "Error", err.getMessage());
 				}));
 	}
@@ -233,6 +239,7 @@ public class PrioritizerView {
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
+				log.error(e);
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
@@ -251,6 +258,7 @@ public class PrioritizerView {
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
+				log.error(e);
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
@@ -269,6 +277,7 @@ public class PrioritizerView {
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
+				log.error(e);
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
@@ -284,9 +293,7 @@ public class PrioritizerView {
 
 	private void subscribeChart() {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
-		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
-		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
-		Single<byte[]> keywordImage = prioritizerService.getKeyWordImage(userEmail, queryProduct, queryComponent, 200);
+		Single<byte[]> keywordImage = prioritizerService.getKeyWordImage(userEmail, null, null, 200);
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.io())
 				.observeOn(SwtSchedulers.from(settingsComposite.getDisplay())).subscribe(imageBytes -> {

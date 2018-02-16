@@ -25,13 +25,14 @@ class PrioritizerController {
 	public Flux<Bug> findSuitableBugs(@RequestParam("assignee") String assignee,
 			@RequestParam("product") String product, @RequestParam("component") String component,
 			@RequestParam(name = "limit", required = false, defaultValue = "50") int limit) {
-		return prioritizerService.findSuitableBugs(assignee,product, component,  limit);
+		return prioritizerService.findSuitableBugs(assignee, product, component, limit);
 	}
 
 	@GetMapping(value = "/getChart", produces = MediaType.IMAGE_PNG_VALUE)
 	public @ResponseBody Mono<byte[]> getKeywordImage(@RequestParam("assignee") String assignee,
-			@RequestParam("product") String product, @RequestParam("component") String component,
+			@RequestParam(name = "product", required = false) String product,
+			@RequestParam(name = "component", required = false) String component,
 			@RequestParam(name = "limit", required = false, defaultValue = "200") int limit) {
-		return prioritizerService.getKeywordImage(assignee,product, component,  limit);
+		return prioritizerService.getKeywordImage(assignee, product, component, limit);
 	}
 }

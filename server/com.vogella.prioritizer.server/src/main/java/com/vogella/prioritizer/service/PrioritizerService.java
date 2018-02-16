@@ -56,37 +56,29 @@ public class PrioritizerService {
 		Instant oneYearAgo = LocalDateTime.now().minusYears(1).toInstant(ZoneOffset.UTC);
 		Flux<Bug> newBugs = issueApi.getBugs(null, limit, product, component, "NEW", Date.from(oneYearAgo), null);
 
-		Mono<List<String>> keywords = getKeywords(assignee, product, component, limit);
+		Mono<List<String>> keywords = getKeywords(assignee, null, null, limit);
 
 		return Flux
 				.combineLatest(keywords, newBugs, (BiFunction<List<String>, Bug, Tuple2<List<String>, Bug>>) Tuples::of)
-				.filter(tuple -> {
-					Bug t1 = tuple.getT2();
-					String summary = t1.getSummary();
-					List<String> t2 = tuple.getT1();
-
-					for (String keyword : t2) {
-						if (summary.contains(keyword)) {
-							return false;
-						}
-					}
-
-					return true;
-				}).map(Tuple2::getT2).sort((o1, o2) -> {
-					float sum1 = getPrioritySum(o1);
-					float sum2 = getPrioritySum(o2);
+				.sort((o1, o2) -> {
+					List<String> kw = o1.getT1();
+					Bug bug1 = o1.getT2();
+					Bug bug2 = o2.getT2();
+					float sum1 = getPrioritySum(bug1, kw);
+					float sum2 = getPrioritySum(bug2, kw);
 
 					return Float.compare(sum2, sum1);
-				});
+				}).map(Tuple2::getT2);
 	}
 
-	private float getPrioritySum(Bug bug) {
+	private float getPrioritySum(Bug bug, List<String> kw) {
 		float sum = 0;
 
 		sum += bug.getComments().size() * 2;
 		sum += bug.getCc().size() * 1.8f;
-		sum += bug.getAttachments().size() * 1.6f;
-		sum += bug.getBlocks().size() * 1.4f;
+		sum += kw.stream().filter(keyword -> bug.getSummary().toLowerCase().contains(keyword.toLowerCase())).count() * 1.6f;
+		sum += bug.getAttachments().size() * 1.4f;
+		sum += bug.getBlocks().size() * 1.2f;
 
 		return sum;
 	}
