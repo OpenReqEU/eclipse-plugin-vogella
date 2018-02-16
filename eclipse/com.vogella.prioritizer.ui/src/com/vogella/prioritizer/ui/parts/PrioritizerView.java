@@ -303,7 +303,7 @@ public class PrioritizerView {
 
 	private void subscribeChart() {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
-		Single<byte[]> keywordImage = prioritizerService.getKeyWordImage(userEmail, null, null, 200);
+		Single<byte[]> keywordImage = prioritizerService.getKeyWordImage(userEmail, 640, 480, null, null, 200);
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.io())
 				.observeOn(SwtSchedulers.from(settingsComposite.getDisplay())).subscribe(imageBytes -> {

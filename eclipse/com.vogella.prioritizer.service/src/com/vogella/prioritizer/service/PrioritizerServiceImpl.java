@@ -31,8 +31,9 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
-	public Single<byte[]> getKeyWordImage(String assignee, String product, String component, int limit) {
-		return prioritizerApi.getKeywordImageBytes(assignee, product, component, limit).map(response -> {
+	public Single<byte[]> getKeyWordImage(String assignee, int width, int height, String product, String component,
+			int limit) {
+		return prioritizerApi.getKeywordImageBytes(assignee, width, height, product, component, limit).map(response -> {
 			return response.bytes();
 		});
 	}
