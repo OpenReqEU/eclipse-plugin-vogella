@@ -66,7 +66,7 @@ public class PrioritizerService {
 					Bug bug2 = o2.getT2();
 					float sum1 = getPrioritySum(bug1, kw);
 					float sum2 = getPrioritySum(bug2, kw);
-					
+
 					bug1.setUserPriority(sum1);
 					bug2.setUserPriority(sum2);
 
@@ -79,7 +79,8 @@ public class PrioritizerService {
 
 		sum += bug.getComments().size() * 2;
 		sum += bug.getCc().size() * 1.8f;
-		sum += kw.stream().filter(keyword -> bug.getSummary().toLowerCase().contains(keyword.toLowerCase())).count() * 1.6f;
+		sum += kw.stream().filter(keyword -> bug.getSummary().toLowerCase().contains(keyword.toLowerCase())).count()
+				* 1.6f;
 		sum += bug.getAttachments().size() * 1.4f;
 		sum += bug.getBlocks().size() * 1.2f;
 
@@ -112,13 +113,14 @@ public class PrioritizerService {
 		}).collectList();
 	}
 
-	public Mono<byte[]> getKeywordImage(String assignee, String product, String component, int limit) {
+	public Mono<byte[]> getKeywordImage(String assignee, int width, int height, String product, String component,
+			int limit) {
 		Mono<List<String>> keywordFlux = getKeywords(assignee, product, component, limit);
 
 		return keywordFlux.map(keywords -> {
 
 			// Create Chart
-			PieChart chart = new PieChartBuilder().width(800).height(600)
+			PieChart chart = new PieChartBuilder().width(width).height(height)
 					.title("Keywords of already fixed bugs by " + assignee).build();
 
 			// Series
