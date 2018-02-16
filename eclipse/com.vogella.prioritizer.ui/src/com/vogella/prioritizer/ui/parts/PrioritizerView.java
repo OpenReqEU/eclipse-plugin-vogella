@@ -1,12 +1,15 @@
 package com.vogella.prioritizer.ui.parts;
 
 import java.io.ByteArrayInputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
@@ -30,13 +33,15 @@ import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnLabelAccumulator;
-import org.eclipse.nebula.widgets.nattable.selection.RowSelectionModel;
+import org.eclipse.nebula.widgets.nattable.reorder.ColumnReorderLayer;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
-import org.eclipse.nebula.widgets.nattable.selection.config.DefaultRowSelectionLayerConfiguration;
+import org.eclipse.nebula.widgets.nattable.sort.config.SingleClickSortConfiguration;
 import org.eclipse.nebula.widgets.nattable.style.CellStyleAttributes;
 import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
 import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.Style;
+import org.eclipse.nebula.widgets.nattable.style.TextDecorationEnum;
+import org.eclipse.nebula.widgets.nattable.ui.NatEventData;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -50,9 +55,11 @@ import org.osgi.service.prefs.BackingStoreException;
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.preferences.Preferences;
+import com.vogella.prioritizer.core.service.BrowserService;
 import com.vogella.prioritizer.core.service.PrioritizerService;
 import com.vogella.prioritizer.ui.nattable.BugColumnPropertyAccessor;
 import com.vogella.prioritizer.ui.nattable.BugHeaderDataProvider;
+import com.vogella.prioritizer.ui.nattable.LinkClickConfiguration;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -74,6 +81,9 @@ public class PrioritizerView {
 
 	@Inject
 	private PrioritizerService prioritizerService;
+
+	@Inject
+	private BrowserService browserService;
 
 	private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -121,18 +131,15 @@ public class PrioritizerView {
 		dataLayer.setColumnWidthPercentageByPosition(1, 60);
 		dataLayer.setColumnWidthPercentageByPosition(2, 15);
 		dataLayer.setColumnWidthPercentageByPosition(3, 15);
-		SelectionLayer selectionLayer = new SelectionLayer(dataLayer);
-		selectionLayer.setSelectionModel(new RowSelectionModel<>(selectionLayer, dataProvider, b -> b.getId()));
-		selectionLayer.addConfiguration(new DefaultRowSelectionLayerConfiguration());
-
+		ColumnReorderLayer columnReorderLayer = new ColumnReorderLayer(dataLayer);
 		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
 		dataLayer.setConfigLabelAccumulator(columnLabelAccumulator);
 
-		ViewportLayer viewportLayer = new ViewportLayer(selectionLayer);
+		ViewportLayer viewportLayer = new ViewportLayer(columnReorderLayer);
 
 		IDataProvider headerDataProvider = new BugHeaderDataProvider();
 		DataLayer headerDataLayer = new DataLayer(headerDataProvider);
-		ILayer columnHeaderLayer = new ColumnHeaderLayer(headerDataLayer, viewportLayer, selectionLayer);
+		ILayer columnHeaderLayer = new ColumnHeaderLayer(headerDataLayer, viewportLayer, (SelectionLayer) null);
 
 		CompositeLayer compositeLayer = new CompositeLayer(1, 2);
 		compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, columnHeaderLayer, 0, 0);
@@ -143,11 +150,42 @@ public class PrioritizerView {
 		Style style = new Style();
 		style.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT);
 
-		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, style, DisplayMode.NORMAL, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 1);
+		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, style, DisplayMode.NORMAL,
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 1);
+
+		Style linkStyle = new Style();
+		linkStyle.setAttributeValue(CellStyleAttributes.FOREGROUND_COLOR,
+				mainComposite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		linkStyle.setAttributeValue(CellStyleAttributes.TEXT_DECORATION, TextDecorationEnum.UNDERLINE);
+
+		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, linkStyle, DisplayMode.NORMAL,
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 0);
+
+		LinkClickConfiguration<Bug> linkClickConfiguration = new LinkClickConfiguration<>(
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 0);
+		linkClickConfiguration.addClickListener((natTable, event) -> {
+			NatEventData eventData = NatEventData.createInstanceFromEvent(event);
+			int rowIndex = natTable.getRowIndexByPosition(eventData.getRowPosition());
+			int columnIndex = natTable.getColumnIndexByPosition(eventData.getColumnPosition());
+
+			Object cellData = dataProvider.getDataValue(columnIndex, rowIndex);
+
+			if (cellData instanceof Integer) {
+				try {
+					URL url = new URL("https://bugs.eclipse.org/bugs/show_bug.cgi?id=" + String.valueOf(cellData));
+					browserService.openExternalBrowser(url);
+				} catch (MalformedURLException | CoreException e) {
+					MessageDialog.openError(natTable.getShell(), "Error", e.getMessage());
+				}
+			}
+		});
 
 		natTable = new NatTable(mainComposite, compositeLayer, false);
 		natTable.setConfigRegistry(configRegistry);
 		natTable.addConfiguration(new DefaultNatTableStyleConfiguration());
+		natTable.addConfiguration(new SingleClickSortConfiguration());
+		natTable.addConfiguration(linkClickConfiguration);
+
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(natTable);
 
 		natTable.configure();
@@ -221,7 +259,7 @@ public class PrioritizerView {
 		componentLabel.setText("Component");
 
 		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
-		
+
 		Text componentText = new Text(settingsPanel, SWT.BORDER);
 		componentText.setText(queryComponent);
 		componentText.setToolTipText("Component");
