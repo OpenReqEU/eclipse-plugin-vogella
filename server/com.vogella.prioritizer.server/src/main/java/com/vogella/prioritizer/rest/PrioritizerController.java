@@ -30,8 +30,8 @@ class PrioritizerController {
 
 	@GetMapping(value = "/getChart", produces = MediaType.IMAGE_PNG_VALUE)
 	public @ResponseBody Mono<byte[]> getKeywordImage(@RequestParam("assignee") String assignee,
-			@RequestParam(name = "width", required = false) int width,
-			@RequestParam(name = "height", required = false) int height,
+			@RequestParam(name = "width", required = false, defaultValue = "800") int width,
+			@RequestParam(name = "height", required = false, defaultValue = "600") int height,
 			@RequestParam(name = "product", required = false) String product,
 			@RequestParam(name = "component", required = false) String component,
 			@RequestParam(name = "limit", required = false, defaultValue = "200") int limit) {
