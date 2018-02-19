@@ -29,6 +29,7 @@ public class BugzillaBug implements Bug {
 	private List<String> cc;
 	private List<Integer> blocks;
 	private List<String> keywords;
+	private List<String> seeAlso;
 	private List<Comment> comments;
 	private List<Attachment> attachments;
 	private float userPriority;
@@ -54,6 +55,7 @@ public class BugzillaBug implements Bug {
 		bugzillaBug.setVersion(jsonBugzillaBug.getVersion());
 		bugzillaBug.setComments(Collections.emptyList());
 		bugzillaBug.setAttachments(Collections.emptyList());
+		bugzillaBug.setSeeAlso(jsonBugzillaBug.getSeeAlso());
 		
 		return bugzillaBug;
 	}

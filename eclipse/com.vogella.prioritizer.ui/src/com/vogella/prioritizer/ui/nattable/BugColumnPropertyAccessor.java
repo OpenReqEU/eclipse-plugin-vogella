@@ -5,11 +5,12 @@ import java.util.List;
 
 import org.eclipse.nebula.widgets.nattable.data.IColumnPropertyAccessor;
 
-import com.vogella.prioritizer.core.model.Bug;
+import com.vogella.prioritizer.core.model.PriorityBug;
 
-public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<Bug> {
+public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<PriorityBug> {
 
-	private static final List<String> propertyNames = Arrays.asList("id", "summary", "userpriority", "platform", "component");
+	private static final List<String> propertyNames = Arrays.asList("id", "summary", "userpriority", "platform",
+			"component");
 
 	@Override
 	public int getColumnCount() {
@@ -17,25 +18,37 @@ public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<Bug> {
 	}
 
 	@Override
-	public Object getDataValue(Bug bug, int columnIndex) {
+	public Object getDataValue(PriorityBug bug, int columnIndex) {
 		switch (columnIndex) {
 		case 0:
-			return bug.getId();
+			return bug.getBug().getId();
 		case 1:
-			return bug.getSummary();
+			return bug.getBug().getSummary();
 		case 2:
-			return bug.getUserPriority();
+			return calcUserPrio(bug);
 		case 3:
-			return bug.getProduct();
+			return bug.getBug().getProduct();
 		case 4:
-			return bug.getComponent();
+			return bug.getBug().getComponent();
 		}
 
 		return bug;
 	}
 
+	private float calcUserPrio(PriorityBug priorityBug) {
+		float sum = 0;
+
+		sum += priorityBug.getGerritChangeCount() * 2.2f;
+		sum += priorityBug.getCommentCount() * 1.9f;
+		sum += priorityBug.getCcCount() * 1.7f;
+		sum += priorityBug.getUserKeywordMatchCount() * 1.5f;
+		sum += priorityBug.getBlockingIssuesCount() * 1.4f;
+
+		return sum;
+	}
+
 	@Override
-	public void setDataValue(Bug rowObject, int columnIndex, Object newValue) {
+	public void setDataValue(PriorityBug rowObject, int columnIndex, Object newValue) {
 		// no editing necessary
 	}
 

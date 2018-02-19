@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.vogella.prioritizer.core.model.Bug;
+import com.vogella.prioritizer.core.model.PriorityBug;
 import com.vogella.prioritizer.core.service.PrioritizerService;
 
 import io.reactivex.Single;
@@ -21,8 +21,8 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 
 	public PrioritizerServiceImpl() {
 
-		final OkHttpClient httpClient = new OkHttpClient.Builder().readTimeout(60, TimeUnit.SECONDS)
-				.connectTimeout(60, TimeUnit.SECONDS).build();
+		final OkHttpClient httpClient = new OkHttpClient.Builder().readTimeout(3, TimeUnit.MINUTES)
+				.connectTimeout(3, TimeUnit.MINUTES).build();
 
 		Retrofit retrofit = new Retrofit.Builder().baseUrl("http://localhost:8080").client(httpClient)
 				.addConverterFactory(GsonConverterFactory.create())
@@ -39,7 +39,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
-	public Single<List<Bug>> getSuitableBugs(String assignee, String product, String component, int limit) {
+	public Single<List<PriorityBug>> getSuitableBugs(String assignee, String product, String component, int limit) {
 		return prioritizerApi.getSuitableBugs(assignee, product, component, limit);
 	}
 

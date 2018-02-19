@@ -58,6 +58,7 @@ import org.osgi.service.prefs.BackingStoreException;
 
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
+import com.vogella.prioritizer.core.model.PriorityBug;
 import com.vogella.prioritizer.core.preferences.Preferences;
 import com.vogella.prioritizer.core.service.BrowserService;
 import com.vogella.prioritizer.core.service.PrioritizerService;
@@ -106,7 +107,7 @@ public class PrioritizerView {
 
 	private Label imgLabel;
 
-	private EventList<Bug> eventList;
+	private EventList<PriorityBug> eventList;
 
 	private NatTable natTable;
 
@@ -131,7 +132,7 @@ public class PrioritizerView {
 
 		eventList = new BasicEventList<>(50);
 
-		ListDataProvider<Bug> dataProvider = new ListDataProvider<>(eventList, new BugColumnPropertyAccessor());
+		ListDataProvider<PriorityBug> dataProvider = new ListDataProvider<>(eventList, new BugColumnPropertyAccessor());
 		DataLayer dataLayer = new DataLayer(dataProvider);
 		dataLayer.setColumnPercentageSizing(true);
 		dataLayer.setColumnWidthPercentageByPosition(0, 7);
@@ -212,15 +213,16 @@ public class PrioritizerView {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
 		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
 		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
-		Single<List<Bug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, queryProduct, queryComponent,
+		Single<List<PriorityBug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, queryProduct, queryComponent,
 				500);
 
 		eventList.clear();
-		eventList.add(Bug.LOADING_DATA_FAKE_BUG);
+		eventList.add(PriorityBug.LOADING_DATA_FAKE_BUG);
 
 		compositeDisposable.add(suitableBugs.subscribeOn(Schedulers.io())
 				.observeOn(SwtSchedulers.from(mainComposite.getDisplay())).subscribe(bugsFromServer -> {
 					eventList.clear();
+					System.out.println("Anzahl gefundener Bugs: " + bugsFromServer.size());
 					eventList.addAll(bugsFromServer);
 					natTable.refresh(true);
 				}, err -> {

@@ -45,8 +45,9 @@ public class BugzillaIssueService implements IssueService {
 			for (JSONBugzillaBug jsonBugzillaBug : jsonBugs) {
 				Flux<Comment> comments = getComments(jsonBugzillaBug.getId());
 				// TODO implement getAttachments
-				// TODO add comments and attachments to BugzillaBug
 				Bug bug = BugzillaBug.of(jsonBugzillaBug);
+				// FIXME make this non blocking
+				bug.setComments(comments.collectList().block());
 				bugs.add(bug);
 			}
 

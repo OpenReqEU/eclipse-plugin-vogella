@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vogella.prioritizer.server.issue.api.model.Bug;
+import com.vogella.prioritizer.server.issue.api.model.PriorityBug;
 import com.vogella.prioritizer.service.PrioritizerService;
 
 import reactor.core.publisher.Flux;
@@ -22,7 +22,7 @@ class PrioritizerController {
 	}
 
 	@GetMapping("/findSuitableBugs")
-	public Flux<Bug> findSuitableBugs(@RequestParam("assignee") String assignee,
+	public Flux<PriorityBug> findSuitableBugs(@RequestParam("assignee") String assignee,
 			@RequestParam("product") String product, @RequestParam("component") String component,
 			@RequestParam(name = "limit", required = false, defaultValue = "50") int limit) {
 		return prioritizerService.findSuitableBugs(assignee, product, component, limit);

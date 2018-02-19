@@ -29,4 +29,6 @@ public class JSONBugzillaBug {
 	private List<String> cc;
 	private List<Integer> blocks;
 	private List<String> keywords;
+	@JsonAlias("see_also")
+	private List<String> seeAlso;
 }

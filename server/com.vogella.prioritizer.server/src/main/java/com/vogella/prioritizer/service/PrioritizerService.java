@@ -32,6 +32,7 @@ import org.springframework.util.ResourceUtils;
 
 import com.vogella.prioritizer.server.issue.api.IssueService;
 import com.vogella.prioritizer.server.issue.api.model.Bug;
+import com.vogella.prioritizer.server.issue.api.model.PriorityBug;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -51,40 +52,33 @@ public class PrioritizerService {
 		stopWordSet = WordlistLoader.getWordSet(new FileReader(file));
 	}
 
-	public Flux<Bug> findSuitableBugs(String assignee, String product, String component, int limit) {
+	public Flux<PriorityBug> findSuitableBugs(String assignee, String product, String component, int limit) {
 
-		Instant oneYearAgo = LocalDateTime.now().minusYears(1).toInstant(ZoneOffset.UTC);
-		Flux<Bug> newBugs = issueApi.getBugs(null, limit, product, component, "NEW", Date.from(oneYearAgo), null);
+		Instant oneYearAgo = LocalDateTime.now().minusYears(2).toInstant(ZoneOffset.UTC);
+		// TODO store latest bugs as prioritizer bugs in the db
+		Flux<Bug> newBugs = issueApi.getBugs(null, limit, product, component, "NEW", null, Date.from(oneYearAgo));
 
 		Mono<List<String>> keywords = getKeywords(assignee, null, null, limit);
 
 		return Flux
 				.combineLatest(keywords, newBugs, (BiFunction<List<String>, Bug, Tuple2<List<String>, Bug>>) Tuples::of)
-				.sort((o1, o2) -> {
-					List<String> kw = o1.getT1();
-					Bug bug1 = o1.getT2();
-					Bug bug2 = o2.getT2();
-					float sum1 = getPrioritySum(bug1, kw);
-					float sum2 = getPrioritySum(bug2, kw);
+				.map(tuple -> {
+					List<String> kw = tuple.getT1();
+					Bug bug = tuple.getT2();
 
-					bug1.setUserPriority(sum1);
-					bug2.setUserPriority(sum2);
+					PriorityBug priorityBug = new PriorityBug();
 
-					return Float.compare(sum2, sum1);
-				}).map(Tuple2::getT2);
-	}
+					priorityBug.setBug(bug);
 
-	private float getPrioritySum(Bug bug, List<String> kw) {
-		float sum = 0;
+					priorityBug.setGerritChangeCount(bug.getSeeAlso().size());
+					priorityBug.setCommentCount(bug.getComments().size());
+					priorityBug.setCcCount(bug.getCc().size());
+					priorityBug.setUserKeywordMatchCount(kw.stream()
+							.filter(keyword -> bug.getSummary().toLowerCase().contains(keyword.toLowerCase())).count());
+					priorityBug.setBlockingIssuesCount(bug.getBlocks().size());
 
-		sum += bug.getComments().size() * 2;
-		sum += bug.getCc().size() * 1.8f;
-		sum += kw.stream().filter(keyword -> bug.getSummary().toLowerCase().contains(keyword.toLowerCase())).count()
-				* 1.6f;
-		sum += bug.getAttachments().size() * 1.4f;
-		sum += bug.getBlocks().size() * 1.2f;
-
-		return sum;
+					return priorityBug;
+				}).sort();
 	}
 
 	public Mono<List<String>> getKeywords(String assignee, String product, String component, int limit) {
@@ -120,8 +114,7 @@ public class PrioritizerService {
 		return keywordFlux.map(keywords -> {
 
 			// Create Chart
-			PieChart chart = new PieChartBuilder().width(width).height(height)
-					.title("Keywords of " + assignee).build();
+			PieChart chart = new PieChartBuilder().width(width).height(height).title("Keywords of " + assignee).build();
 
 			// Series
 			keywords.stream().sorted((o1, o2) -> {

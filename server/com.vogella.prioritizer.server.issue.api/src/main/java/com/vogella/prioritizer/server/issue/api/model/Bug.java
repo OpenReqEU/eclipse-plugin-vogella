@@ -69,6 +69,10 @@ public interface Bug {
 
 	void setKeywords(List<String> keywords);
 
+	List<String> getSeeAlso();
+
+	void setSeeAlso(List<String> seeAlso);
+
 	List<Comment> getComments();
 
 	void setComments(List<Comment> comments);
@@ -76,9 +80,4 @@ public interface Bug {
 	List<Attachment> getAttachments();
 
 	void setAttachments(List<Attachment> attachments);
-	
-	public float getUserPriority();
-
-	public void setUserPriority(float userPriority);
-
 }

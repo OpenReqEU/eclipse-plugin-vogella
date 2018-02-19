@@ -1,17 +1,17 @@
-package com.vogella.prioritizer.priority;
+package com.vogella.prioritizer.server.issue.api.model;
 
 import lombok.Data;
 
 @Data
 public class PriorityBug implements Comparable<PriorityBug> {
+	
+	private Bug bug;
+
+	private int gerritChangeCount;
 
 	private int commentCount;
 
 	private int ccCount;
-
-	private int votesCount;
-
-	private int attachmentsCount;
 
 	private int blockingIssuesCount;
 
@@ -37,11 +37,11 @@ public class PriorityBug implements Comparable<PriorityBug> {
 
 		float sum = 0;
 
-		sum += priorityBug.commentCount * 2;
-		sum += priorityBug.ccCount * 1.8f;
-		sum += priorityBug.votesCount * 1.6f;
-		sum += priorityBug.attachmentsCount * 1.4f;
-		sum += priorityBug.blockingIssuesCount * 1.2f;
+		sum += priorityBug.gerritChangeCount * 2.2f;
+		sum += priorityBug.commentCount * 1.9f;
+		sum += priorityBug.ccCount * 1.7f;
+		sum += priorityBug.userKeywordMatchCount * 1.5f;
+		sum += priorityBug.blockingIssuesCount * 1.4f;
 
 		return sum;
 	}
