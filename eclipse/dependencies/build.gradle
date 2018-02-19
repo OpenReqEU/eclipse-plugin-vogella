@@ -35,33 +35,29 @@ platform {
 	useFeatureHashQualifiers = false
 	defaultQualifierMap.prefix = ''
 
-	feature(id: 'RxJava-OSGi', name: 'RxJava OSGi', version: '2.1.9') {
-		plugin('io.reactivex.rxjava2:rxjava:2.1.9')
-	}
+	feature(id: 'Project-Reactor', name: 'Project Reactor', version: '3.1.4') {
 
-	feature(id: 'RxSWT-OSGi', name: 'RxSWT OSGi', version: '0.1.0') {
-		plugin('io.reactivex.swt:rxswt:0.1.0') {
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.ppc64'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.win32.win32.x86_64'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.win32.win32.x86'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.s390'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.aarch64'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.x86_64'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.aix.ppc'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.aix.ppc64'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.solaris.x86_64'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.ppc64le'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.cocoa.macosx.x86_64'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.solaris.sparcv9'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.ppc'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.hpux.ia64'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.x86'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.arm'
-			 exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.gtk.linux.s390x'
+		plugin('io.projectreactor:reactor-core:3.1.4.RELEASE') {
+			bnd {
+				optionalImport 'javax.swing'
+				optionalImport 'kotlin'
+				optionalImport 'kotlin.jvm.functions'
+				optionalImport 'kotlin.jvm.internal'
+				optionalImport 'sun.misc'
+			}
+		}
+
+		plugin('io.projectreactor.addons:reactor-extra:3.1.5.RELEASE') {
+			bnd {
+				optionalImport 'javax.swing'
+				optionalImport 'kotlin'
+				optionalImport 'kotlin.jvm.functions'
+				optionalImport 'kotlin.jvm.internal'
+			}
 		}
 	}
 	
-	feature(id: 'Retrofit2.3.0', name: 'Retrofit 2.3.0', version: '2.3.0') {
+	feature(id: 'Retrofit', name: 'Retrofit', version: '2.3.0') {
 		// Convert the retrofit artifact to OSGi, make android.os optional and handle the split package problems in OSGi
 		plugin('com.squareup.retrofit2:retrofit:2.3.0'){
 			bnd {
@@ -70,11 +66,11 @@ platform {
 		    	}
 		}
 	
-		// Convert the retrofit gson converter artifact to OSGi and handle the split package problems in OSGi
-		plugin('com.squareup.retrofit2:converter-gson:2.3.0')
+		// Convert the retrofit jackson converter artifact to OSGi and handle the split package problems in OSGi
+		plugin('com.squareup.retrofit2:converter-jackson:2.3.0')
 
-		// lets retrofit return RxJava types
-		plugin('com.squareup.retrofit2:adapter-rxjava2:2.3.0')
+		// lets retrofit return reactor types
+		plugin('com.jakewharton.retrofit:retrofit2-reactor-adapter:2.1.0')
 	
 		// Convert okhttp3 artifact to OSGi without android
 		plugin('com.squareup.okhttp3:okhttp:3.8.0') {
