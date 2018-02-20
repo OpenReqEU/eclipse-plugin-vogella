@@ -25,9 +25,9 @@ public class PriorityBug implements Comparable<PriorityBug> {
 		float otherSumPriority = sumPriority(priorityBug);
 
 		if (sumPriority < otherSumPriority) {
-			return -1;
-		} else if (sumPriority > otherSumPriority) {
 			return 1;
+		} else if (sumPriority > otherSumPriority) {
+			return -1;
 		}
 
 		return 0;
