@@ -3,11 +3,14 @@ package com.vogella.prioritizer.core.model;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Bug {
 
 	private int id;
 	private String resolution;
-	private boolean is_open;
+	private boolean isOpen;
 	private String status;
 	private String creator;
 	private String summary;
@@ -17,10 +20,12 @@ public class Bug {
 	private String severity;
 	private String priority;
 	private String version;
-	private Date creation_time;
+	private Date creationTime;
 	private List<String> cc;
 	private List<Integer> blocks;
 	private List<String> keywords;
+	private List<String> seeAlso;
+
 
 	public Bug() {
 	}
@@ -46,11 +51,11 @@ public class Bug {
 	}
 
 	public boolean isIs_open() {
-		return is_open;
+		return isOpen;
 	}
 
 	public void setIs_open(boolean is_open) {
-		this.is_open = is_open;
+		this.isOpen = is_open;
 	}
 
 	public String getStatus() {
@@ -126,11 +131,11 @@ public class Bug {
 	}
 
 	public Date getCreation_time() {
-		return creation_time;
+		return creationTime;
 	}
 
 	public void setCreation_time(Date creation_time) {
-		this.creation_time = creation_time;
+		this.creationTime = creation_time;
 	}
 
 	public List<String> getCc() {
@@ -155,6 +160,14 @@ public class Bug {
 
 	public void setKeywords(List<String> keywords) {
 		this.keywords = keywords;
+	}
+
+	public List<String> getSeeAlso() {
+		return seeAlso;
+	}
+
+	public void setSeeAlso(List<String> seeAlso) {
+		this.seeAlso = seeAlso;
 	}
 
 }

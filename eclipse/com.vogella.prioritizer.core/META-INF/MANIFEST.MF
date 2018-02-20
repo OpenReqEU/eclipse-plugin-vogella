@@ -9,5 +9,6 @@ Export-Package: com.vogella.prioritizer.core.events,
  com.vogella.prioritizer.core.model,
  com.vogella.prioritizer.core.preferences,
  com.vogella.prioritizer.core.service
-Require-Bundle: io.reactivex.rxjava2.rxjava,
- org.eclipse.core.runtime;bundle-version="3.13.0"
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.13.0",
+ io.projectreactor.reactor-core;bundle-version="3.1.4",
+ com.fasterxml.jackson.core.jackson-annotations;bundle-version="2.7.0"

@@ -68,10 +68,11 @@ import com.vogella.prioritizer.ui.nattable.LinkClickConfiguration;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
-import io.reactivex.Single;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.swt.schedulers.SwtSchedulers;
+import reactor.core.Disposable;
+import reactor.core.Disposables;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+import reactor.swing.SwtScheduler;
 
 @SuppressWarnings("restriction")
 public class PrioritizerView {
@@ -93,7 +94,7 @@ public class PrioritizerView {
 	@Inject
 	private BrowserService browserService;
 
-	private CompositeDisposable compositeDisposable = new CompositeDisposable();
+	private Disposable.Composite compositeDisposable = Disposables.composite();
 
 	private StackLayout stackLayout;
 
@@ -213,14 +214,14 @@ public class PrioritizerView {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
 		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
 		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
-		Single<List<PriorityBug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, queryProduct, queryComponent,
-				500);
+		Mono<List<PriorityBug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, queryProduct,
+				queryComponent, 500);
 
 		eventList.clear();
 		eventList.add(PriorityBug.LOADING_DATA_FAKE_BUG);
 
-		compositeDisposable.add(suitableBugs.subscribeOn(Schedulers.io())
-				.observeOn(SwtSchedulers.from(mainComposite.getDisplay())).subscribe(bugsFromServer -> {
+		compositeDisposable.add(suitableBugs.subscribeOn(Schedulers.elastic())
+				.publishOn(SwtScheduler.from(mainComposite.getDisplay())).subscribe(bugsFromServer -> {
 					eventList.clear();
 					System.out.println("Anzahl gefundener Bugs: " + bugsFromServer.size());
 					eventList.addAll(bugsFromServer);
@@ -305,10 +306,10 @@ public class PrioritizerView {
 
 	private void subscribeChart() {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
-		Single<byte[]> keywordImage = prioritizerService.getKeyWordImage(userEmail, 640, 480, null, null, 200);
+		Mono<byte[]> keywordImage = prioritizerService.getKeyWordImage(userEmail, 640, 480, null, null, 200);
 
-		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.io())
-				.observeOn(SwtSchedulers.from(settingsComposite.getDisplay())).subscribe(imageBytes -> {
+		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.elastic())
+				.publishOn(SwtScheduler.from(settingsComposite.getDisplay())).subscribe(imageBytes -> {
 
 					ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imageBytes);
 
