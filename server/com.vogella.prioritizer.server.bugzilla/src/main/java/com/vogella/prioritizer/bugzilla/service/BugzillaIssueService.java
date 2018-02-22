@@ -47,7 +47,7 @@ public class BugzillaIssueService implements IssueService {
 				// TODO implement getAttachments
 				Bug bug = BugzillaBug.of(jsonBugzillaBug);
 				// FIXME make this non blocking
-				bug.setComments(comments.collectList().block());
+//				bug.setComments(comments.collectList().block());
 				bugs.add(bug);
 			}
 
