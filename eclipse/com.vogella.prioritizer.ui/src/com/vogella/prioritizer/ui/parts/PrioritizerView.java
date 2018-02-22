@@ -3,9 +3,8 @@ package com.vogella.prioritizer.ui.parts;
 import java.io.ByteArrayInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.List;
+import java.util.OptionalDouble;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -30,7 +29,6 @@ import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.data.ListDataProvider;
-import org.eclipse.nebula.widgets.nattable.data.convert.DefaultFloatDisplayConverter;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
@@ -65,6 +63,7 @@ import com.vogella.prioritizer.core.service.PrioritizerService;
 import com.vogella.prioritizer.ui.nattable.BugColumnPropertyAccessor;
 import com.vogella.prioritizer.ui.nattable.BugHeaderDataProvider;
 import com.vogella.prioritizer.ui.nattable.LinkClickConfiguration;
+import com.vogella.prioritizer.ui.nattable.NormalizePercentageDisplayConverter;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -112,6 +111,8 @@ public class PrioritizerView {
 
 	private NatTable natTable;
 
+	private NormalizePercentageDisplayConverter percentageDisplayConverter;
+
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 		resourceManager = new LocalResourceManager(JFaceResources.getResources(), parent);
@@ -131,7 +132,7 @@ public class PrioritizerView {
 
 		stackLayout.topControl = mainComposite;
 
-		eventList = new BasicEventList<>(50);
+		eventList = new BasicEventList<>(500);
 
 		ListDataProvider<PriorityBug> dataProvider = new ListDataProvider<>(eventList, new BugColumnPropertyAccessor());
 		DataLayer dataLayer = new DataLayer(dataProvider);
@@ -191,10 +192,8 @@ public class PrioritizerView {
 			}
 		});
 
-		DefaultFloatDisplayConverter floatDisplayConverter = new DefaultFloatDisplayConverter(true);
-		NumberFormat formatter = new DecimalFormat("0.00");
-		floatDisplayConverter.setNumberFormat(formatter);
-		configRegistry.registerConfigAttribute(CellConfigAttributes.DISPLAY_CONVERTER, floatDisplayConverter,
+		percentageDisplayConverter = new NormalizePercentageDisplayConverter();
+		configRegistry.registerConfigAttribute(CellConfigAttributes.DISPLAY_CONVERTER, percentageDisplayConverter,
 				DisplayMode.NORMAL, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 2);
 
 		natTable = new NatTable(mainComposite, compositeLayer, false);
@@ -225,6 +224,16 @@ public class PrioritizerView {
 					eventList.clear();
 					System.out.println("Anzahl gefundener Bugs: " + bugsFromServer.size());
 					eventList.addAll(bugsFromServer);
+					
+					OptionalDouble min = eventList.stream().map(BugColumnPropertyAccessor::calcUserPrio)
+							.mapToDouble(f -> f).min();
+					OptionalDouble max = eventList.stream().map(BugColumnPropertyAccessor::calcUserPrio)
+							.mapToDouble(f -> f).max();
+
+					if (min.isPresent() && max.isPresent()) {
+						percentageDisplayConverter.setMinAndMax(min.getAsDouble(), max.getAsDouble());
+					}
+
 					natTable.refresh(true);
 				}, err -> {
 					log.error(err);

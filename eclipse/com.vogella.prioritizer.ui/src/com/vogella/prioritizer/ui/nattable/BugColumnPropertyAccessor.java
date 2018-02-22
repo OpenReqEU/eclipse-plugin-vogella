@@ -35,7 +35,7 @@ public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<Priori
 		return bug;
 	}
 
-	private float calcUserPrio(PriorityBug priorityBug) {
+	public static float calcUserPrio(PriorityBug priorityBug) {
 		float sum = 0;
 
 		sum += priorityBug.getGerritChangeCount() * 2.2f;
