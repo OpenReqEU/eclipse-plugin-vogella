@@ -83,6 +83,12 @@ image::launch-file.png[]
 
 === What's next?
 
+=== Issues
+
+Getting statistics from bugzillas rest api is quite hard and takes some time. Therefore I suggested some enhancements to bugzillas rest api:
+
+* https://bugzilla.mozilla.org/show_bug.cgi?id=1440227
+
 === Sources
 
 http://bugzilla.readthedocs.io/en/latest/api/index.html
