@@ -2,9 +2,9 @@
 
 The following technologies are used:
 
-* Spring Boot (-> http://www.vogella.com/tutorials/Spring/article.html)
+* Spring Boot (-> http://www.vogella.com/tutorials/SpringBoot2/article.html)
 * Lombok (-> http://www.vogella.com/tutorials/Lombok/article.html)
-* RxJava 2.x (-> http://www.vogella.com/tutorials/RxJava/article.html)
+* Project Reactor IO (-> https://projectreactor.io/)
 * Retrofit (-> http://www.vogella.com/tutorials/Retrofit/article.html)
 * Gradle (-> http://www.vogella.com/tutorials/Gradle/article.html)
 * Eclipse RCP (-> http://www.vogella.com/tutorials/EclipseRCP/article.html)
