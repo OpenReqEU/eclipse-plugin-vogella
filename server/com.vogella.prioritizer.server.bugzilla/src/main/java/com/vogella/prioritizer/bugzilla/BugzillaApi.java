@@ -1,6 +1,7 @@
 package com.vogella.prioritizer.bugzilla;
 
 import java.util.Date;
+import java.util.List;
 
 import com.vogella.prioritizer.bugzilla.model.json.JSONBugResponse;
 
@@ -18,8 +19,8 @@ public interface BugzillaApi {
 	Mono<JSONBugResponse> getBugById(@Path("bugId") long bugId);
 
 	@GET("rest/bug")
-	Mono<JSONBugResponse> getBugs(@Query("assigned_to") String assignee, @Query("product") String product,
-			@Query("component") String component, @Query("limit") long limit, @Query("status") String status,
+	Mono<JSONBugResponse> getBugs(@Query("assigned_to") String assignee, @Query("product") List<String> product,
+			@Query("component") List<String> component, @Query("limit") long limit, @Query("status") String status,
 			@Query("creation_time") Date creationTime, @Query("last_change_time") Date lastChangeTime);
 
 	@GET("rest/bug/{bugId}/comment")

@@ -54,7 +54,7 @@ public class PrioritizerService {
 		stopWordSet = WordlistLoader.getWordSet(new FileReader(file));
 	}
 
-	public Flux<Bug> getMostDiscussedBugsOfTheMonth(String product, String component) {
+	public Flux<Bug> getMostDiscussedBugsOfTheMonth(List<String> product, List<String> component) {
 
 		LocalDate firstDayOfTheMonth = LocalDate.now().withDayOfMonth(1);
 		Date lastModifiedDate = Date.from(firstDayOfTheMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -63,7 +63,7 @@ public class PrioritizerService {
 		return bugs.sort((b1, b2) -> Integer.compare(b2.getComments().size(), b1.getComments().size()));
 	}
 
-	public Flux<PriorityBug> findSuitableBugs(String assignee, String product, String component, int limit) {
+	public Flux<PriorityBug> findSuitableBugs(String assignee, List<String> product, List<String> component, int limit) {
 
 		Instant oneYearAgo = LocalDateTime.now().minusYears(2).toInstant(ZoneOffset.UTC);
 		// TODO store latest bugs as prioritizer bugs in the db
@@ -92,7 +92,7 @@ public class PrioritizerService {
 				}).sort();
 	}
 
-	public Mono<List<String>> getKeywords(String assignee, String product, String component, int limit) {
+	public Mono<List<String>> getKeywords(String assignee, List<String> product, List<String> component, int limit) {
 		Flux<Bug> resolvedBugs = issueApi.getBugs(assignee, limit, product, component, "RESOLVED", null, null, false);
 
 		return resolvedBugs.map(Bug::getSummary).flatMapIterable(summariesAsText -> {
@@ -118,7 +118,7 @@ public class PrioritizerService {
 		}).collectList();
 	}
 
-	public Mono<byte[]> getKeywordImage(String assignee, int width, int height, String product, String component,
+	public Mono<byte[]> getKeywordImage(String assignee, int width, int height, List<String> product, List<String> component,
 			int limit) {
 		Mono<List<String>> keywordFlux = getKeywords(assignee, product, component, limit);
 
