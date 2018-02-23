@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,11 +54,20 @@ public class PrioritizerService {
 		stopWordSet = WordlistLoader.getWordSet(new FileReader(file));
 	}
 
+	public Flux<Bug> getMostDiscussedBugsOfTheMonth(String product, String component) {
+
+		LocalDate firstDayOfTheMonth = LocalDate.now().withDayOfMonth(1);
+		Date lastModifiedDate = Date.from(firstDayOfTheMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		Flux<Bug> bugs = issueApi.getBugs(null, 500, product, component, null, null, lastModifiedDate, true);
+
+		return bugs.sort((b1, b2) -> Integer.compare(b2.getComments().size(), b1.getComments().size()));
+	}
+
 	public Flux<PriorityBug> findSuitableBugs(String assignee, String product, String component, int limit) {
 
 		Instant oneYearAgo = LocalDateTime.now().minusYears(2).toInstant(ZoneOffset.UTC);
 		// TODO store latest bugs as prioritizer bugs in the db
-		Flux<Bug> newBugs = issueApi.getBugs(null, limit, product, component, "NEW", null, Date.from(oneYearAgo));
+		Flux<Bug> newBugs = issueApi.getBugs(null, limit, product, component, "NEW", null, Date.from(oneYearAgo), false);
 
 		Mono<List<String>> keywords = getKeywords(assignee, null, null, limit);
 
@@ -82,7 +93,7 @@ public class PrioritizerService {
 	}
 
 	public Mono<List<String>> getKeywords(String assignee, String product, String component, int limit) {
-		Flux<Bug> resolvedBugs = issueApi.getBugs(assignee, limit, product, component, "RESOLVED", null, null);
+		Flux<Bug> resolvedBugs = issueApi.getBugs(assignee, limit, product, component, "RESOLVED", null, null, false);
 
 		return resolvedBugs.map(Bug::getSummary).flatMapIterable(summariesAsText -> {
 			try (Analyzer analyzer = new StandardAnalyzer(stopWordSet)) {

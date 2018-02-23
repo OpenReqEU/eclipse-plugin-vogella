@@ -35,19 +35,22 @@ public class BugzillaIssueService implements IssueService {
 
 	@Override
 	public Flux<Bug> getBugs(String assignee, long limit, String product, String component, String status,
-			Date creationTime, Date lastChangeTime) {
+			Date creationTime, Date lastChangeTime, boolean withComments) {
 
-		Mono<JSONBugResponse> bugsOfAssignee = bugzillaApi.getBugs(assignee, product, component, limit, status,
+		Mono<JSONBugResponse> bugzillaBugs = bugzillaApi.getBugs(assignee, product, component, limit, status,
 				creationTime, lastChangeTime);
 
-		return bugsOfAssignee.map(JSONBugResponse::getBugs).flatMapIterable(jsonBugs -> {
+		return bugzillaBugs.map(JSONBugResponse::getBugs).flatMapIterable(jsonBugs -> {
 			List<Bug> bugs = new ArrayList<>();
 			for (JSONBugzillaBug jsonBugzillaBug : jsonBugs) {
-				Flux<Comment> comments = getComments(jsonBugzillaBug.getId());
+				Flux<Comment> commentsFlux = getComments(jsonBugzillaBug.getId());
 				// TODO implement getAttachments
 				Bug bug = BugzillaBug.of(jsonBugzillaBug);
 				// FIXME make this non blocking
-//				bug.setComments(comments.collectList().block());
+				if (withComments) {
+					List<Comment> comments = commentsFlux.collectList().block();
+					bug.setComments(comments);
+				}
 				bugs.add(bug);
 			}
 

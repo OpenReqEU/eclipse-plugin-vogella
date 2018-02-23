@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vogella.prioritizer.server.issue.api.model.Bug;
 import com.vogella.prioritizer.server.issue.api.model.PriorityBug;
 import com.vogella.prioritizer.service.PrioritizerService;
 
@@ -36,5 +37,11 @@ class PrioritizerController {
 			@RequestParam(name = "component", required = false) String component,
 			@RequestParam(name = "limit", required = false, defaultValue = "200") int limit) {
 		return prioritizerService.getKeywordImage(assignee, width, height, product, component, limit);
+	}
+
+	@GetMapping("/mostDiscussedBugsOfTheMonth")
+	public Flux<Bug> getMostDiscussedBugsOfTheMonth(@RequestParam(name = "product", required = false) String product,
+			@RequestParam(name = "component", required = false) String component) {
+		return prioritizerService.getMostDiscussedBugsOfTheMonth(product, component);
 	}
 }
