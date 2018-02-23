@@ -2,7 +2,7 @@ package com.vogella.prioritizer.ui.nattable;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
-public class BugHeaderDataProvider implements IDataProvider {
+public class PriorityBugHeaderDataProvider implements IDataProvider {
 
 	@Override
 	public Object getDataValue(int columnIndex, int rowIndex) {

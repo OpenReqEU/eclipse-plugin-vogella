@@ -7,7 +7,7 @@ import org.eclipse.nebula.widgets.nattable.data.IColumnPropertyAccessor;
 
 import com.vogella.prioritizer.core.model.PriorityBug;
 
-public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<PriorityBug> {
+public class PriorityBugColumnPropertyAccessor implements IColumnPropertyAccessor<PriorityBug> {
 
 	private static final List<String> propertyNames = Arrays.asList("id", "summary", "userpriority", "platform",
 			"component");

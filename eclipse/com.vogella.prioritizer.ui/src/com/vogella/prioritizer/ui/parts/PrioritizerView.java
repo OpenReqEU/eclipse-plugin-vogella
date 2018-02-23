@@ -66,8 +66,8 @@ import com.vogella.prioritizer.core.model.PriorityBug;
 import com.vogella.prioritizer.core.preferences.Preferences;
 import com.vogella.prioritizer.core.service.BrowserService;
 import com.vogella.prioritizer.core.service.PrioritizerService;
-import com.vogella.prioritizer.ui.nattable.BugColumnPropertyAccessor;
-import com.vogella.prioritizer.ui.nattable.BugHeaderDataProvider;
+import com.vogella.prioritizer.ui.nattable.PriorityBugColumnPropertyAccessor;
+import com.vogella.prioritizer.ui.nattable.PriorityBugHeaderDataProvider;
 import com.vogella.prioritizer.ui.nattable.LinkClickConfiguration;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -116,7 +116,7 @@ public class PrioritizerView {
 
 	private NatTable natTable;
 
-	private BugColumnPropertyAccessor bugColumnPropertyAccessor;
+	private PriorityBugColumnPropertyAccessor bugColumnPropertyAccessor;
 
 	@PostConstruct
 	public void createPartControl(Composite parent) {
@@ -139,7 +139,7 @@ public class PrioritizerView {
 
 		eventList = new BasicEventList<>(500);
 
-		bugColumnPropertyAccessor = new BugColumnPropertyAccessor();
+		bugColumnPropertyAccessor = new PriorityBugColumnPropertyAccessor();
 
 		ListDataProvider<PriorityBug> dataProvider = new ListDataProvider<>(eventList, bugColumnPropertyAccessor);
 		DataLayer dataLayer = new DataLayer(dataProvider);
@@ -155,7 +155,7 @@ public class PrioritizerView {
 
 		ViewportLayer viewportLayer = new ViewportLayer(columnReorderLayer);
 
-		IDataProvider headerDataProvider = new BugHeaderDataProvider();
+		IDataProvider headerDataProvider = new PriorityBugHeaderDataProvider();
 		DataLayer headerDataLayer = new DataLayer(headerDataProvider);
 		ILayer columnHeaderLayer = new ColumnHeaderLayer(headerDataLayer, viewportLayer, (SelectionLayer) null);
 
@@ -248,8 +248,8 @@ public class PrioritizerView {
 					System.out.println("Anzahl gefundener Bugs: " + bugsFromServer.size());
 					eventList.addAll(bugsFromServer);
 
-					OptionalDouble min = eventList.stream().mapToDouble(BugColumnPropertyAccessor::calcUserPrio).min();
-					OptionalDouble max = eventList.stream().mapToDouble(BugColumnPropertyAccessor::calcUserPrio).max();
+					OptionalDouble min = eventList.stream().mapToDouble(PriorityBugColumnPropertyAccessor::calcUserPrio).min();
+					OptionalDouble max = eventList.stream().mapToDouble(PriorityBugColumnPropertyAccessor::calcUserPrio).max();
 
 					if (min.isPresent() && max.isPresent()) {
 						bugColumnPropertyAccessor.setMinAndMax(min.getAsDouble(), max.getAsDouble());
