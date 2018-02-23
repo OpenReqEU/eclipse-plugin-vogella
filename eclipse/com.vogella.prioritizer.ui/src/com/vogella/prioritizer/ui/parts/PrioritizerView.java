@@ -29,12 +29,15 @@ import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.data.ListDataProvider;
+import org.eclipse.nebula.widgets.nattable.data.convert.PercentageDisplayConverter;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnLabelAccumulator;
+import org.eclipse.nebula.widgets.nattable.painter.cell.PercentageBarCellPainter;
+import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.PercentageBarDecorator;
 import org.eclipse.nebula.widgets.nattable.reorder.ColumnReorderLayer;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 import org.eclipse.nebula.widgets.nattable.sort.config.SingleClickSortConfiguration;
@@ -43,12 +46,15 @@ import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
 import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.TextDecorationEnum;
+import org.eclipse.nebula.widgets.nattable.style.VerticalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.ui.NatEventData;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -63,7 +69,6 @@ import com.vogella.prioritizer.core.service.PrioritizerService;
 import com.vogella.prioritizer.ui.nattable.BugColumnPropertyAccessor;
 import com.vogella.prioritizer.ui.nattable.BugHeaderDataProvider;
 import com.vogella.prioritizer.ui.nattable.LinkClickConfiguration;
-import com.vogella.prioritizer.ui.nattable.NormalizePercentageDisplayConverter;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -111,7 +116,7 @@ public class PrioritizerView {
 
 	private NatTable natTable;
 
-	private NormalizePercentageDisplayConverter percentageDisplayConverter;
+	private BugColumnPropertyAccessor bugColumnPropertyAccessor;
 
 	@PostConstruct
 	public void createPartControl(Composite parent) {
@@ -134,7 +139,9 @@ public class PrioritizerView {
 
 		eventList = new BasicEventList<>(500);
 
-		ListDataProvider<PriorityBug> dataProvider = new ListDataProvider<>(eventList, new BugColumnPropertyAccessor());
+		bugColumnPropertyAccessor = new BugColumnPropertyAccessor();
+
+		ListDataProvider<PriorityBug> dataProvider = new ListDataProvider<>(eventList, bugColumnPropertyAccessor);
 		DataLayer dataLayer = new DataLayer(dataProvider);
 		dataLayer.setColumnPercentageSizing(true);
 		dataLayer.setColumnWidthPercentageByPosition(0, 7);
@@ -192,8 +199,24 @@ public class PrioritizerView {
 			}
 		});
 
-		percentageDisplayConverter = new NormalizePercentageDisplayConverter();
-		configRegistry.registerConfigAttribute(CellConfigAttributes.DISPLAY_CONVERTER, percentageDisplayConverter,
+		Style cellStyle = new Style();
+		cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.CENTER);
+		cellStyle.setAttributeValue(CellStyleAttributes.VERTICAL_ALIGNMENT, VerticalAlignmentEnum.MIDDLE);
+
+		cellStyle.setAttributeValue(PercentageBarDecorator.PERCENTAGE_BAR_COMPLETE_REGION_START_COLOR,
+				GUIHelper.getColor(new RGB(55, 186, 68)));
+		cellStyle.setAttributeValue(PercentageBarDecorator.PERCENTAGE_BAR_COMPLETE_REGION_END_COLOR,
+				GUIHelper.getColor(new RGB(94, 253, 0)));
+		cellStyle.setAttributeValue(PercentageBarDecorator.PERCENTAGE_BAR_INCOMPLETE_REGION_COLOR,
+				GUIHelper.getColor(new RGB(244, 244, 244)));
+
+		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, cellStyle, DisplayMode.NORMAL,
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 2);
+
+		configRegistry.registerConfigAttribute(CellConfigAttributes.DISPLAY_CONVERTER, new PercentageDisplayConverter(),
+				DisplayMode.NORMAL, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 2);
+
+		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, new PercentageBarCellPainter(),
 				DisplayMode.NORMAL, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 2);
 
 		natTable = new NatTable(mainComposite, compositeLayer, false);
@@ -224,14 +247,12 @@ public class PrioritizerView {
 					eventList.clear();
 					System.out.println("Anzahl gefundener Bugs: " + bugsFromServer.size());
 					eventList.addAll(bugsFromServer);
-					
-					OptionalDouble min = eventList.stream().map(BugColumnPropertyAccessor::calcUserPrio)
-							.mapToDouble(f -> f).min();
-					OptionalDouble max = eventList.stream().map(BugColumnPropertyAccessor::calcUserPrio)
-							.mapToDouble(f -> f).max();
+
+					OptionalDouble min = eventList.stream().mapToDouble(BugColumnPropertyAccessor::calcUserPrio).min();
+					OptionalDouble max = eventList.stream().mapToDouble(BugColumnPropertyAccessor::calcUserPrio).max();
 
 					if (min.isPresent() && max.isPresent()) {
-						percentageDisplayConverter.setMinAndMax(min.getAsDouble(), max.getAsDouble());
+						bugColumnPropertyAccessor.setMinAndMax(min.getAsDouble(), max.getAsDouble());
 					}
 
 					natTable.refresh(true);

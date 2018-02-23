@@ -11,6 +11,8 @@ public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<Priori
 
 	private static final List<String> propertyNames = Arrays.asList("id", "summary", "userpriority", "platform",
 			"component");
+	private double max;
+	private double min;
 
 	@Override
 	public int getColumnCount() {
@@ -25,7 +27,7 @@ public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<Priori
 		case 1:
 			return bug.getBug().getSummary();
 		case 2:
-			return calcUserPrio(bug);
+			return normalize(min, max, calcUserPrio(bug));
 		case 3:
 			return bug.getBug().getProduct();
 		case 4:
@@ -35,7 +37,7 @@ public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<Priori
 		return bug;
 	}
 
-	public static float calcUserPrio(PriorityBug priorityBug) {
+	public static double calcUserPrio(PriorityBug priorityBug) {
 		float sum = 0;
 
 		sum += priorityBug.getGerritChangeCount() * 2.2f;
@@ -45,6 +47,10 @@ public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<Priori
 		sum += priorityBug.getBlockingIssuesCount() * 1.4f;
 
 		return sum;
+	}
+
+	private static double normalize(double min, double max, double sum) {
+		return (sum - min) / (max - min);
 	}
 
 	@Override
@@ -62,4 +68,8 @@ public class BugColumnPropertyAccessor implements IColumnPropertyAccessor<Priori
 		return propertyNames.indexOf(propertyName);
 	}
 
+	public void setMinAndMax(double min, double max) {
+		this.min = min;
+		this.max = max;
+	}
 }
