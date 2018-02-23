@@ -15,7 +15,7 @@ import com.vogella.prioritizer.service.PrioritizerService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@RestController
+@RestController("rest")
 class PrioritizerController {
 
 	private PrioritizerService prioritizerService;

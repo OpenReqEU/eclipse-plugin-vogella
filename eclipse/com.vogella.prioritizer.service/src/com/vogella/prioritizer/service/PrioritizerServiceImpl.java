@@ -26,7 +26,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 		final OkHttpClient httpClient = new OkHttpClient.Builder().readTimeout(3, TimeUnit.MINUTES)
 				.connectTimeout(3, TimeUnit.MINUTES).build();
 
-		Retrofit retrofit = new Retrofit.Builder().baseUrl("http://localhost:9801").client(httpClient)
+		Retrofit retrofit = new Retrofit.Builder().baseUrl("http://localhost:9801/rest/").client(httpClient)
 				.addConverterFactory(JacksonConverterFactory.create())
 				.addCallAdapterFactory(ReactorCallAdapterFactory.create()).build();
 		prioritizerApi = retrofit.create(PrioritizerApi.class);
