@@ -48,7 +48,7 @@ $ ./mvnw clean verify
 
 This will generate an update site for the Prioritizer Eclipse Plugin in the _openreq/eclipse/com.vogella.prioritizer.updatesite/target/repository_ folder.
 
-image::local_update_site.png[]
+image::img/local_update_site.png[]
 
 Just press on the btn:[Local] and point to the update site folder.
 
@@ -62,7 +62,7 @@ Import all projects from the openreq git repository into your Eclipse IDE.
 Then open the _com.vogella.prioritizer.target.target_ file inside the _com.vogella.prioritizer.target_ project.
 This will load all necessary dependencies for the project.
 
-image::set_target_platform.png[]
+image::img/set_target_platform.png[]
 
 [TIP]
 ====
@@ -71,17 +71,17 @@ In older Eclipse IDE distributions the _Reload Target Platform_ link was called 
 
 After the target platform has been set the _Prioritizer-Plugin.launch_ launch configuration can be started by opening the _eclipse_ project and right clicking on the _Prioritizer-Plugin.launch_ file and clicking on the _Run as > Prioritizer-Plugin_ menu entry.
 
-image::launch-file.png[]
-
-=== Using the Eclipse Prioritizer plug-in
-
-
+image::img/launch-file.png[]
 
 === What does the application currently do?
 
+In the Eclipse IDE you can install the Prioritzer plug-in and visualize the bugs, which might be interesting for you.
 
+image::img/Prioritizer-View.png[]
 
 === What's next?
+
+Further statistics will be provided.
 
 === Issues
 
