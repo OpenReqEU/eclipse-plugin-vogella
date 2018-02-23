@@ -30,7 +30,6 @@ import org.knowm.xchart.style.Styler;
 import org.knowm.xchart.style.colors.BaseSeriesColors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 
 import com.vogella.prioritizer.server.issue.api.IssueService;
 import com.vogella.prioritizer.server.issue.api.model.Bug;
@@ -50,7 +49,8 @@ public class PrioritizerService {
 	private CharArraySet stopWordSet;
 
 	public PrioritizerService() throws IOException {
-		File file = ResourceUtils.getFile("classpath:stopwords");
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource("stopwords").getFile());
 		stopWordSet = WordlistLoader.getWordSet(new FileReader(file));
 	}
 
