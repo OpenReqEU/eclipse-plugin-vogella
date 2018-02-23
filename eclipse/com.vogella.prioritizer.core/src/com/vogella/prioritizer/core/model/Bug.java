@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Bug {
+	
+	public static final Bug LOADING_DATA_FAKE_BUG = new Bug("Loading data...");
 
 	private int id;
 	private String resolution;
@@ -25,7 +27,7 @@ public class Bug {
 	private List<Integer> blocks;
 	private List<String> keywords;
 	private List<String> seeAlso;
-
+	private List<Comment> comments;
 
 	public Bug() {
 	}
@@ -168,6 +170,14 @@ public class Bug {
 
 	public void setSeeAlso(List<String> seeAlso) {
 		this.seeAlso = seeAlso;
+	}
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
 	}
 
 }
