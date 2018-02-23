@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import org.osgi.service.component.annotations.Component;
 
 import com.jakewharton.retrofit2.adapter.reactor.ReactorCallAdapterFactory;
+import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.model.PriorityBug;
 import com.vogella.prioritizer.core.service.PrioritizerService;
 
@@ -48,4 +49,8 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 		return prioritizerApi.getSuitableBugs(assignee, product, component, limit);
 	}
 
+	@Override
+	public Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(String product, String component) {
+		return prioritizerApi.getMostDiscussedBugsOfTheMonth(product, component);
+	}
 }

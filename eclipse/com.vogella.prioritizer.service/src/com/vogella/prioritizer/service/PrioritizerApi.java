@@ -2,6 +2,7 @@ package com.vogella.prioritizer.service;
 
 import java.util.List;
 
+import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.model.PriorityBug;
 
 import okhttp3.ResponseBody;
@@ -21,4 +22,8 @@ public interface PrioritizerApi {
 	@GET("/findSuitableBugs")
 	Mono<List<PriorityBug>> getSuitableBugs(@Query("assignee") String assignee, @Query("product") String product,
 			@Query("component") String component, @Query("limit") int limit);
+
+	@GET("/mostDiscussedBugsOfTheMonth")
+	Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(@Query("product") String product,
+			@Query("component") String component);
 }
