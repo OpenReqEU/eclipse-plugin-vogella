@@ -1,5 +1,6 @@
 package com.vogella.prioritizer.core.model;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Bug {
-	
+
 	public static final Bug LOADING_DATA_FAKE_BUG = new Bug("Loading data...");
 
 	private int id;
@@ -173,6 +174,9 @@ public class Bug {
 	}
 
 	public List<Comment> getComments() {
+		if (null == comments) {
+			return Collections.emptyList();
+		}
 		return comments;
 	}
 

@@ -50,7 +50,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
-	public Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(String product, String component) {
+	public Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(List<String> product, List<String> component) {
 		return prioritizerApi.getMostDiscussedBugsOfTheMonth(product, component);
 	}
 }

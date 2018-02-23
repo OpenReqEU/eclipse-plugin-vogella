@@ -1,10 +1,10 @@
+
 package com.vogella.prioritizer.ui.parts;
 
-import java.io.ByteArrayInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
-import java.util.OptionalDouble;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -19,25 +19,19 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.LocalResourceManager;
-import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
+import org.eclipse.nebula.widgets.nattable.data.IColumnPropertyAccessor;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.data.ListDataProvider;
-import org.eclipse.nebula.widgets.nattable.data.convert.PercentageDisplayConverter;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnLabelAccumulator;
-import org.eclipse.nebula.widgets.nattable.painter.cell.PercentageBarCellPainter;
-import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.PercentageBarDecorator;
 import org.eclipse.nebula.widgets.nattable.reorder.ColumnReorderLayer;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 import org.eclipse.nebula.widgets.nattable.sort.config.SingleClickSortConfiguration;
@@ -46,15 +40,10 @@ import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
 import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.TextDecorationEnum;
-import org.eclipse.nebula.widgets.nattable.style.VerticalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.ui.NatEventData;
-import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -62,28 +51,22 @@ import org.osgi.service.prefs.BackingStoreException;
 
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
-import com.vogella.prioritizer.core.model.PriorityBug;
 import com.vogella.prioritizer.core.preferences.Preferences;
 import com.vogella.prioritizer.core.service.BrowserService;
 import com.vogella.prioritizer.core.service.PrioritizerService;
-import com.vogella.prioritizer.ui.nattable.PriorityBugColumnPropertyAccessor;
-import com.vogella.prioritizer.ui.nattable.PriorityBugHeaderDataProvider;
+import com.vogella.prioritizer.ui.nattable.BugColumnPropertyAccessor;
+import com.vogella.prioritizer.ui.nattable.BugHeaderDataProvider;
 import com.vogella.prioritizer.ui.nattable.LinkClickConfiguration;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import reactor.core.Disposable;
-import reactor.core.Disposables;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.swing.SwtScheduler;
 
 @SuppressWarnings("restriction")
-public class PrioritizerView {
-
-	public static enum ViewType {
-		MAIN, SETTINGS
-	}
+public class MostDiscussedBugsOfTheMonthPart {
 
 	@Inject
 	@Preference
@@ -98,11 +81,7 @@ public class PrioritizerView {
 	@Inject
 	private BrowserService browserService;
 
-	private Disposable.Composite compositeDisposable = Disposables.composite();
-
 	private StackLayout stackLayout;
-
-	private ResourceManager resourceManager;
 
 	private Composite settingsComposite;
 
@@ -110,17 +89,14 @@ public class PrioritizerView {
 
 	private ViewType currentViewType = ViewType.MAIN;
 
-	private Label imgLabel;
-
-	private EventList<PriorityBug> eventList;
+	private EventList<Bug> eventList;
 
 	private NatTable natTable;
 
-	private PriorityBugColumnPropertyAccessor bugColumnPropertyAccessor;
+	private Disposable mostDiscussedBugQuery;
 
 	@PostConstruct
 	public void createPartControl(Composite parent) {
-		resourceManager = new LocalResourceManager(JFaceResources.getResources(), parent);
 
 		stackLayout = new StackLayout();
 		parent.setLayout(stackLayout);
@@ -137,11 +113,11 @@ public class PrioritizerView {
 
 		stackLayout.topControl = mainComposite;
 
-		eventList = new BasicEventList<>(500);
+		eventList = new BasicEventList<>(10);
 
-		bugColumnPropertyAccessor = new PriorityBugColumnPropertyAccessor();
+		IColumnPropertyAccessor<Bug> bugColumnPropertyAccessor = new BugColumnPropertyAccessor();
 
-		ListDataProvider<PriorityBug> dataProvider = new ListDataProvider<>(eventList, bugColumnPropertyAccessor);
+		ListDataProvider<Bug> dataProvider = new ListDataProvider<>(eventList, bugColumnPropertyAccessor);
 		DataLayer dataLayer = new DataLayer(dataProvider);
 		dataLayer.setColumnPercentageSizing(true);
 		dataLayer.setColumnWidthPercentageByPosition(0, 7);
@@ -155,7 +131,7 @@ public class PrioritizerView {
 
 		ViewportLayer viewportLayer = new ViewportLayer(columnReorderLayer);
 
-		IDataProvider headerDataProvider = new PriorityBugHeaderDataProvider();
+		IDataProvider headerDataProvider = new BugHeaderDataProvider();
 		DataLayer headerDataLayer = new DataLayer(headerDataProvider);
 		ILayer columnHeaderLayer = new ColumnHeaderLayer(headerDataLayer, viewportLayer, (SelectionLayer) null);
 
@@ -199,26 +175,6 @@ public class PrioritizerView {
 			}
 		});
 
-		Style cellStyle = new Style();
-		cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.CENTER);
-		cellStyle.setAttributeValue(CellStyleAttributes.VERTICAL_ALIGNMENT, VerticalAlignmentEnum.MIDDLE);
-
-		cellStyle.setAttributeValue(PercentageBarDecorator.PERCENTAGE_BAR_COMPLETE_REGION_START_COLOR,
-				GUIHelper.getColor(new RGB(55, 186, 68)));
-		cellStyle.setAttributeValue(PercentageBarDecorator.PERCENTAGE_BAR_COMPLETE_REGION_END_COLOR,
-				GUIHelper.getColor(new RGB(94, 253, 0)));
-		cellStyle.setAttributeValue(PercentageBarDecorator.PERCENTAGE_BAR_INCOMPLETE_REGION_COLOR,
-				GUIHelper.getColor(new RGB(244, 244, 244)));
-
-		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, cellStyle, DisplayMode.NORMAL,
-				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 2);
-
-		configRegistry.registerConfigAttribute(CellConfigAttributes.DISPLAY_CONVERTER, new PercentageDisplayConverter(),
-				DisplayMode.NORMAL, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 2);
-
-		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, new PercentageBarCellPainter(),
-				DisplayMode.NORMAL, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 2);
-
 		natTable = new NatTable(mainComposite, compositeLayer, false);
 		natTable.setConfigRegistry(configRegistry);
 		natTable.addConfiguration(new DefaultNatTableStyleConfiguration());
@@ -233,33 +189,38 @@ public class PrioritizerView {
 	}
 
 	private void subscribeBugTable() {
-		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
+
+		if (mostDiscussedBugQuery != null) {
+			mostDiscussedBugQuery.dispose();
+		}
+
 		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
+		List<String> queryProducts = null;
+		if (!queryProduct.isEmpty()) {
+			queryProducts = Arrays.asList(queryProduct.split(","));
+		}
 		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
-		Mono<List<PriorityBug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, queryProduct,
-				queryComponent, 500);
+		List<String> queryComponents = null;
+		if (!queryComponent.isEmpty()) {
+			queryComponents = Arrays.asList(queryComponent.split(","));
+		}
+		Mono<List<Bug>> suitableBugs = prioritizerService.getMostDiscussedBugsOfTheMonth(queryProducts,
+				queryComponents);
 
 		eventList.clear();
-		eventList.add(PriorityBug.LOADING_DATA_FAKE_BUG);
+		eventList.add(Bug.LOADING_DATA_FAKE_BUG);
 
-		compositeDisposable.add(suitableBugs.subscribeOn(Schedulers.elastic())
+		mostDiscussedBugQuery = suitableBugs.subscribeOn(Schedulers.elastic())
 				.publishOn(SwtScheduler.from(mainComposite.getDisplay())).subscribe(bugsFromServer -> {
 					eventList.clear();
 					System.out.println("Anzahl gefundener Bugs: " + bugsFromServer.size());
 					eventList.addAll(bugsFromServer);
 
-					OptionalDouble min = eventList.stream().mapToDouble(PriorityBugColumnPropertyAccessor::calcUserPrio).min();
-					OptionalDouble max = eventList.stream().mapToDouble(PriorityBugColumnPropertyAccessor::calcUserPrio).max();
-
-					if (min.isPresent() && max.isPresent()) {
-						bugColumnPropertyAccessor.setMinAndMax(min.getAsDouble(), max.getAsDouble());
-					}
-
 					natTable.refresh(true);
 				}, err -> {
 					log.error(err);
 					MessageDialog.openError(mainComposite.getShell(), "Error", err.getMessage());
-				}));
+				});
 	}
 
 	private void createSettings(Composite parent) {
@@ -267,25 +228,6 @@ public class PrioritizerView {
 		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(settingsComposite);
 
 		Composite settingsPanel = new Composite(settingsComposite, SWT.NONE);
-
-		Label emailLabel = new Label(settingsPanel, SWT.FLAT);
-		emailLabel.setText("Email");
-
-		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
-
-		Text emailText = new Text(settingsPanel, SWT.BORDER);
-		emailText.setText(userEmail);
-		emailText.setToolTipText("Email");
-		emailText.setMessage("Email");
-		emailText.addModifyListener(event -> {
-			preferences.put(Preferences.USER_EMAIL, emailText.getText());
-			try {
-				preferences.flush();
-			} catch (BackingStoreException e) {
-				log.error(e);
-				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
-			}
-		});
 
 		Label productLabel = new Label(settingsPanel, SWT.FLAT);
 		productLabel.setText("Product");
@@ -328,42 +270,16 @@ public class PrioritizerView {
 		GridLayoutFactory.fillDefaults().generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);
 
-		imgLabel = new Label(settingsComposite, SWT.FLAT);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(imgLabel);
-
-		subscribeChart();
-	}
-
-	private void subscribeChart() {
-		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
-		Mono<byte[]> keywordImage = prioritizerService.getKeyWordImage(userEmail, 640, 480, null, null, 200);
-
-		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.elastic())
-				.publishOn(SwtScheduler.from(settingsComposite.getDisplay())).subscribe(imageBytes -> {
-
-					ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imageBytes);
-
-					ImageData imageData = new ImageData(byteArrayInputStream);
-
-					ImageDescriptor imageDescriptor = ImageDescriptor.createFromImageDataProvider(zoom -> {
-						return imageData;
-					});
-					Image image = resourceManager.createImage(imageDescriptor);
-
-					imgLabel.setImage(image);
-				}, err -> {
-					MessageDialog.openError(settingsComposite.getShell(), "Error", err.getMessage());
-				}));
 	}
 
 	@PreDestroy
 	public void dispose() {
-		compositeDisposable.dispose();
+		mostDiscussedBugQuery.dispose();
 	}
 
 	@Inject
 	@Optional
-	public void toggleView(@UIEventTopic(Events.TOGGLE_VIEW) ViewType viewType) {
+	public void toggleView(@UIEventTopic(Events.TOGGLE_VIEW_MOSTDISCUSSEDBUGSOFTHEMONTHPART) ViewType viewType) {
 		// always switch to main, if another type is selected twice
 		if ((currentViewType.equals(viewType)) || (ViewType.MAIN.equals(viewType))) {
 			currentViewType = ViewType.MAIN;
@@ -380,6 +296,6 @@ public class PrioritizerView {
 	@Optional
 	public void refresh(@UIEventTopic(Events.REFRESH) boolean refresh) {
 		subscribeBugTable();
-		subscribeChart();
 	}
+
 }

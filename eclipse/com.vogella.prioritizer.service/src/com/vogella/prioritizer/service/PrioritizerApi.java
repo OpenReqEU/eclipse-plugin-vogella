@@ -24,6 +24,6 @@ public interface PrioritizerApi {
 			@Query("component") String component, @Query("limit") int limit);
 
 	@GET("/mostDiscussedBugsOfTheMonth")
-	Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(@Query("product") String product,
-			@Query("component") String component);
+	Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(@Query("product") List<String> product,
+			@Query("component") List<String> component);
 }

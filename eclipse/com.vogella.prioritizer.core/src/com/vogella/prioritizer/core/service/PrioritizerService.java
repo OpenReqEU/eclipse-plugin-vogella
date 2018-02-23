@@ -12,5 +12,5 @@ public interface PrioritizerService {
 
 	Mono<List<PriorityBug>> getSuitableBugs(String assignee, String product, String component, int limit);
 
-	Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(String product, String component);
+	Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(List<String> product, List<String> component);
 }
