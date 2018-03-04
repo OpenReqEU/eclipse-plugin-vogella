@@ -12,9 +12,8 @@ $ ./gradlew updateSiteZip
 
 Dependencies which are currently added:
 
-* RxJava
-* RxSWT
-* Retrofit with RxJava Adapter and GSON converter
+* Reactor IO
+* Retrofit with Reactor IO Adapter and Jackson converter
 
 The latest update site is available here:
 
