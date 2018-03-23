@@ -12,7 +12,8 @@
         <children xsi:type="menu:HandledToolItem" xmi:id="_SYNVUA2HEeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.handledtoolitem.0" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/refresh.png" command="_OMx2sA2HEeijCoQO9b84Zg"/>
       </toolbar>
     </elements>
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_eP-9oBiVEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.partdescriptor.mostdiscussedbugsofthemonth" label="Most discussed bugs of the month" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/discuss.png" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.parts.MostDiscussedBugsOfTheMonthPart">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_eP-9oBiVEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.partdescriptor.mostdiscussedbugsofthemonth" label="Most discussed bugs of the month" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/discuss.png" category="Prioritizer" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.parts.MostDiscussedBugsOfTheMonthPart">
+      <tags>View</tags>
       <toolbar xmi:id="_e5JLMBicEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.toolbar.1">
         <children xsi:type="menu:HandledToolItem" xmi:id="_UTWw4BifEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.handledtoolitem.settings" label="" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/settings.png" command="_QzjlUA1_EeijCoQO9b84Zg">
           <parameters xmi:id="_UTWw4RifEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.parameter.prioritizer.pagetype" name="PAGE_TYPE" value="SETTINGS"/>
