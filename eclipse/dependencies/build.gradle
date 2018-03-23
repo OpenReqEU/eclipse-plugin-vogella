@@ -81,6 +81,52 @@ platform {
 		}
 	}
 
+	feature(id: 'logback-classic', name: 'logback-classic', version: '1.2.3') {
+		plugin('ch.qos.logback:logback-core:1.2.3') {
+			bnd {
+				optionalImport 'javax.mail'
+				optionalImport 'javax.mail.internet'
+				optionalImport 'javax.naming'
+				optionalImport 'javax.net'
+				optionalImport 'javax.net.ssl'
+				optionalImport 'javax.servlet'
+				optionalImport 'javax.servlet.http'
+				optionalImport 'javax.sql'
+				optionalImport 'javax.xml.namespace'
+				optionalImport 'javax.xml.parsers'
+				optionalImport 'javax.xml.stream'
+				optionalImport 'javax.xml.stream.events'
+				optionalImport 'org.xml.sax'
+				optionalImport 'org.xml.sax.helpers'
+				optionalImport 'org.codehaus.janino'
+				optionalImport 'org.codehaus.commons.compiler'
+				optionalImport 'org.fusesource.jansi'
+			}
+		}
+
+		plugin('ch.qos.logback:logback-classic:1.2.3') {
+			bnd {
+				optionalImport 'sun.reflect'
+				optionalImport 'javax.management'
+				optionalImport 'javax.naming'
+				optionalImport 'javax.net'
+				optionalImport 'javax.net.ssl'
+				optionalImport 'javax.servlet'
+				optionalImport 'javax.servlet.http'
+				optionalImport 'org.xml.sax'
+				optionalImport 'org.codehaus.groovy.control'
+				optionalImport 'org.codehaus.groovy.control.customizers'
+				optionalImport 'org.codehaus.groovy.reflection'
+				optionalImport 'org.codehaus.groovy.runtime'
+				optionalImport 'org.codehaus.groovy.runtime.callsite'
+				optionalImport 'org.codehaus.groovy.runtime.typehandling'
+				optionalImport 'org.codehaus.groovy.runtime.wrappers'
+				optionalImport 'org.codehaus.groovy.transform'
+				optionalImport 'groovy.lang'		
+			}
+		}
+	}
+
 	feature(id: 'io.micrometer', name: 'io.micrometer', version: '1.0.2') {
 		plugin('io.micrometer:micrometer-core:1.0.2') {
 			bnd {
@@ -123,6 +169,8 @@ platform {
 				optionalImport 'rx.functions'
 			}
 		}
+		plugin('io.micrometer:micrometer-registry-atlas:1.0.2')
+		
 		plugin('io.dropwizard.metrics:metrics-core:3.2.6')
 	}
 }
