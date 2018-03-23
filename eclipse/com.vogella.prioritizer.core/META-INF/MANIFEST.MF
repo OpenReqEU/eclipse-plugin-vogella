@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Core
+Bundle-Name: Prioritizer Core
 Bundle-SymbolicName: com.vogella.prioritizer.core
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: VOGELLA
