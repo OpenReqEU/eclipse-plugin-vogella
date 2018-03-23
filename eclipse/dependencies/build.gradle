@@ -1,9 +1,10 @@
 buildscript {
 	repositories {
-		mavenCentral()
+		jcenter()
+		mavenLocal()
 	}
 	dependencies {
-		classpath 'org.standardout:bnd-platform:1.5.0'
+		classpath 'org.standardout:bnd-platform:1.6.0-SNAPSHOT'
 	}
 }
 
@@ -19,7 +20,7 @@ repositories {
 platform {
 
 	// Set a proper path to your eclipse installation (necessary for building a p2 updatesite)
-	eclipseHome = new File('/home/simon/eclipse/eclipse-photon')
+	// eclipseHome = new File('/home/simon/eclipse/eclipse-launcher')
 
 	// configure proper names for the p2 update site
 	categoryId = 'Open-Req-Eclipse-Libs'
@@ -35,9 +36,9 @@ platform {
 	useFeatureHashQualifiers = false
 	defaultQualifierMap.prefix = ''
 
-	feature(id: 'Project-Reactor', name: 'Project Reactor', version: '3.1.4') {
+	feature(id: 'Project-Reactor', name: 'Project Reactor', version: '3.1.5') {
 
-		plugin('io.projectreactor:reactor-core:3.1.4.RELEASE') {
+		plugin('io.projectreactor:reactor-core:3.1.5.RELEASE') {
 			bnd {
 				optionalImport 'javax.swing'
 				optionalImport 'kotlin'
@@ -78,6 +79,51 @@ platform {
 				optionalImport 'android.util'
 			}
 		}
+	}
+
+	feature(id: 'io.micrometer', name: 'io.micrometer', version: '1.0.2') {
+		plugin('io.micrometer:micrometer-core:1.0.2') {
+			bnd {
+				optionalImport 'com.hazelcast.core'
+				optionalImport 'com.google.common.cache'
+				optionalImport 'com.github.benmanes.caffeine.cache.stats'
+				optionalImport 'com.github.benmanes.caffeine.cache'
+				optionalImport 'com.codahale.metrics'
+				optionalImport 'ch.qos.logback.classic'
+				optionalImport 'ch.qos.logback.classic.spi'
+				optionalImport 'ch.qos.logback.classic.turbo'
+				optionalImport 'ch.qos.logback.core.spi'
+				optionalImport 'com.hazelcast.monitor'
+				optionalImport 'com.netflix.hystrix'
+				optionalImport 'com.netflix.hystrix.metric'
+				optionalImport 'com.netflix.hystrix.strategy'
+				optionalImport 'com.netflix.hystrix.strategy.concurrency'
+				optionalImport 'com.netflix.hystrix.strategy.eventnotifier'
+				optionalImport 'com.netflix.hystrix.strategy.executionhook'
+				optionalImport 'com.netflix.hystrix.strategy.metrics'
+				optionalImport 'com.netflix.hystrix.strategy.properties'
+				optionalImport 'com.sun.management'
+				optionalImport 'javax.annotation'
+				optionalImport 'javax.annotation.meta'
+				optionalImport 'javax.cache'
+				optionalImport 'javax.management'
+				optionalImport 'javax.management.openmbean'
+				optionalImport 'javax.persistence'
+				optionalImport 'javax.sql'
+				optionalImport 'net.sf.ehcache'
+				optionalImport 'net.sf.ehcache.statistics'
+				optionalImport 'org.apache.catalina'
+				optionalImport 'org.aspectj.lang'
+				optionalImport 'org.aspectj.lang.annotation'
+				optionalImport 'org.aspectj.lang.reflect'
+				optionalImport 'org.eclipse.jetty.server.handler'
+				optionalImport 'org.hibernate'
+				optionalImport 'org.hibernate.stat'
+				optionalImport 'rx'
+				optionalImport 'rx.functions'
+			}
+		}
+		plugin('io.dropwizard.metrics:metrics-core:3.2.6')
 	}
 }
 
