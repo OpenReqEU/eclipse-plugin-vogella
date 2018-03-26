@@ -90,6 +90,16 @@ Getting statistics from bugzillas rest api is quite hard and takes some time. Th
 
 * https://bugzilla.mozilla.org/show_bug.cgi?id=1440227
 
+=== Metrics with Micrometer IO
+
+The implementation for the Mircrometer IO facade, which will be used is Atlas from Netflix: https://micrometer.io/docs/registry/atlas
+
+Atlas can be run locally. See https://github.com/Netflix/atlas/wiki/Getting-Started#running-demo-with-memory-storage
+
+To query the metrics from Atlas the stack language query has to be used: https://github.com/Netflix/atlas/wiki/Stack-Language#query
+
+For now we intend to run the Atlas server from an Eclipse component and later on we want to omit the server completely and use the Netlix API directly.
+
 === Sources
 
 http://bugzilla.readthedocs.io/en/latest/api/index.html
