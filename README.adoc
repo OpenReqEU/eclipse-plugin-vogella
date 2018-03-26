@@ -10,6 +10,7 @@ The following technologies are used:
 * Eclipse RCP (-> http://www.vogella.com/tutorials/EclipseRCP/article.html)
 * Maven Tycho (-> http://www.vogella.com/tutorials/EclipseTycho/article.html)
 * XChart (-> https://github.com/timmolter/xchart)
+* Micrometer IO (-> https://micrometer.io/)
 
 [[running-with-gradle]]
 === Running the Spring Boot application
