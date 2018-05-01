@@ -2,7 +2,7 @@
 <feature
       id="com.vogella.prioritizer.feature"
       label="Feature"
-      version="1.0.0.qualifier"
+      version="1.0.100.qualifier"
       provider-name="VOGELLA">
 
    <description url="http://www.example.com/description">
@@ -33,6 +33,13 @@
 
    <plugin
          id="com.vogella.prioritizer.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.vogella.prioritizer.service.browser"
          download-size="0"
          install-size="0"
          version="0.0.0"

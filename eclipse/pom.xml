@@ -15,7 +15,8 @@
 		<module>com.vogella.prioritizer.service</module>
 		<module>com.vogella.prioritizer.feature</module>
 		<module>com.vogella.prioritizer.target</module>	
-		<module>com.vogella.prioritizer.updatesite</module>	
+		<module>com.vogella.prioritizer.updatesite</module>
+		<module>com.vogella.prioritizer.service.browser</module>	
 	</modules>
 
 	<build>
