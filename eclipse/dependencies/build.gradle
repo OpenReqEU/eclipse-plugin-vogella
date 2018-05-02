@@ -1,10 +1,12 @@
 buildscript {
 	repositories {
 		jcenter()
-		mavenLocal()
+	    maven {
+	      url 'http://oss.sonatype.org/content/repositories/snapshots/'
+	    }
 	}
 	dependencies {
-		classpath 'org.standardout:bnd-platform:1.6.0-SNAPSHOT'
+		classpath 'org.standardout:bnd-platform:1.7.0-SNAPSHOT'
 	}
 }
 
@@ -12,9 +14,6 @@ apply plugin: 'org.standardout.bnd-platform'
 
 repositories {
 	jcenter()
-	maven {
-		url 'https://dl.bintray.com/simon-scholz/RxJava-Extensions/'
-	}
 }
 
 platform {
@@ -26,10 +25,7 @@ platform {
 	categoryId = 'Open-Req-Eclipse-Libs'
 	categoryName = 'Open Req Eclipse Libs'
 
-	featureId = 'All-Open-Req-Eclipse-Libs'
-	featureName = 'All Open Req Eclipse Libs'
-	featureVersion = '0.1.0.'
-	featureProvider = 'vogella GmbH'
+	generatePlatformFeature = false
 
 	defaultQualifier = ''
 	useBndHashQualifiers = false
@@ -58,9 +54,9 @@ platform {
 		}
 	}
 	
-	feature(id: 'Retrofit', name: 'Retrofit', version: '2.3.0') {
+	feature(id: 'Retrofit', name: 'Retrofit', version: '2.4.0') {
 		// Convert the retrofit artifact to OSGi, make android.os optional and handle the split package problems in OSGi
-		plugin('com.squareup.retrofit2:retrofit:2.3.0'){
+		plugin('com.squareup.retrofit2:retrofit:2.4.0'){
 			bnd {
 				optionalImport 'android.os'
 				optionalImport 'android.net'
@@ -74,11 +70,15 @@ platform {
 		plugin('com.jakewharton.retrofit:retrofit2-reactor-adapter:2.1.0')
 	
 		// Convert okhttp3 artifact to OSGi without android
-		plugin('com.squareup.okhttp3:okhttp:3.8.0') {
+		plugin('com.squareup.okhttp3:okhttp:3.10.0') {
 			bnd{
+				optionalImport 'android.os'
 				optionalImport 'android.util'
+				optionalImport 'org.conscrypt'
 			}
 		}
+
+		plugin('com.squareup.okhttp3:logging-interceptor:3.10.0')
 	}
 
 	feature(id: 'logback-classic', name: 'logback-classic', version: '1.2.3') {
@@ -176,5 +176,5 @@ platform {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.5.1'
+	gradleVersion = '4.7'
 }

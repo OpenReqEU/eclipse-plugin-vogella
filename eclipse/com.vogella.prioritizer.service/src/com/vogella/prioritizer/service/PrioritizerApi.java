@@ -3,25 +3,23 @@ package com.vogella.prioritizer.service;
 import java.util.List;
 
 import com.vogella.prioritizer.core.model.Bug;
-import com.vogella.prioritizer.core.model.PriorityBug;
 
-import okhttp3.ResponseBody;
 import reactor.core.publisher.Mono;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
-import retrofit2.http.Streaming;
 
 public interface PrioritizerApi {
 
-	@GET("/getChart")
-	@Streaming
-	Mono<ResponseBody> getKeywordImageBytes(@Query("assignee") String assignee, @Query("width") int width,
-			@Query("height") int height, @Query("product") String product, @Query("component") String component,
-			@Query("limit") int limit);
+	@POST("/prioritizer/chart")
+	@Headers("Content-Type: application/json")
+	Mono<KeyWordUrlResponse> getKeyWordUrl(@Body BugzillaRequest bugzillaRequest);
 
-	@GET("/findSuitableBugs")
-	Mono<List<PriorityBug>> getSuitableBugs(@Query("assignee") String assignee, @Query("product") String product,
-			@Query("component") String component, @Query("limit") int limit);
+	@POST("/prioritizer/compute")
+	@Headers("Content-Type: application/json")
+	Mono<BugzillaPriorityResponse> getSuitableBugs(@Body BugzillaRequest bugzillaRequest);
 
 	@GET("/mostDiscussedBugsOfTheMonth")
 	Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(@Query("product") List<String> product,

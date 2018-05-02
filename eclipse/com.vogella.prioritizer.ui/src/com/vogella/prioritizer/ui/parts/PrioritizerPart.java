@@ -1,8 +1,8 @@
 package com.vogella.prioritizer.ui.parts;
 
-import java.io.ByteArrayInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.OptionalDouble;
 
@@ -19,10 +19,6 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.LocalResourceManager;
-import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
@@ -30,6 +26,8 @@ import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfigurat
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.data.ListDataProvider;
 import org.eclipse.nebula.widgets.nattable.data.convert.PercentageDisplayConverter;
+import org.eclipse.nebula.widgets.nattable.extension.glazedlists.GlazedListsEventLayer;
+import org.eclipse.nebula.widgets.nattable.extension.glazedlists.GlazedListsSortModel;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
@@ -40,6 +38,7 @@ import org.eclipse.nebula.widgets.nattable.painter.cell.PercentageBarCellPainter
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.PercentageBarDecorator;
 import org.eclipse.nebula.widgets.nattable.reorder.ColumnReorderLayer;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
+import org.eclipse.nebula.widgets.nattable.sort.SortHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.sort.config.SingleClickSortConfiguration;
 import org.eclipse.nebula.widgets.nattable.style.CellStyleAttributes;
 import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
@@ -51,9 +50,8 @@ import org.eclipse.nebula.widgets.nattable.ui.NatEventData;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -62,16 +60,17 @@ import org.osgi.service.prefs.BackingStoreException;
 
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
-import com.vogella.prioritizer.core.model.PriorityBug;
+import com.vogella.prioritizer.core.model.RankedBug;
 import com.vogella.prioritizer.core.preferences.Preferences;
 import com.vogella.prioritizer.core.service.BrowserService;
 import com.vogella.prioritizer.core.service.PrioritizerService;
 import com.vogella.prioritizer.ui.nattable.LinkClickConfiguration;
-import com.vogella.prioritizer.ui.nattable.PriorityBugColumnPropertyAccessor;
-import com.vogella.prioritizer.ui.nattable.PriorityBugHeaderDataProvider;
+import com.vogella.prioritizer.ui.nattable.RankedBugColumnPropertyAccessor;
+import com.vogella.prioritizer.ui.nattable.RankedBugHeaderDataProvider;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.SortedList;
 import reactor.core.Disposable;
 import reactor.core.Disposables;
 import reactor.core.publisher.Mono;
@@ -98,26 +97,22 @@ public class PrioritizerPart {
 
 	private StackLayout stackLayout;
 
-	private ResourceManager resourceManager;
-
 	private Composite settingsComposite;
 
 	private Composite mainComposite;
 
 	private ViewType currentViewType = ViewType.MAIN;
 
-	private Label imgLabel;
-
-	private EventList<PriorityBug> eventList;
+	private EventList<RankedBug> eventList;
 
 	private NatTable natTable;
 
-	private PriorityBugColumnPropertyAccessor bugColumnPropertyAccessor;
+	private RankedBugColumnPropertyAccessor bugColumnPropertyAccessor;
+
+	private Browser browser;
 
 	@PostConstruct
 	public void createPartControl(Composite parent) {
-		resourceManager = new LocalResourceManager(JFaceResources.getResources(), parent);
-
 		stackLayout = new StackLayout();
 		parent.setLayout(stackLayout);
 
@@ -134,10 +129,11 @@ public class PrioritizerPart {
 		stackLayout.topControl = mainComposite;
 
 		eventList = new BasicEventList<>(500);
+		SortedList<RankedBug> sortedList = new SortedList<>(eventList, null);
 
-		bugColumnPropertyAccessor = new PriorityBugColumnPropertyAccessor();
+		bugColumnPropertyAccessor = new RankedBugColumnPropertyAccessor();
 
-		ListDataProvider<PriorityBug> dataProvider = new ListDataProvider<>(eventList, bugColumnPropertyAccessor);
+		ListDataProvider<RankedBug> dataProvider = new ListDataProvider<>(sortedList, bugColumnPropertyAccessor);
 		DataLayer dataLayer = new DataLayer(dataProvider);
 		dataLayer.setColumnPercentageSizing(true);
 		dataLayer.setColumnWidthPercentageByPosition(0, 7);
@@ -145,21 +141,23 @@ public class PrioritizerPart {
 		dataLayer.setColumnWidthPercentageByPosition(2, 11);
 		dataLayer.setColumnWidthPercentageByPosition(3, 11);
 		dataLayer.setColumnWidthPercentageByPosition(4, 11);
-		ColumnReorderLayer columnReorderLayer = new ColumnReorderLayer(dataLayer);
+		GlazedListsEventLayer<RankedBug> eventLayer = new GlazedListsEventLayer<RankedBug>(dataLayer, sortedList);
+		ColumnReorderLayer columnReorderLayer = new ColumnReorderLayer(eventLayer);
 		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
-		dataLayer.setConfigLabelAccumulator(columnLabelAccumulator);
+		eventLayer.setConfigLabelAccumulator(columnLabelAccumulator);
 
 		ViewportLayer viewportLayer = new ViewportLayer(columnReorderLayer);
 
-		IDataProvider headerDataProvider = new PriorityBugHeaderDataProvider();
+		IDataProvider headerDataProvider = new RankedBugHeaderDataProvider();
 		DataLayer headerDataLayer = new DataLayer(headerDataProvider);
 		ILayer columnHeaderLayer = new ColumnHeaderLayer(headerDataLayer, viewportLayer, (SelectionLayer) null);
+		ConfigRegistry configRegistry = new ConfigRegistry();
+		final SortHeaderLayer<RankedBug> sortHeaderLayer = new SortHeaderLayer<>(columnHeaderLayer,
+				new GlazedListsSortModel<>(sortedList, bugColumnPropertyAccessor, configRegistry, headerDataLayer));
 
 		CompositeLayer compositeLayer = new CompositeLayer(1, 2);
-		compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, columnHeaderLayer, 0, 0);
+		compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, sortHeaderLayer, 0, 0);
 		compositeLayer.setChildLayer(GridRegion.BODY, viewportLayer, 0, 1);
-
-		ConfigRegistry configRegistry = new ConfigRegistry();
 
 		Style style = new Style();
 		style.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT);
@@ -230,13 +228,13 @@ public class PrioritizerPart {
 
 	private void subscribeBugTable() {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
-		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
-		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
-		Mono<List<PriorityBug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, queryProduct,
-				queryComponent, 500);
+		List<String> queryProduct = Arrays.asList(preferences.get(Preferences.QUERY_PRODUCT, "Platform").split(","));
+		List<String> queryComponent = Arrays.asList(preferences.get(Preferences.QUERY_COMPONENT, "UI").split(","));
+		Mono<List<RankedBug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, queryProduct,
+				queryComponent);
 
 		eventList.clear();
-		eventList.add(PriorityBug.LOADING_DATA_FAKE_BUG);
+		eventList.add(RankedBug.LOADING_DATA_FAKE_BUG);
 
 		compositeDisposable.add(suitableBugs.subscribeOn(Schedulers.elastic())
 				.publishOn(SwtScheduler.from(mainComposite.getDisplay())).subscribe(bugsFromServer -> {
@@ -244,15 +242,12 @@ public class PrioritizerPart {
 					System.out.println("Anzahl gefundener Bugs: " + bugsFromServer.size());
 					eventList.addAll(bugsFromServer);
 
-					OptionalDouble min = eventList.stream().mapToDouble(PriorityBugColumnPropertyAccessor::calcUserPrio)
-							.min();
-					OptionalDouble max = eventList.stream().mapToDouble(PriorityBugColumnPropertyAccessor::calcUserPrio)
-							.max();
+					OptionalDouble min = eventList.stream().mapToDouble(RankedBug::getPriority).min();
+					OptionalDouble max = eventList.stream().mapToDouble(RankedBug::getPriority).max();
 
 					if (min.isPresent() && max.isPresent()) {
 						bugColumnPropertyAccessor.setMinAndMax(min.getAsDouble(), max.getAsDouble());
 					}
-
 					natTable.refresh(true);
 				}, err -> {
 					log.error(err);
@@ -326,29 +321,21 @@ public class PrioritizerPart {
 		GridLayoutFactory.fillDefaults().generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);
 
-		imgLabel = new Label(settingsComposite, SWT.FLAT);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(imgLabel);
+		browser = new Browser(settingsComposite, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(browser);
 
 		subscribeChart();
 	}
 
 	private void subscribeChart() {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
-		Mono<byte[]> keywordImage = prioritizerService.getKeyWordImage(userEmail, 640, 480, null, null, 200);
+		List<String> queryProduct = Arrays.asList(preferences.get(Preferences.QUERY_PRODUCT, "Platform").split(","));
+		List<String> queryComponent = Arrays.asList(preferences.get(Preferences.QUERY_COMPONENT, "UI").split(","));
+		Mono<String> keywordImage = prioritizerService.getKeyWordUrl(userEmail, queryProduct, queryComponent);
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.elastic())
-				.publishOn(SwtScheduler.from(settingsComposite.getDisplay())).subscribe(imageBytes -> {
-
-					ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imageBytes);
-
-					ImageData imageData = new ImageData(byteArrayInputStream);
-
-					ImageDescriptor imageDescriptor = ImageDescriptor.createFromImageDataProvider(zoom -> {
-						return imageData;
-					});
-					Image image = resourceManager.createImage(imageDescriptor);
-
-					imgLabel.setImage(image);
+				.publishOn(SwtScheduler.from(settingsComposite.getDisplay())).subscribe(url -> {
+					browser.setUrl(url);
 				}, err -> {
 					MessageDialog.openError(settingsComposite.getShell(), "Error", err.getMessage());
 				}));
