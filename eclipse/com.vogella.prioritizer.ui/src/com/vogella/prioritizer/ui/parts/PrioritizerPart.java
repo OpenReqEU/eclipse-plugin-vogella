@@ -51,6 +51,8 @@ import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressAdapter;
+import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
@@ -335,6 +337,14 @@ public class PrioritizerPart {
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.elastic())
 				.publishOn(SwtScheduler.from(settingsComposite.getDisplay())).subscribe(url -> {
+					
+					// FIXME see https://bugs.eclipse.org/bugs/show_bug.cgi?id=300174#c3
+				    browser.addProgressListener(new ProgressAdapter() {
+				        public void completed(ProgressEvent event) {
+				            browser.removeProgressListener(this);
+				            browser.refresh(); 
+				        }
+				    });
 					browser.setUrl(url);
 				}, err -> {
 					MessageDialog.openError(settingsComposite.getShell(), "Error", err.getMessage());
