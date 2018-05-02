@@ -3,5 +3,9 @@
    <feature url="features/com.vogella.prioritizer.feature_1.0.100.qualifier.jar" id="com.vogella.prioritizer.feature" version="1.0.100.qualifier">
       <category name="Prioritizer"/>
    </feature>
+   <feature url="features/com.vogella.tracing.feature_1.0.0.qualifier.jar" id="com.vogella.tracing.feature" version="1.0.0.qualifier">
+      <category name="Tracing"/>
+   </feature>
    <category-def name="Prioritizer" label="Prioritizer"/>
+   <category-def name="Tracing" label="Tracing"/>
 </site>
