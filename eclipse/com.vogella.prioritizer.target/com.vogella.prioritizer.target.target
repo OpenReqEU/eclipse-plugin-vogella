@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="platform" sequenceNumber="30">
+<?pde version="3.8"?><target name="platform" sequenceNumber="32">
     <locations>
         <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
             <unit id="org.eclipse.nebula.widgets.nattable.core.feature.feature.group" version="1.5.0.201703192131"/>
@@ -28,7 +28,7 @@
             <unit id="io.micrometer.source.feature.group" version="1.0.2"/>
             <unit id="logback-classic.feature.group" version="1.2.3"/>
             <unit id="logback-classic.source.feature.group" version="1.2.3"/>
-            <repository location="file:/home/simon/eclipse/updatesites/4/"/>
+            <repository location="https://dl.bintray.com/vogellacompany/OpenReq-Eclipse/"/>
         </location>
     </locations>
 </target>
