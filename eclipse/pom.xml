@@ -22,6 +22,7 @@
 		<module>com.vogella.tracing.ui</module>
 
 		<module>com.vogella.prioritizer.feature</module>
+		<module>com.vogella.tracing.feature</module>
 
 		<module>update-site</module>
 	</modules>
