@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
-import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -60,6 +59,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.service.prefs.BackingStoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
@@ -83,15 +84,14 @@ import reactor.swing.SwtScheduler;
 @SuppressWarnings("restriction")
 public class PrioritizerPart {
 
+	private static final Logger LOG = LoggerFactory.getLogger(PrioritizerPart.class);
+
 	@Inject
 	@Preference
 	private IEclipsePreferences preferences;
 
 	@Inject
 	private PrioritizerService prioritizerService;
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private BrowserService browserService;
@@ -190,7 +190,7 @@ public class PrioritizerPart {
 					URL url = new URL("https://bugs.eclipse.org/bugs/show_bug.cgi?id=" + String.valueOf(cellData));
 					browserService.openExternalBrowser(url);
 				} catch (MalformedURLException | CoreException e) {
-					log.error(e);
+					LOG.error(e.getMessage(), e);
 					MessageDialog.openError(natTable.getShell(), "Error", e.getMessage());
 				}
 			}
@@ -242,8 +242,8 @@ public class PrioritizerPart {
 		compositeDisposable.add(suitableBugs.subscribeOn(Schedulers.elastic())
 				.publishOn(SwtScheduler.from(mainComposite.getDisplay())).subscribe(bugsFromServer -> {
 					eventList.clear();
-					System.out.println("Anzahl gefundener Bugs: " + bugsFromServer.size());
-					
+					LOG.info("Anzahl gefundener Bugs: " + bugsFromServer.size());
+
 					Collections.sort(bugsFromServer);
 					eventList.addAll(bugsFromServer);
 
@@ -255,7 +255,7 @@ public class PrioritizerPart {
 					}
 					natTable.refresh(true);
 				}, err -> {
-					log.error(err);
+					LOG.error(err.getMessage(), err);
 					MessageDialog.openError(mainComposite.getShell(), "Error", err.getMessage());
 				}));
 	}
@@ -280,7 +280,7 @@ public class PrioritizerPart {
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
-				log.error(e);
+				LOG.error(e.getMessage(), e);
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
@@ -299,7 +299,7 @@ public class PrioritizerPart {
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
-				log.error(e);
+				LOG.error(e.getMessage(), e);
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
@@ -318,7 +318,7 @@ public class PrioritizerPart {
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
-				log.error(e);
+				LOG.error(e.getMessage(), e);
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
@@ -340,14 +340,14 @@ public class PrioritizerPart {
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.elastic())
 				.publishOn(SwtScheduler.from(settingsComposite.getDisplay())).subscribe(url -> {
-					
+
 					// FIXME see https://bugs.eclipse.org/bugs/show_bug.cgi?id=300174#c3
-				    browser.addProgressListener(new ProgressAdapter() {
-				        public void completed(ProgressEvent event) {
-				            browser.removeProgressListener(this);
-				            browser.refresh(); 
-				        }
-				    });
+					browser.addProgressListener(new ProgressAdapter() {
+						public void completed(ProgressEvent event) {
+							browser.removeProgressListener(this);
+							browser.refresh();
+						}
+					});
 					browser.setUrl(url);
 				}, err -> {
 					MessageDialog.openError(settingsComposite.getShell(), "Error", err.getMessage());

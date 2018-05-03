@@ -29,5 +29,6 @@ Require-Bundle: javax.inject,
   org.reactivestreams.reactive-streams;bundle-version="1.0.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
-  javax.inject;version="1.0.0"
+ javax.inject;version="1.0.0",
+ org.slf4j;version="1.7.10"
 Automatic-Module-Name: com.vogella.prioritizer.ui
