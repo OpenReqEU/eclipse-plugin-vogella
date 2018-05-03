@@ -60,7 +60,7 @@ This will list the required features, which have to be installed.
 
 Import all projects from the openreq git repository into your Eclipse IDE.
 
-Then open the _com.vogella.prioritizer.target.target_ file inside the _com.vogella.prioritizer.target_ project.
+Then open the _target-platform.target_ file inside the _target-platform_ project.
 This will load all necessary dependencies for the project.
 
 image::img/set_target_platform.png[]
