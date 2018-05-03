@@ -3,6 +3,7 @@ package com.vogella.prioritizer.ui.parts;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.OptionalDouble;
 
@@ -242,6 +243,8 @@ public class PrioritizerPart {
 				.publishOn(SwtScheduler.from(mainComposite.getDisplay())).subscribe(bugsFromServer -> {
 					eventList.clear();
 					System.out.println("Anzahl gefundener Bugs: " + bugsFromServer.size());
+					
+					Collections.sort(bugsFromServer);
 					eventList.addAll(bugsFromServer);
 
 					OptionalDouble min = eventList.stream().mapToDouble(RankedBug::getPriority).min();

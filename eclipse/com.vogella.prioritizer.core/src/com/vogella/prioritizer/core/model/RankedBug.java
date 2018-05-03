@@ -62,6 +62,9 @@ public class RankedBug implements Comparable<RankedBug> {
 
 	@Override
 	public int compareTo(RankedBug o) {
-		return Double.compare(priority, o.getPriority());
+		if(null == o) {
+			return 1;
+		}
+		return Double.compare(o.getPriority(), priority);
 	}
 }
