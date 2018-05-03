@@ -21,7 +21,7 @@ public interface PrioritizerApi {
 	@Headers("Content-Type: application/json")
 	Mono<BugzillaPriorityResponse> getSuitableBugs(@Body BugzillaRequest bugzillaRequest);
 
-	@GET("/mostDiscussedBugsOfTheMonth")
+	@GET("http://localhost:9801/mostDiscussedBugsOfTheMonth")
 	Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(@Query("product") List<String> product,
 			@Query("component") List<String> component);
 }
