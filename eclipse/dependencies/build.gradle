@@ -17,10 +17,6 @@ repositories {
 }
 
 platform {
-
-	// Set a proper path to your eclipse installation (necessary for building a p2 updatesite)
-	// eclipseHome = new File('/home/simon/eclipse/eclipse-launcher')
-
 	// configure proper names for the p2 update site
 	categoryId = 'Open-Req-Eclipse-Libs'
 	categoryName = 'Open Req Eclipse Libs'
