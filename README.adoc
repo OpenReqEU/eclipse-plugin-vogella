@@ -1,4 +1,4 @@
-== OpenReq Eclipse Integration image:https://travis-ci.org/vogellacompany/openreq.svg?branch=master["Build Status", link="https://travis-ci.org/vogellacompany/openreq"] image:https://img.shields.io/badge/License-EPL%202.0-blue.svg[EPL 2.0]
+== OpenReq Eclipse Integration image:https://travis-ci.org/vogellacompany/openreq.svg?branch=master["Build Status", link="https://travis-ci.org/vogellacompany/openreq"] image:https://img.shields.io/badge/License-EPL%202.0-blue.svg["EPL 2.0", link="https://www.eclipse.org/legal/epl-2.0/"]
 
 The following technologies are used:
 
