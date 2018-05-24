@@ -28,7 +28,7 @@
             <unit id="io.micrometer.source.feature.group" version="1.0.2"/>
             <unit id="logback-classic.feature.group" version="1.2.3"/>
             <unit id="logback-classic.source.feature.group" version="1.2.3"/>
-            <repository location="https://dl.bintray.com/vogellacompany/OpenReq-Eclipse/"/>
+            <repository location="http://dl.bintray.com/vogellacompany/OpenReq-Eclipse/"/>
         </location>
         <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
             <unit id="ch.qos.logback.classic" version="1.1.2.v20160208-0839"/>
