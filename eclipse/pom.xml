@@ -22,6 +22,7 @@
 		<module>com.vogella.tracing.core</module>
 		<module>com.vogella.tracing.meterregistry</module>
 		<module>com.vogella.tracing.ui</module>
+		<module>com.vogella.tracing.datalog</module>
 
 		<module>com.vogella.prioritizer.feature</module>
 		<module>com.vogella.tracing.feature</module>
