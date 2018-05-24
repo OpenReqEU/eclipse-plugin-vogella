@@ -35,12 +35,12 @@ public class LoggingActivator implements BundleActivator {
 		context.reset();
 
 		// get the configuration location where the logback.xml is located
-		Location configurationLocation = Platform.getInstallLocation();
-		File logbackFile = new File(configurationLocation.getURL().getPath(), "logback.xml");
+		Location configurationLocation = Platform.getConfigurationLocation();
 
 		// overriding the log directory property programmatically
-		String logDirProperty = logbackFile.getAbsolutePath();
+		String logDirProperty = configurationLocation.getURL().getPath();
 		context.putProperty("LOG_DIR", logDirProperty);
+		File logbackFile = new File(configurationLocation.getURL().getPath(), "logback.xml");
 		if (logbackFile.exists()) {
 			jc.doConfigure(logbackFile);
 		} else {
