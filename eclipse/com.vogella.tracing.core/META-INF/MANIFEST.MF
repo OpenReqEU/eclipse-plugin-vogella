@@ -4,6 +4,7 @@ Bundle-Name: Tracing Core
 Bundle-SymbolicName: com.vogella.tracing.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: VOGELLA
+Export-Package: com.vogella.tracing.core.constants
 Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="2.0.1.v20170713-1800",
  org.eclipse.e4.core.services,
  org.eclipse.e4.core.di.annotations,
@@ -16,8 +17,10 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="2.0.1.v2017071
  io.micrometer.core;bundle-version="1.0.2",
  org.eclipse.e4.ui.bindings;bundle-version="0.12.1",
  org.eclipse.e4.core.commands;bundle-version="0.12.100",
- org.eclipse.core.runtime;bundle-version="3.13.0"
+ org.eclipse.core.runtime;bundle-version="3.13.0",
+ jcommander;bundle-version="1.71.0",
+ org.zeroturnaround.zt-process-killer;bundle-version="1.8.0",
+ org.zeroturnaround.zt-exec;bundle-version="1.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: javax.inject;version="1.0.0"
-Export-Package: com.vogella.tracing.core.constants
 Automatic-Module-Name: com.vogella.tracing.core
+Import-Package: org.slf4j;version="1.7.10"
