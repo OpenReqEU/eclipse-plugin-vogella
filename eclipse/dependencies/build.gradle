@@ -169,6 +169,15 @@ platform {
 		
 		plugin('io.dropwizard.metrics:metrics-core:3.2.6')
 	}
+	
+	
+	feature(id: 'jcommander', name: 'jcommander', version: '1.71.0') {
+			plugin('com.beust:jcommander:1.71')
+	 }
+
+	feature(id: 'zt-process-killer', name: 'zt-process-killer', version: '1.8.0') {
+			plugin('org.zeroturnaround:zt-process-killer:1.8')
+	 }
 }
 
 task wrapper(type: Wrapper) {
