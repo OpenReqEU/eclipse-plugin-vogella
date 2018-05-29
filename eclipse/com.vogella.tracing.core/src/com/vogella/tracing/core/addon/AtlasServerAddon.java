@@ -12,11 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeroturnaround.exec.InvalidExitValueException;
 import org.zeroturnaround.exec.ProcessExecutor;
-import org.zeroturnaround.exec.ProcessResult;
 import org.zeroturnaround.exec.StartedProcess;
 import org.zeroturnaround.exec.stream.slf4j.Slf4jStream;
 import org.zeroturnaround.process.JavaProcess;
-import org.zeroturnaround.process.PidProcess;
 import org.zeroturnaround.process.PidUtil;
 import org.zeroturnaround.process.Processes;
 
@@ -36,10 +34,11 @@ public class AtlasServerAddon {
 		TracingProgramArgs tracingProgramArgs = new TracingProgramArgs();
 		JCommander.newBuilder().addObject(tracingProgramArgs).acceptUnknownOptions(true).build().parse(args);
 
-		if (tracingProgramArgs.getAtlasServerUrl() == null) {
+		if (tracingProgramArgs.isUseLocalAtlasServer()) {
 			// start local atlas server
 			StartedProcess start = new ProcessExecutor()
-					.command("/usr/lib/jvm/java-8-openjdk-amd64/bin/java", "-jar", "/home/simon/atlas/atlas-1.5.3-standalone.jar", "memory.conf")
+					.command("/usr/lib/jvm/java-8-openjdk-amd64/bin/java", "-jar",
+							"/home/simon/atlas/atlas-1.5.3-standalone.jar", "memory.conf")
 					.redirectOutput(Slf4jStream.ofCaller().asInfo()).start();
 			atlasProcess = Processes.newJavaProcess(start.getProcess());
 
