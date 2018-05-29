@@ -24,6 +24,8 @@ public class SelectionDisplayFilterAddon {
 
 	@PreDestroy
 	public void dispose(Display display) {
-		display.removeFilter(SWT.Selection, selectionListener);
+		if (display != null && display.isDisposed()) {
+			display.removeFilter(SWT.Selection, selectionListener);
+		}
 	}
 }
