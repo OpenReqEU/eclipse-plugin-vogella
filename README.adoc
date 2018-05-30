@@ -100,6 +100,40 @@ To query the metrics from Atlas the stack language query has to be used: https:/
 
 For now we intend to run the Atlas server from an Eclipse component and later on we want to omit the server completely and use the Netlix API directly.
 
+==== Download and start an atlas server locally
+
+The following description is based on the link mentioned above: https://github.com/Netflix/atlas/wiki/Getting-Started#running-demo-with-memory-storage
+
+We assume that curl is installed on your system.
+
+[source, console]
+----
+# create an atlas directory
+mkdir atlas
+
+# download the atlas server jar
+curl -LO https://github.com/Netflix/atlas/releases/download/v1.5.3/atlas-1.5.3-standalone.jar
+
+# download the memory configuration to persist the data
+curl -Lo memory.conf https://raw.githubusercontent.com/Netflix/atlas/v1.5.x/conf/memory.conf
+
+# run the server
+java -jar atlas-1.5.3-standalone.jar memory.conf
+
+----
+
+
+[NOTE]
+====
+Future versions of this plug-in will start the server automatically for you.
+====
+
+Once the server has been started an Eclipse IDE instance can be launched together with the tracing plug-ins in order to visualize user actions. 
+
+To see the different command invocations in a graph just open the _Command Calls Stats_ part.
+
+image::img/Command-Calls-Part.png[] 
+
 === Sources
 
 http://bugzilla.readthedocs.io/en/latest/api/index.html
