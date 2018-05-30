@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -31,8 +32,11 @@ public class CommandCallsPart {
 	public void updateGraph(@UIEventTopic("INSTANT") Instant instant) {
 		Instant now = Instant.now();
 		Duration duration = Duration.between(instant, now);
+		
+		TimeZone timeZone = TimeZone.getDefault();
+		
 		browser.setUrl("http://localhost:7101/api/v1/graph?q=name,command.calls,:eq,(,commandId,),:by&s=e-"
-				+ duration.toMinutes() + "m&l=0");
+				+ duration.toMinutes() + "m&l=0&tz=" + timeZone.getID());
 	}
 
 }
