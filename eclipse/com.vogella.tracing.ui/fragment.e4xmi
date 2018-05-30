@@ -8,6 +8,9 @@
         <children xsi:type="menu:HandledToolItem" xmi:id="_QzIzcC6NEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.handledtoolitem.refresh" label="Refresh" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/refresh.png" tooltip="Refresh" command="_OMx2sA2HEeijCoQO9b84Zg"/>
       </toolbar>
     </elements>
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_5gEWcGNOEeiEqeh5JjswBg" elementId="com.vogella.tracing.ui.partdescriptor.commandcallsstats" label="Command Calls Stats" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/stats.png" contributionURI="bundleclass://com.vogella.tracing.ui/com.vogella.prioritizer.ui.parts.CommandCallsPart">
+      <tags>View</tags>
+    </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_MFDO0A1_EeijCoQO9b84Zg" featurename="commands" parentElementId="xpath:/">
     <elements xsi:type="commands:Command" xmi:id="_OMx2sA2HEeijCoQO9b84Zg" elementId="com.vogella.tracing.ui.command.refresh" commandName="Refresh"/>
