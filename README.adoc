@@ -134,6 +134,15 @@ To see the different command invocations in a graph just open the _Command Calls
 
 image::img/Command-Calls-Part.png[] 
 
+
+[NOTE]
+====
+You can also open these graphs in a browser.
+A sample query could look like this: http://localhost:7101/api/v1/graph?q=name,command.calls,:eq,(,commandId,),:by&s=e-30m&l=0&tz=Europe/Berlin
+
+See for more information about the query language: https://github.com/Netflix/atlas/wiki/Stack-Language
+====
+
 === Sources
 
 http://bugzilla.readthedocs.io/en/latest/api/index.html
