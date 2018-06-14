@@ -61,7 +61,7 @@ public class StatsPart {
 	private SortedList<CommandStats> sortedList;
 
 	@PostConstruct
-	public void postConstruct(Composite parent) {
+	public void createPartControl(Composite parent) {
 		BasicEventList<CommandStats> eventList = new BasicEventList<>(500);
 		sortedList = new SortedList<>(eventList, (o1, o2) -> Double.compare(o2.getInvocations(), o1.getInvocations()));
 

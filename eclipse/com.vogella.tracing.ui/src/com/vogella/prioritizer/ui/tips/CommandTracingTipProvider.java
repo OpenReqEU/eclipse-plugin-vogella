@@ -1,10 +1,12 @@
 package com.vogella.prioritizer.ui.tips;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.tips.core.Tip;
 import org.eclipse.tips.core.TipImage;
 import org.eclipse.tips.core.TipProvider;
 import org.osgi.framework.Bundle;
@@ -39,8 +41,15 @@ public class CommandTracingTipProvider extends TipProvider {
 	}
 
 	@Override
-	public IStatus loadNewTips(IProgressMonitor arg0) {
-		return null;
+	public IStatus loadNewTips(IProgressMonitor monitor) {
+
+		ArrayList<Tip> tips = new ArrayList<>();
+		tips.add(new CommandInvocationGraphTip(getID()));
+		tips.add(new CommandInvocationShortCutTip(getID()));
+
+		setTips(tips);
+
+		return Status.OK_STATUS;
 	}
 
 	@Override
