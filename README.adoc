@@ -80,14 +80,14 @@ The statistics and user usage analysis is also provided as Tip of the day in the
 
 In order to install the _Tip of the day_ feature the _http://download.eclipse.org/eclipse/updates/4.8-I-builds_ update site can be used.
 
-image::install-tip-of-the-day.png[] 
+image::img/install-tip-of-the-day.png[] 
 
 [NOTE]
 ====
 Make sure to uncheck the _Group items by category_ entry.
 ====
 
-image::tip-of-the-day-stats.png[] 
+image::img/tip-of-the-day-stats.png[] 
 
 === Metrics with Micrometer IO
 
