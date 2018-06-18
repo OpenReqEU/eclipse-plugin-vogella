@@ -46,6 +46,7 @@ public class CommandTracingTipProvider extends TipProvider {
 		ArrayList<Tip> tips = new ArrayList<>();
 		tips.add(new CommandInvocationGraphTip(getID()));
 		tips.add(new CommandInvocationShortCutTip(getID()));
+		tips.add(new MenuDeptGraphTip(getID()));
 
 		setTips(tips);
 

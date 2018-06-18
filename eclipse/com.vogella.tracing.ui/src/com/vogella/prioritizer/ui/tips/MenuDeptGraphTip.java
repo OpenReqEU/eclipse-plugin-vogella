@@ -11,9 +11,9 @@ import java.util.TimeZone;
 import org.eclipse.tips.core.IUrlTip;
 import org.eclipse.tips.core.Tip;
 
-public class CommandInvocationGraphTip extends Tip implements IUrlTip {
+public class MenuDeptGraphTip extends Tip implements IUrlTip {
 
-	public CommandInvocationGraphTip(String providerId) {
+	public MenuDeptGraphTip(String providerId) {
 		super(providerId);
 	}
 
@@ -24,7 +24,7 @@ public class CommandInvocationGraphTip extends Tip implements IUrlTip {
 
 		TimeZone timeZone = TimeZone.getDefault();
 
-		return "http://localhost:7101/api/v1/graph?q=name,command.calls,:eq,(,commandId,),:by&s=e-"
+		return "http://localhost:7101/api/v1/graph?q=name,menu.dept,:eq,(,count,),:by&s=e-"
 				+ duration.toMinutes() + "m&l=0&title=Command invocations of the last 7 days&tz=" + timeZone.getID();
 	}
 
@@ -35,7 +35,7 @@ public class CommandInvocationGraphTip extends Tip implements IUrlTip {
 
 	@Override
 	public String getSubject() {
-		return "Show the Command invocation graph";
+		return "Compare the menu depts of actions invoked from a menu";
 	}
 
 }
