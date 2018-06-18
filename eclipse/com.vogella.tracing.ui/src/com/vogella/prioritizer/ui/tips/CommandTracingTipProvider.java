@@ -32,7 +32,7 @@ public class CommandTracingTipProvider extends TipProvider {
 			Bundle bundle = FrameworkUtil.getBundle(getClass());
 
 			try {
-				tipImage = new TipImage(bundle.getEntry("icons/48/openreqlogo.png")).setAspectRatio(1);
+				tipImage = new TipImage(bundle.getEntry("icons/48/openreqlogo.png"));
 			} catch (IOException ex) {
 				getManager().log(new Status(IStatus.ERROR, bundle.getSymbolicName(), ex.getMessage(), ex));
 			}
