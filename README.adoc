@@ -74,21 +74,20 @@ After the target platform has been set the _Prioritizer-Plugin.launch_ launch co
 
 image::img/launch-file.png[]
 
-=== What does the application currently do?
+=== Installing the Tip of the day feature
 
-In the Eclipse IDE you can install the Prioritzer plug-in and visualize the bugs, which might be interesting for you.
+The statistics and user usage analysis is also provided as Tip of the day in the Eclipse IDE.
 
-image::img/Prioritizer-View.png[]
+In order to install the _Tip of the day_ feature the _http://download.eclipse.org/eclipse/updates/4.8-I-builds_ update site can be used.
 
-=== What's next?
+image::install-tip-of-the-day.png[] 
 
-Further statistics will be provided.
+[NOTE]
+====
+Make sure to uncheck the _Group items by category_ entry.
+====
 
-=== Issues
-
-Getting statistics from bugzillas rest api is quite hard and takes some time. Therefore I suggested some enhancements to bugzillas rest api:
-
-* https://bugzilla.mozilla.org/show_bug.cgi?id=1440227
+image::tip-of-the-day-stats.png[] 
 
 === Metrics with Micrometer IO
 
@@ -122,7 +121,6 @@ java -jar atlas-1.5.3-standalone.jar memory.conf
 
 ----
 
-
 [NOTE]
 ====
 Future versions of this plug-in will start the server automatically for you.
@@ -142,6 +140,22 @@ A sample query could look like this: http://localhost:7101/api/v1/graph?q=name,c
 
 See for more information about the query language: https://github.com/Netflix/atlas/wiki/Stack-Language
 ====
+
+=== What does the application currently do?
+
+In the Eclipse IDE you can install the Prioritzer plug-in and visualize the bugs, which might be interesting for you.
+
+image::img/Prioritizer-View.png[]
+
+=== What's next?
+
+Further statistics will be provided.
+
+=== Issues
+
+Getting statistics from bugzillas rest api is quite hard and takes some time. Therefore I suggested some enhancements to bugzillas rest api:
+
+* https://bugzilla.mozilla.org/show_bug.cgi?id=1440227
 
 === Sources
 
