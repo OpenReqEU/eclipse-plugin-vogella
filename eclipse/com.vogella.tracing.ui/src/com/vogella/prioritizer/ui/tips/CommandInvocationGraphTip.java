@@ -10,11 +10,15 @@ import java.util.TimeZone;
 
 import org.eclipse.tips.core.IUrlTip;
 import org.eclipse.tips.core.Tip;
+import org.eclipse.tips.core.TipAction;
 
 public class CommandInvocationGraphTip extends Tip implements IUrlTip {
 
 	public CommandInvocationGraphTip(String providerId) {
 		super(providerId);
+		TipAction reportBugTipAction = new TipAction("Report bug", "Create a bug report in InnoSensr.",
+				() -> System.out.println("Reporting bug"), null);
+		getActions().add(reportBugTipAction);
 	}
 
 	@Override

@@ -10,11 +10,15 @@ import java.util.TimeZone;
 
 import org.eclipse.tips.core.IUrlTip;
 import org.eclipse.tips.core.Tip;
+import org.eclipse.tips.core.TipAction;
 
-public class MenuDeptGraphTip extends Tip implements IUrlTip {
+public class MenuDepthGraphTip extends Tip implements IUrlTip {
 
-	public MenuDeptGraphTip(String providerId) {
+	public MenuDepthGraphTip(String providerId) {
 		super(providerId);
+		TipAction reportBugTipAction = new TipAction("Report bug", "Create a bug report in InnoSensr.",
+				() -> System.out.println("Reporting bug"), null);
+		getActions().add(reportBugTipAction);
 	}
 
 	@Override
@@ -25,7 +29,7 @@ public class MenuDeptGraphTip extends Tip implements IUrlTip {
 		TimeZone timeZone = TimeZone.getDefault();
 
 		return "http://localhost:7101/api/v1/graph?q=name,menu.dept,:eq,(,count,),:by&s=e-"
-				+ duration.toMinutes() + "m&l=0&title=Command invocations of the last 7 days&tz=" + timeZone.getID();
+				+ duration.toMinutes() + "m&l=0&title=Menu depths of the last 7 days&tz=" + timeZone.getID();
 	}
 
 	@Override
@@ -35,7 +39,7 @@ public class MenuDeptGraphTip extends Tip implements IUrlTip {
 
 	@Override
 	public String getSubject() {
-		return "Compare the menu depts of actions invoked from a menu";
+		return "Compare the menu depths of actions invoked from a menu";
 	}
 
 }

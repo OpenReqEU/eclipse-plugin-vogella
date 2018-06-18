@@ -10,6 +10,7 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tips.core.Tip;
+import org.eclipse.tips.core.TipAction;
 import org.eclipse.tips.ui.ISwtTip;
 import org.eclipse.ui.PlatformUI;
 
@@ -17,6 +18,9 @@ public class CommandInvocationShortCutTip extends Tip implements ISwtTip {
 
 	public CommandInvocationShortCutTip(String providerId) {
 		super(providerId);
+		TipAction reportBugTipAction = new TipAction("Report bug", "Create a bug report in InnoSensr.",
+				() -> System.out.println("Reporting bug"), null);
+		getActions().add(reportBugTipAction);
 	}
 
 	@Override
