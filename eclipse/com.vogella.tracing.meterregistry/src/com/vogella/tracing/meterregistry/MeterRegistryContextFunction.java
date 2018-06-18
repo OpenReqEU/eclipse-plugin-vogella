@@ -12,30 +12,38 @@ import com.netflix.spectator.atlas.AtlasConfig;
 import io.micrometer.atlas.AtlasMeterRegistry;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 @Component(property = IContextFunction.SERVICE_CONTEXT_KEY + "=io.micrometer.core.instrument.MeterRegistry")
 public class MeterRegistryContextFunction implements IContextFunction {
 
 	@Override
 	public Object compute(IEclipseContext context, String contextKey) {
-		
-		AtlasConfig atlasConfig = new AtlasConfig() {
-			
-		    @Override
-		    public Duration step() {
-		        return Duration.ofSeconds(10);
-		    }
 
-		    @Override
-		    public String get(String k) {
-		        return null; // accept the rest of the defaults
-		    }
+		CompositeMeterRegistry compositeMeterRegistry = new CompositeMeterRegistry();
+
+		AtlasConfig atlasConfig = new AtlasConfig() {
+
+			@Override
+			public Duration step() {
+				return Duration.ofSeconds(10);
+			}
+
+			@Override
+			public String get(String k) {
+				return null; // accept the rest of the defaults
+			}
 		};
-		MeterRegistry registry = new AtlasMeterRegistry(atlasConfig, Clock.SYSTEM);
-		
+		MeterRegistry atlasRegistry = new AtlasMeterRegistry(atlasConfig, Clock.SYSTEM);
+		compositeMeterRegistry.add(atlasRegistry);
+
+		SimpleMeterRegistry simpleMeterRegistry = new SimpleMeterRegistry();
+		compositeMeterRegistry.add(simpleMeterRegistry);
+
 		MApplication app = context.get(MApplication.class);
-		app.getContext().set(MeterRegistry.class, registry);
-		
-		return registry;
+		app.getContext().set(MeterRegistry.class, compositeMeterRegistry);
+
+		return compositeMeterRegistry;
 	}
 }

@@ -2,6 +2,7 @@
 package com.vogella.prioritizer.ui.parts;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -43,6 +44,8 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.SortedList;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 @SuppressWarnings("restriction")
 public class StatsPart {
@@ -111,8 +114,16 @@ public class StatsPart {
 	@Optional
 	public void refreshCommandStats(@UIEventTopic(Events.REFRESH) boolean refresh) {
 		List<Meter> meters = meterRegistry.getMeters();
-		List<CommandStats> list = meters.stream().filter(meter -> "command.calls.pre".equals(meter.getId().getName()))
-				.flatMap(meter -> {
+		if (meterRegistry instanceof CompositeMeterRegistry) {
+			Set<MeterRegistry> registries = ((CompositeMeterRegistry) meterRegistry).getRegistries();
+			java.util.Optional<MeterRegistry> findAny = registries.stream()
+					.filter(SimpleMeterRegistry.class::isInstance).findAny();
+			if (findAny.isPresent()) {
+				meters = findAny.get().getMeters();
+			}
+		}
+		List<CommandStats> list = meters.stream().filter(meter -> "command.calls".equals(meter.getId().getName())
+				&& "success".equals(meter.getId().getTag("result"))).flatMap(meter -> {
 					return StreamSupport.stream(meter.measure().spliterator(), false).map(measurement -> {
 						String commandId = meter.getId().getTag("commandId");
 						double invocations = measurement.getValue();
