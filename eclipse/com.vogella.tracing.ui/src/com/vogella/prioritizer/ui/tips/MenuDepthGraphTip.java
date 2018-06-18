@@ -9,8 +9,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.tips.core.IUrlTip;
 import org.eclipse.tips.core.Tip;
 import org.eclipse.tips.core.TipAction;
@@ -26,7 +24,7 @@ public class MenuDepthGraphTip extends Tip implements IUrlTip {
 		try {
 			TipImage tipImage = new TipImage(bundle.getEntry("icons/16/innosensr-logo.png"));
 			TipAction reportBugTipAction = new TipAction("Report bug", "Create a bug report in InnoSensr.",
-					() -> System.out.println("Reporting bug"), tipImage);
+					() -> System.out.println("Reporting Bug"), tipImage);
 			getActions().add(reportBugTipAction);
 		} catch (IOException e) {
 			e.printStackTrace();

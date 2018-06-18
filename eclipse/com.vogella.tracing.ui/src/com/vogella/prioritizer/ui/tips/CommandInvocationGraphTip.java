@@ -23,7 +23,7 @@ public class CommandInvocationGraphTip extends Tip implements IUrlTip {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
 		try {
 			TipImage tipImage = new TipImage(bundle.getEntry("icons/16/innosensr-logo.png"));
-			TipAction reportBugTipAction = new TipAction("Report bug", "Create a bug report in InnoSensr.",
+			TipAction reportBugTipAction = new TipAction("Report Bug", "Create a bug report in InnoSensr.",
 					() -> System.out.println("Reporting bug"), tipImage);
 			getActions().add(reportBugTipAction);
 		} catch (IOException e) {
