@@ -132,7 +132,7 @@ Once the server has been started an Eclipse IDE instance can be launched togethe
 
 To see the different command invocations in a graph just open the _Command Calls Stats_ part.
 
-image::img/Command-Calls-Part.png[] 
+image::img/command-calls-part.png[] 
 
 
 [NOTE]
