@@ -4,8 +4,8 @@
     <elements xsi:type="basic:PartDescriptor" xmi:id="_n5LbkC6FEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.partdescriptor.stats" label="Stats" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/stats.png" category="Stats" closeable="true" contributionURI="bundleclass://com.vogella.tracing.ui/com.vogella.prioritizer.ui.parts.StatsPart">
       <tags>View</tags>
       <toolbar xmi:id="_QZBDQC6NEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.toolbar.0">
-        <children xsi:type="menu:HandledToolItem" xmi:id="_Z0yA0C6SEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.handledtoolitem.track" label="Track" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/update.png" tooltip="Update on command execution" type="Check" command="_nL7BEC6SEei8C8uLdCEuDg"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_QzIzcC6NEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.handledtoolitem.refresh" label="Refresh" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/refresh.png" tooltip="Refresh" command="_OMx2sA2HEeijCoQO9b84Zg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_Z0yA0C6SEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.handledtoolitem.track" label="Track" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/update.png" tooltip="Update on command execution" type="Check" command="_nL7BEC6SEei8C8uLdCEuDg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_QzIzcC6NEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.handledtoolitem.refresh" label="Refresh" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/refresh.png" tooltip="Refresh" command="_OMx2sA2HEeijCoQO9b84Zg"/>
       </toolbar>
     </elements>
     <elements xsi:type="basic:PartDescriptor" xmi:id="_5gEWcGNOEeiEqeh5JjswBg" elementId="com.vogella.tracing.ui.partdescriptor.commandcallsstats" label="Command Calls Stats" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/stats.png" contributionURI="bundleclass://com.vogella.tracing.ui/com.vogella.prioritizer.ui.parts.CommandCallsPart">
