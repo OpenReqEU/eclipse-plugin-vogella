@@ -38,7 +38,7 @@ public class MenuDepthGraphTip extends Tip implements IUrlTip {
 
 		TimeZone timeZone = TimeZone.getDefault();
 
-		return "http://localhost:7101/api/v1/graph?q=name,menu.dept,:eq,(,count,),:by&s=e-" + duration.toMinutes()
+		return "http://localhost:7101/api/v1/graph?q=name,selection.menu,:eq,(,menuText,menuDepth,),:by&s=e-" + duration.toMinutes()
 				+ "m&l=0&title=Menu depths of the last 7 days&tz=" + timeZone.getID();
 	}
 
