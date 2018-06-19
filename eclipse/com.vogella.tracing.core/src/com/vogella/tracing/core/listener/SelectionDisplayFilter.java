@@ -48,7 +48,7 @@ public class SelectionDisplayFilter implements Listener {
 
 	private int getMenuDepth(Menu parentMenu, int i) {
 		if (parentMenu.getParentMenu() != null) {
-			getMenuDepth(parentMenu.getParentMenu(), ++i);
+			return getMenuDepth(parentMenu.getParentMenu(), ++i);
 		}
 
 		return i;
