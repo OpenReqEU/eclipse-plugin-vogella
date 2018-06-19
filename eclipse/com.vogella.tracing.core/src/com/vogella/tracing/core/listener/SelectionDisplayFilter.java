@@ -37,8 +37,8 @@ public class SelectionDisplayFilter implements Listener {
 			menuSelectionCounter.increment();
 
 			int menuDepth = getMenuDepth(menuItem.getParent(), 0);
-			Counter menuDepthCounter = meterRegistry.counter("selection.menu", "menu.text", menuItem.getText(),
-					"menu.depth", String.valueOf(menuDepth));
+			Counter menuDepthCounter = meterRegistry.counter("selection.menu", "menuText", menuItem.getText(),
+					"menuDepth", String.valueOf(menuDepth));
 			menuDepthCounter.increment();
 			LOG.debug(menuItem.getText() + " has a depth of " + menuDepth);
 		} else if (widget instanceof ToolItem) {
