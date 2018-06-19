@@ -35,7 +35,7 @@ public class CommandCallsPart {
 		
 		TimeZone timeZone = TimeZone.getDefault();
 		
-		browser.setUrl("http://localhost:7101/api/v1/graph?q=name,command.calls,:eq,(,commandId,),:by&s=e-"
+		browser.setUrl("http://localhost:7101/api/v1/graph?q=name,command.calls,:eq,(,commandId,commandName,),:by&s=e-"
 				+ duration.toMinutes() + "m&l=0&title=Recent command invocations&tz=" + timeZone.getID());
 	}
 

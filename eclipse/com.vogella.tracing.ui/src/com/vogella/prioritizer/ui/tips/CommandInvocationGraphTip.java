@@ -38,7 +38,7 @@ public class CommandInvocationGraphTip extends Tip implements IUrlTip {
 
 		TimeZone timeZone = TimeZone.getDefault();
 
-		return "http://localhost:7101/api/v1/graph?q=name,command.calls,:eq,(,commandId,),:by&s=e-"
+		return "http://localhost:7101/api/v1/graph?q=name,command.calls,:eq,(,commandId,commandName,),:by&s=e-"
 				+ duration.toMinutes() + "m&l=0&title=Command invocations of the last 7 days&tz=" + timeZone.getID();
 	}
 
