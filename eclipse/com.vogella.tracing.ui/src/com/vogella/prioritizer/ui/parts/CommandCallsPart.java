@@ -18,24 +18,30 @@ import org.eclipse.swt.widgets.Composite;
 
 public class CommandCallsPart {
 
-	private Browser browser;
+	private Browser browserCommandCalls;
+
+	private Browser browserMenuDepths;
 
 	@PostConstruct
 	public void postConstruct(Composite parent) {
-		browser = new Browser(parent, SWT.NONE);
+		browserCommandCalls = new Browser(parent, SWT.NONE);
+		browserMenuDepths = new Browser(parent, SWT.NONE);
 		Instant oneWeekBefore = ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(20).toInstant();
-		updateGraph(oneWeekBefore);
+		updateGraphs(oneWeekBefore);
 	}
 
 	@Inject
 	@Optional
-	public void updateGraph(@UIEventTopic("INSTANT") Instant instant) {
+	public void updateGraphs(@UIEventTopic("INSTANT") Instant instant) {
 		Instant now = Instant.now();
 		Duration duration = Duration.between(instant, now);
 		
 		TimeZone timeZone = TimeZone.getDefault();
 		
-		browser.setUrl("http://localhost:7101/api/v1/graph?q=name,command.calls,:eq,(,commandId,commandName,),:by&s=e-"
+		browserCommandCalls.setUrl("http://localhost:7101/api/v1/graph?q=name,command.calls,:eq,(,commandId,commandName,),:by&s=e-"
+				+ duration.toMinutes() + "m&l=0&title=Recent command invocations&tz=" + timeZone.getID());
+		
+		browserMenuDepths.setUrl("http://localhost:7101/api/v1/graph?q=name,selection.menu,:eq,(,menuText,menuDepth,),:by&s=e-"
 				+ duration.toMinutes() + "m&l=0&title=Recent command invocations&tz=" + timeZone.getID());
 	}
 
