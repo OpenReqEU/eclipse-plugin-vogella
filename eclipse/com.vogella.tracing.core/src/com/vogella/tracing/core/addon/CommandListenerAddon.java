@@ -52,21 +52,11 @@ public class CommandListenerAddon {
 				broker.post(CommandListenerEvents.TOPIC_COMMAND_NOT_HANDLED, commandId);
 			}
 
-			private String getCommandName(CommandManager commandManager, String commandId) {
-				Command command = commandManager.getCommand(commandId);
-				try {
-					return command.getName();
-				} catch (NotDefinedException e) {
-					// should not happen in this listener
-					LOG.error(e.getMessage(), e);
-				}
-				return "No command name";
-			}
-
 			@Override
 			public void postExecuteFailure(String commandId, ExecutionException exception) {
 				// TODO create constants
-				Counter counter = meterRegistry.counter("command.calls", "commandId", commandId, "result", "failure");
+				Counter counter = meterRegistry.counter("command.calls", "commandId", commandId, "commandName",
+						getCommandName(commandManager, commandId), "result", "failure");
 				counter.increment();
 
 				// always fire event after metrics are done
@@ -76,7 +66,8 @@ public class CommandListenerAddon {
 			@Override
 			public void postExecuteSuccess(String commandId, Object returnValue) {
 				// TODO create constants
-				Counter counter = meterRegistry.counter("command.calls", "commandId", commandId, "result", "success");
+				Counter counter = meterRegistry.counter("command.calls", "commandId", commandId, "commandName",
+						getCommandName(commandManager, commandId), "result", "success");
 				counter.increment();
 
 				// always fire event after metrics are done
@@ -86,7 +77,8 @@ public class CommandListenerAddon {
 			@Override
 			public void preExecute(String commandId, ExecutionEvent event) {
 				// TODO create constants
-				Counter counter = meterRegistry.counter("command.calls", "commandId", commandId, "result", "pre");
+				Counter counter = meterRegistry.counter("command.calls", "commandId", commandId, "commandName",
+						getCommandName(commandManager, commandId), "result", "pre");
 				counter.increment();
 
 				// always fire event after metrics are done
@@ -101,6 +93,17 @@ public class CommandListenerAddon {
 	@PreDestroy
 	public void dispose(CommandManager commandManager) {
 		commandManager.removeExecutionListener(executionListener);
+	}
+
+	private String getCommandName(CommandManager commandManager, String commandId) {
+		Command command = commandManager.getCommand(commandId);
+		try {
+			return command.getName();
+		} catch (NotDefinedException e) {
+			// should not happen in this listener
+			LOG.error(e.getMessage(), e);
+		}
+		return "No command name";
 	}
 
 }
