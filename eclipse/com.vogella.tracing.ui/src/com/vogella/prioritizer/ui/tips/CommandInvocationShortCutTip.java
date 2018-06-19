@@ -35,13 +35,14 @@ public class CommandInvocationShortCutTip extends Tip implements ISwtTip {
 
 	@Override
 	public void createControl(Composite parent) {
-		IEclipseContext eclipseContext = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getService(IEclipseContext.class);
-		
+		IEclipseContext eclipseContext = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getService(IEclipseContext.class);
+
 		IPresentationEngine presentationEngine = eclipseContext.get(IPresentationEngine.class);
-		
+
 		EPartService partService = eclipseContext.get(EPartService.class);
 		MPart statsPart = partService.createPart("com.vogella.tracing.ui.partdescriptor.stats");
-		
+
 		presentationEngine.createGui(statsPart, parent, eclipseContext);
 	}
 
