@@ -35,7 +35,8 @@ public class CommandInvocationShortCutTip extends Tip implements ISwtTip {
 
 	@Override
 	public void createControl(Composite parent) {
-		IEclipseContext eclipseContext = PlatformUI.getWorkbench().getService(IEclipseContext.class);
+		IEclipseContext eclipseContext = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getService(IEclipseContext.class);
+		
 		IPresentationEngine presentationEngine = eclipseContext.get(IPresentationEngine.class);
 		
 		EPartService partService = eclipseContext.get(EPartService.class);
