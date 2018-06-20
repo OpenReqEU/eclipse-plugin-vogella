@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
 
 public class SelectionDisplayFilter implements Listener {
@@ -37,9 +38,9 @@ public class SelectionDisplayFilter implements Listener {
 			menuSelectionCounter.increment();
 
 			int menuDepth = getMenuDepth(menuItem.getParent(), 0);
-			Counter menuDepthCounter = meterRegistry.counter("selection.menu", "menuText", menuItem.getText(),
-					"menuDepth", String.valueOf(menuDepth));
-			menuDepthCounter.increment();
+			DistributionSummary menuDepthCounter = meterRegistry.summary("selection.menu", "menuText", menuItem.getText());
+			menuDepthCounter.record(menuDepth);
+			
 			LOG.debug(menuItem.getText() + " has a depth of " + menuDepth);
 		} else if (widget instanceof ToolItem) {
 			toolbarSelectionCounter.increment();
