@@ -12,6 +12,8 @@ import org.eclipse.tips.core.TipProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
+import com.vogella.tips.ShortcutTip;
+
 public class CommandTracingTipProvider extends TipProvider {
 
 	private TipImage tipImage;
@@ -47,6 +49,10 @@ public class CommandTracingTipProvider extends TipProvider {
 		tips.add(new CommandInvocationGraphTip(getID()));
 		tips.add(new CommandInvocationShortCutTip(getID()));
 		tips.add(new MenuDepthGraphTip(getID()));
+		tips.add(new ShortcutTip(getID(), "Refresh", "F5"));
+		tips.add(new ShortcutTip(getID(), "Properties", "ALT + ENTER"));
+		tips.add(new ShortcutTip(getID(), "Save", "CTRL + S"));
+		tips.add(new ShortcutTip(getID(), "Save All", "CTRL + SHIFT + S"));
 
 		setTips(tips);
 
