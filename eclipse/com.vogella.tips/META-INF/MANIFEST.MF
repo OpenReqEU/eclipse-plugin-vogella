@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tips
+Bundle-SymbolicName: com.vogella.tips
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: VOGELLA
+Automatic-Module-Name: com.vogella.tips
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.tips.core;bundle-version="0.1.0",
+ org.eclipse.tips.ui;bundle-version="0.1.0",
+ org.eclipse.swt,
+ org.eclipse.osgi
+Import-Package: org.slf4j;version="1.7.25"
+Export-Package: com.vogella.tips
