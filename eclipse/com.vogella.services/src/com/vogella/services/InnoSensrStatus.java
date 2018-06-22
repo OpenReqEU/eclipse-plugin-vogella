@@ -1,4 +1,4 @@
-package com.vogella.rest.services;
+package com.vogella.services;
 
 public enum InnoSensrStatus {
 	NEW, PLANNED, COMPLETED, REJECTED, RECOMMENDED

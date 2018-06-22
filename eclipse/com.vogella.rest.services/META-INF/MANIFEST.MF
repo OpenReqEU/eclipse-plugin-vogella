@@ -6,4 +6,14 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: VOGELLA
 Automatic-Module-Name: com.vogella.rest.services
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: io.projectreactor.reactor-core;bundle-version="3.1.5"
+Require-Bundle: io.projectreactor.reactor-core;bundle-version="3.1.5",
+ com.vogella.services;bundle-version="1.0.0",
+ com.squareup.okhttp3.okhttp,
+ com.squareup.retrofit2.retrofit,
+ com.squareup.retrofit2.converter-jackson,
+ com.jakewharton.retrofit.2-reactor-adapter,
+ com.squareup.okhttp3.logging-interceptor,
+ slf4j.api
+Import-Package: org.osgi.service.component.annotations;version="1.3.0";resolution:=optional
+Service-Component: OSGI-INF/com.vogella.rest.services.InnoSensrServiceImpl.xml
+Bundle-ActivationPolicy: lazy

@@ -1,4 +1,4 @@
-package com.vogella.rest.services;
+package com.vogella.services;
 
 import reactor.core.publisher.Mono;
 

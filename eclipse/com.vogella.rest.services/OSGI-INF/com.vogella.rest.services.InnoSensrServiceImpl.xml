@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="com.vogella.rest.services.InnoSensrServiceImpl">
+   <service>
+      <provide interface="com.vogella.services.InnoSensrService"/>
+   </service>
+   <implementation class="com.vogella.rest.services.InnoSensrServiceImpl"/>
+</scr:component>
