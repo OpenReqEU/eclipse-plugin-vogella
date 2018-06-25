@@ -1,5 +1,5 @@
 
-package com.vogella.prioritizer.ui.parts;
+package com.vogella.tracing.ui.parts;
 
 import java.time.Duration;
 import java.time.Instant;

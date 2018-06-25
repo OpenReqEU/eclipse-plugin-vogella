@@ -1,11 +1,11 @@
-package com.vogella.prioritizer.ui.nattable;
+package com.vogella.tracing.ui.nattable;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.nebula.widgets.nattable.data.IColumnPropertyAccessor;
 
-import com.vogella.prioritizer.ui.domain.CommandStats;
+import com.vogella.tracing.ui.domain.CommandStats;
 
 public class CommandStatsColumnPropertyAccessor implements IColumnPropertyAccessor<CommandStats> {
 

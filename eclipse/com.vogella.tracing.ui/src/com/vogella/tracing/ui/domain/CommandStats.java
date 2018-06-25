@@ -1,4 +1,4 @@
-package com.vogella.prioritizer.ui.domain;
+package com.vogella.tracing.ui.domain;
 
 public class CommandStats {
 

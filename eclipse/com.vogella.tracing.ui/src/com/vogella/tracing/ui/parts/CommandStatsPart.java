@@ -1,6 +1,7 @@
 
-package com.vogella.prioritizer.ui.parts;
+package com.vogella.tracing.ui.parts;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
+import org.eclipse.nebula.widgets.nattable.data.IRowIdAccessor;
 import org.eclipse.nebula.widgets.nattable.data.ListDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
@@ -29,15 +31,17 @@ import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.reorder.ColumnReorderLayer;
+import org.eclipse.nebula.widgets.nattable.selection.RowSelectionModel;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
+import org.eclipse.nebula.widgets.nattable.selection.config.DefaultRowSelectionLayerConfiguration;
 import org.eclipse.nebula.widgets.nattable.sort.config.SingleClickSortConfiguration;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Composite;
 
-import com.vogella.prioritizer.ui.domain.CommandStats;
-import com.vogella.prioritizer.ui.nattable.CommandStatsColumnPropertyAccessor;
-import com.vogella.prioritizer.ui.nattable.CommandStatsHeaderDataProvider;
 import com.vogella.tracing.core.constants.CommandListenerEvents;
+import com.vogella.tracing.ui.domain.CommandStats;
+import com.vogella.tracing.ui.nattable.CommandStatsColumnPropertyAccessor;
+import com.vogella.tracing.ui.nattable.CommandStatsHeaderDataProvider;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.SortedList;
@@ -78,8 +82,21 @@ public class CommandStatsPart {
 		ColumnReorderLayer columnReorderLayer = new ColumnReorderLayer(dataLayer);
 		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
 		dataLayer.setConfigLabelAccumulator(columnLabelAccumulator);
+		
+		SelectionLayer selectionLayer = new SelectionLayer(columnReorderLayer, false);
+		selectionLayer.setSelectionModel(
+				new RowSelectionModel<>(selectionLayer, dataProvider, new IRowIdAccessor<CommandStats>() {
 
-		ViewportLayer viewportLayer = new ViewportLayer(columnReorderLayer);
+					@Override
+					public Serializable getRowId(CommandStats rowObject) {
+						return rowObject.getCommandId();
+					}
+
+				}));
+
+		selectionLayer.addConfiguration(new DefaultRowSelectionLayerConfiguration());
+
+		ViewportLayer viewportLayer = new ViewportLayer(selectionLayer);
 
 		IDataProvider headerDataProvider = new CommandStatsHeaderDataProvider();
 		DataLayer headerDataLayer = new DataLayer(headerDataProvider);

@@ -1,4 +1,4 @@
-package com.vogella.prioritizer.ui.nattable;
+package com.vogella.tracing.ui.nattable;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 

@@ -1,4 +1,4 @@
-package com.vogella.prioritizer.ui.tips;
+package com.vogella.tracing.ui.tips;
 
 import java.io.IOException;
 import java.time.LocalDate;

@@ -1,4 +1,4 @@
-package com.vogella.prioritizer.ui.tips;
+package com.vogella.tracing.ui.tips;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,9 +24,9 @@ import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-import com.vogella.prioritizer.ui.domain.CommandStats;
 import com.vogella.services.InnoSensrService;
 import com.vogella.tips.ShortcutTip;
+import com.vogella.tracing.ui.domain.CommandStats;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
