@@ -25,6 +25,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import com.vogella.prioritizer.ui.domain.CommandStats;
+import com.vogella.services.InnoSensrService;
 import com.vogella.tips.ShortcutTip;
 
 import io.micrometer.core.instrument.Meter;
@@ -67,6 +68,7 @@ public class CommandTracingTipProvider extends TipProvider {
 		ECommandService commandService = PlatformUI.getWorkbench().getService(ECommandService.class);
 		EHandlerService handlerService = PlatformUI.getWorkbench().getService(EHandlerService.class);
 		UISynchronize uiSync = PlatformUI.getWorkbench().getService(UISynchronize.class);
+		InnoSensrService innoSensrService = PlatformUI.getWorkbench().getService(InnoSensrService.class);
 
 		ArrayList<Tip> tips = new ArrayList<>();
 		tips.add(new CommandInvocationShortCutTip(getID()));
@@ -96,7 +98,7 @@ public class CommandTracingTipProvider extends TipProvider {
 
 		for (CommandStats commandStats : list) {
 			tips.add(new ShortcutTip(getID(), commandStats.getCommandName(), commandStats.getKeybinding(),
-					commandService, handlerService, uiSync));
+					commandService, handlerService, uiSync, innoSensrService));
 		}
 
 		setTips(tips);

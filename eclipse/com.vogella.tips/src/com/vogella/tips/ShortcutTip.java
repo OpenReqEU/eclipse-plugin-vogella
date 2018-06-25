@@ -21,6 +21,10 @@ import org.slf4j.LoggerFactory;
 
 import com.vogella.common.ui.dialog.ReportDialog;
 import com.vogella.common.ui.dialog.ReportModel;
+import com.vogella.services.InnoSensrService;
+import com.vogella.services.InnoSensrStatus;
+
+import reactor.core.scheduler.Schedulers;
 
 @SuppressWarnings("restriction")
 public class ShortcutTip extends Tip implements IHtmlTip {
@@ -30,11 +34,14 @@ public class ShortcutTip extends Tip implements IHtmlTip {
 	private String commandName;
 	private String shortcut;
 
+	private InnoSensrService innoSensrService;
+
 	public ShortcutTip(String providerId, String commandName, String shortcut, ECommandService commandService,
-			EHandlerService handlerService, UISynchronize uiSync) {
+			EHandlerService handlerService, UISynchronize uiSync, InnoSensrService innoSensrService) {
 		super(providerId);
 		this.commandName = commandName;
 		this.shortcut = shortcut;
+		this.innoSensrService = innoSensrService;
 
 		if (null == shortcut) {
 			Bundle bundle = FrameworkUtil.getBundle(getClass());
@@ -57,6 +64,8 @@ public class ShortcutTip extends Tip implements IHtmlTip {
 				"Report bug in InnoSensr", "Open a new issue in InnoSensr.");
 		if (Window.OK == reportDialog.open()) {
 			LOG.debug("Sending bug report to InnoSensr.");
+			innoSensrService.createRequirement("bLMk11Jc", reportModel.getTitle(), reportModel.getDescription(),
+					InnoSensrStatus.NEW).subscribeOn(Schedulers.elastic()).subscribe();
 		}
 	}
 

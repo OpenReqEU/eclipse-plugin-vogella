@@ -11,7 +11,6 @@ Require-Bundle: javax.inject,
  org.eclipse.e4.ui.di,
  org.eclipse.e4.ui.services,
  org.eclipse.e4.core.di.annotations,
- com.vogella.prioritizer.core;bundle-version="1.0.0",
  org.eclipse.nebula.widgets.nattable.core;bundle-version="1.5.0",
  org.eclipse.nebula.widgets.nattable.extension.e4;bundle-version="1.1.0",
  org.eclipse.nebula.widgets.nattable.extension.glazedlists;bundle-version="1.5.0",
@@ -36,7 +35,8 @@ Require-Bundle: javax.inject,
  org.eclipse.tips.ui;bundle-version="0.1.0",
  org.eclipse.ui;bundle-version="3.109.100",
  com.vogella.tips;bundle-version="1.0.0",
- com.vogella.common.ui;bundle-version="1.0.0"
+ com.vogella.common.ui;bundle-version="1.0.0",
+ com.vogella.services;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
   javax.inject;version="1.0.0"

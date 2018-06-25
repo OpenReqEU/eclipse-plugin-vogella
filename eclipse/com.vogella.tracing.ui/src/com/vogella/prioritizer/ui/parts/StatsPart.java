@@ -34,7 +34,6 @@ import org.eclipse.nebula.widgets.nattable.sort.config.SingleClickSortConfigurat
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Composite;
 
-import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.ui.domain.CommandStats;
 import com.vogella.prioritizer.ui.nattable.CommandStatsColumnPropertyAccessor;
 import com.vogella.prioritizer.ui.nattable.CommandStatsHeaderDataProvider;
@@ -101,18 +100,12 @@ public class StatsPart {
 
 		natTable.configure();
 
-		refreshCommandStats(true);
+		refreshCommandStats("");
 	}
 
 	@Inject
 	@Optional
-	public void trackCommandCalls(@UIEventTopic(CommandListenerEvents.TOPIC_COMMAND_PRE_EXECUTE) String commandId) {
-		refreshCommandStats(true);
-	}
-
-	@Inject
-	@Optional
-	public void refreshCommandStats(@UIEventTopic(Events.REFRESH) boolean refresh) {
+	public void refreshCommandStats(@UIEventTopic(CommandListenerEvents.TOPIC_COMMAND_PRE_EXECUTE) String commandId) {
 		List<Meter> meters = meterRegistry.getMeters();
 		if (meterRegistry instanceof CompositeMeterRegistry) {
 			Set<MeterRegistry> registries = ((CompositeMeterRegistry) meterRegistry).getRegistries();
@@ -125,11 +118,11 @@ public class StatsPart {
 		List<CommandStats> list = meters.stream().filter(meter -> "command.calls".equals(meter.getId().getName())
 				&& "success".equals(meter.getId().getTag("result"))).flatMap(meter -> {
 					return StreamSupport.stream(meter.measure().spliterator(), false).map(measurement -> {
-						String commandId = meter.getId().getTag("commandId");
+						String cmdId = meter.getId().getTag("commandId");
 						double invocations = measurement.getValue();
 
-						ParameterizedCommand command = commandService.createCommand(commandId, null);
-						return new CommandStats(commandId, getCommandName(command), invocations,
+						ParameterizedCommand command = commandService.createCommand(cmdId, null);
+						return new CommandStats(cmdId, getCommandName(command), invocations,
 								getKeybinding(command));
 					});
 				}).collect(Collectors.toList());

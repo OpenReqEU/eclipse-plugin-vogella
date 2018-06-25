@@ -1,23 +1,11 @@
 <?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_EI7oACerEeWxCPrV0pAZQQ" featurename="descriptors" parentElementId="xpath:/">
     <elements xsi:type="basic:PartDescriptor" xmi:id="_n5LbkC6FEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.partdescriptor.stats" label="Stats" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/stats.png" category="Stats" closeable="true" contributionURI="bundleclass://com.vogella.tracing.ui/com.vogella.prioritizer.ui.parts.StatsPart">
       <tags>View</tags>
-      <toolbar xmi:id="_QZBDQC6NEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.toolbar.0">
-        <children xsi:type="menu:HandledToolItem" xmi:id="_Z0yA0C6SEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.handledtoolitem.track" label="Track" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/update.png" tooltip="Update on command execution" type="Check" command="_nL7BEC6SEei8C8uLdCEuDg"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_QzIzcC6NEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.handledtoolitem.refresh" label="Refresh" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/refresh.png" tooltip="Refresh" command="_OMx2sA2HEeijCoQO9b84Zg"/>
-      </toolbar>
     </elements>
     <elements xsi:type="basic:PartDescriptor" xmi:id="_5gEWcGNOEeiEqeh5JjswBg" elementId="com.vogella.tracing.ui.partdescriptor.commandcallsstats" label="Command Calls Stats" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/stats.png" contributionURI="bundleclass://com.vogella.tracing.ui/com.vogella.prioritizer.ui.parts.CommandCallsPart">
       <tags>View</tags>
     </elements>
-  </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_MFDO0A1_EeijCoQO9b84Zg" featurename="commands" parentElementId="xpath:/">
-    <elements xsi:type="commands:Command" xmi:id="_OMx2sA2HEeijCoQO9b84Zg" elementId="com.vogella.tracing.ui.command.refresh" commandName="Refresh"/>
-    <elements xsi:type="commands:Command" xmi:id="_nL7BEC6SEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.command.trackcommandcalls" commandName="Track Command Calls"/>
-  </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_GqfZYBidEei0erOA8_EOUg" featurename="handlers" parentElementId="xpath:/">
-    <elements xsi:type="commands:Handler" xmi:id="_ZqUPgC6NEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.handler.refresh" contributionURI="bundleclass://com.vogella.tracing.ui/com.vogella.prioritizer.ui.handler.RefreshHandler" command="_OMx2sA2HEeijCoQO9b84Zg"/>
-    <elements xsi:type="commands:Handler" xmi:id="_pEEOcC6SEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.handler.0" contributionURI="bundleclass://com.vogella.tracing.ui/com.vogella.prioritizer.ui.handler.TrackCommandClassHandler" command="_nL7BEC6SEei8C8uLdCEuDg"/>
   </fragments>
 </fragment:ModelFragments>
