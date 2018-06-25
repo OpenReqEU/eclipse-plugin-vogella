@@ -69,9 +69,7 @@ public class CommandTracingTipProvider extends TipProvider {
 		UISynchronize uiSync = PlatformUI.getWorkbench().getService(UISynchronize.class);
 
 		ArrayList<Tip> tips = new ArrayList<>();
-		tips.add(new CommandInvocationGraphTip(getID()));
 		tips.add(new CommandInvocationShortCutTip(getID()));
-		tips.add(new MenuDepthGraphTip(getID()));
 
 		MeterRegistry meterRegistry = PlatformUI.getWorkbench().getService(MeterRegistry.class);
 		EBindingService bindingService = PlatformUI.getWorkbench().getService(EBindingService.class);
