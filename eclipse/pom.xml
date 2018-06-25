@@ -18,6 +18,8 @@
 
 		<module>com.vogella.tips</module>
 
+		<module>com.vogella.common.ui</module>
+
 		<module>com.vogella.prioritizer.core</module>
 		<module>com.vogella.prioritizer.ui</module>
 		<module>com.vogella.prioritizer.service</module>
