@@ -1,5 +1,8 @@
 package com.vogella.common.ui.dialog;
 
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -16,9 +19,11 @@ public class ReportDialog extends TitleAreaDialog {
 
 	private String title;
 	private String infoMessage;
+	private ReportModel model;
 
-	public ReportDialog(Shell shell, String title, String message) {
+	public ReportDialog(Shell shell, ReportModel model,  String title, String message) {
 		super(shell);
+		this.model = model;
 		this.title = title;
 		this.infoMessage = message;
 	}
@@ -40,10 +45,16 @@ public class ReportDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite content = new Composite((Composite) super.createDialogArea(parent), SWT.NONE);
 
+		DataBindingContext dbc = new DataBindingContext();
+		
 		new Label(content, SWT.NONE).setText("Title: ");
 
 		Text titleText = new Text(content, SWT.BORDER);
 		titleText.setMessage("title");
+		
+		ISWTObservableValue titleTextObservable = WidgetProperties.text(SWT.Modify).observe(titleText);
+		
+		dbc.bindValue(titleTextObservable, model.getTitleObservable());
 
 		Label descriptionLabel = new Label(content, SWT.NONE);
 		descriptionLabel.setText("Description: ");
@@ -52,6 +63,10 @@ public class ReportDialog extends TitleAreaDialog {
 		Text descriptionText = new Text(content, SWT.BORDER | SWT.MULTI);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(descriptionText);
 		descriptionText.setMessage("description");
+		
+		ISWTObservableValue descriptionTextObservable = WidgetProperties.text(SWT.Modify).observe(descriptionText);
+		
+		dbc.bindValue(descriptionTextObservable, model.getDescriptionObservable());
 
 		GridLayoutFactory.fillDefaults().numColumns(2).generateLayout(content);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(content);

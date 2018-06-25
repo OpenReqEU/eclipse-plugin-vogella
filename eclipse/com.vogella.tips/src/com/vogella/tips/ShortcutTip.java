@@ -8,6 +8,7 @@ import java.util.Date;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tips.core.IHtmlTip;
 import org.eclipse.tips.core.Tip;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vogella.common.ui.dialog.ReportDialog;
+import com.vogella.common.ui.dialog.ReportModel;
 
 @SuppressWarnings("restriction")
 public class ShortcutTip extends Tip implements IHtmlTip {
@@ -48,8 +50,14 @@ public class ShortcutTip extends Tip implements IHtmlTip {
 	}
 
 	private void openReportDialog() {
-		ReportDialog reportDialog = new ReportDialog(Display.getDefault().getActiveShell(), "Report bug in InnoSensr", "Open a new issue in InnoSensr.");
-		reportDialog.open();
+		ReportModel reportModel = new ReportModel();
+		reportModel.setTitle("No default shortcut for the " + commandName + " command.");
+		reportModel.setDescription("The " + commandName + " should have a default shortcut");
+		ReportDialog reportDialog = new ReportDialog(Display.getDefault().getActiveShell(), reportModel,
+				"Report bug in InnoSensr", "Open a new issue in InnoSensr.");
+		if (Window.OK == reportDialog.open()) {
+			LOG.debug("Sending bug report to InnoSensr.");
+		}
 	}
 
 	@Override
