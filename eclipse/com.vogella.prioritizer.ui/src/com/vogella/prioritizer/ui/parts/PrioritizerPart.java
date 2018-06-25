@@ -1,5 +1,6 @@
 package com.vogella.prioritizer.ui.parts;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
+import org.eclipse.nebula.widgets.nattable.data.IRowIdAccessor;
 import org.eclipse.nebula.widgets.nattable.data.ListDataProvider;
 import org.eclipse.nebula.widgets.nattable.data.convert.PercentageDisplayConverter;
 import org.eclipse.nebula.widgets.nattable.extension.glazedlists.GlazedListsEventLayer;
@@ -37,7 +39,9 @@ import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.painter.cell.PercentageBarCellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.PercentageBarDecorator;
 import org.eclipse.nebula.widgets.nattable.reorder.ColumnReorderLayer;
+import org.eclipse.nebula.widgets.nattable.selection.RowSelectionModel;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
+import org.eclipse.nebula.widgets.nattable.selection.config.DefaultRowSelectionLayerConfiguration;
 import org.eclipse.nebula.widgets.nattable.sort.SortHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.sort.config.SingleClickSortConfiguration;
 import org.eclipse.nebula.widgets.nattable.style.CellStyleAttributes;
@@ -149,7 +153,20 @@ public class PrioritizerPart {
 		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
 		eventLayer.setConfigLabelAccumulator(columnLabelAccumulator);
 
-		ViewportLayer viewportLayer = new ViewportLayer(columnReorderLayer);
+		SelectionLayer selectionLayer = new SelectionLayer(columnReorderLayer, false);
+		selectionLayer.setSelectionModel(
+				new RowSelectionModel<>(selectionLayer, dataProvider, new IRowIdAccessor<RankedBug>() {
+
+					@Override
+					public Serializable getRowId(RankedBug rowObject) {
+						return rowObject.getId();
+					}
+
+				}));
+
+		selectionLayer.addConfiguration(new DefaultRowSelectionLayerConfiguration());
+
+		ViewportLayer viewportLayer = new ViewportLayer(selectionLayer);
 
 		IDataProvider headerDataProvider = new RankedBugHeaderDataProvider();
 		DataLayer headerDataLayer = new DataLayer(headerDataProvider);
@@ -174,6 +191,8 @@ public class PrioritizerPart {
 		linkStyle.setAttributeValue(CellStyleAttributes.TEXT_DECORATION, TextDecorationEnum.UNDERLINE);
 
 		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, linkStyle, DisplayMode.NORMAL,
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 0);
+		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, linkStyle, DisplayMode.SELECT,
 				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 0);
 
 		LinkClickConfiguration<Bug> linkClickConfiguration = new LinkClickConfiguration<>(

@@ -129,7 +129,9 @@ public class MostDiscussedBugsOfTheMonthPart {
 		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
 		dataLayer.setConfigLabelAccumulator(columnLabelAccumulator);
 
-		ViewportLayer viewportLayer = new ViewportLayer(columnReorderLayer);
+		SelectionLayer selectionLayer = new SelectionLayer(columnReorderLayer, false);
+
+		ViewportLayer viewportLayer = new ViewportLayer(selectionLayer);
 
 		IDataProvider headerDataProvider = new BugHeaderDataProvider();
 		DataLayer headerDataLayer = new DataLayer(headerDataProvider);
@@ -153,6 +155,8 @@ public class MostDiscussedBugsOfTheMonthPart {
 		linkStyle.setAttributeValue(CellStyleAttributes.TEXT_DECORATION, TextDecorationEnum.UNDERLINE);
 
 		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, linkStyle, DisplayMode.NORMAL,
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 0);
+		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, linkStyle, DisplayMode.SELECT,
 				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 0);
 
 		LinkClickConfiguration<Bug> linkClickConfiguration = new LinkClickConfiguration<>(
