@@ -8,6 +8,7 @@ import java.util.Date;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.tips.core.IHtmlTip;
 import org.eclipse.tips.core.Tip;
 import org.eclipse.tips.core.TipAction;
@@ -16,6 +17,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vogella.common.ui.dialog.ReportDialog;
 
 @SuppressWarnings("restriction")
 public class ShortcutTip extends Tip implements IHtmlTip {
@@ -35,13 +38,18 @@ public class ShortcutTip extends Tip implements IHtmlTip {
 			Bundle bundle = FrameworkUtil.getBundle(getClass());
 			try {
 				TipAction reportBugTipAction = new TipAction("Report Bug", "Create a bug report in InnoSensr.",
-						() -> System.out.println("Reporting bug"),
+						() -> uiSync.asyncExec(this::openReportDialog),
 						new TipImage(bundle.getEntry("icons/16/innosensr-logo.png")));
 				getActions().add(reportBugTipAction);
 			} catch (IOException e) {
 				LOG.error(e.getMessage(), e);
 			}
 		}
+	}
+
+	private void openReportDialog() {
+		ReportDialog reportDialog = new ReportDialog(Display.getDefault().getActiveShell(), "Report bug in InnoSensr", "Open a new issue in InnoSensr.");
+		reportDialog.open();
 	}
 
 	@Override
