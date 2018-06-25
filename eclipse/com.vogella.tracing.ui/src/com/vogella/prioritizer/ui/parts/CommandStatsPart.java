@@ -47,7 +47,7 @@ import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 @SuppressWarnings("restriction")
-public class StatsPart {
+public class CommandStatsPart {
 
 	@Inject
 	private MeterRegistry meterRegistry;

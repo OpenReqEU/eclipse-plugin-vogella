@@ -16,7 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Composite;
 
-public class CommandCallsPart {
+public class AtlasGraphPart {
 
 	private Browser browserCommandCalls;
 
