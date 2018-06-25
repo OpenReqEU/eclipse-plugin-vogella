@@ -3,10 +3,8 @@ package com.vogella.tips;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Collections;
 import java.util.Date;
 
-import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.ui.di.UISynchronize;
@@ -33,18 +31,17 @@ public class ShortcutTip extends Tip implements IHtmlTip {
 		this.commandName = commandName;
 		this.shortcut = shortcut;
 
-		TipAction openPreferencesAction = new TipAction("Preferences", "Show shortcuts in preferences", () -> {
-			ParameterizedCommand command = commandService.createCommand("org.eclipse.ui.window.preferences",
-					Collections.singletonMap("preferencePageId", "org.eclipse.ui.preferencePages.Keys"));
-			uiSync.asyncExec(() -> {
-				handlerService.executeHandler(command);
-			});
-		}, null);
-		TipAction reportBugTipAction = new TipAction("Report Bug", "Create a bug report in InnoSensr.",
-				() -> System.out.println("Reporting bug"), null);
-
-		getActions().add(reportBugTipAction);
-		getActions().add(openPreferencesAction);
+		if (null == shortcut) {
+			Bundle bundle = FrameworkUtil.getBundle(getClass());
+			try {
+				TipAction reportBugTipAction = new TipAction("Report Bug", "Create a bug report in InnoSensr.",
+						() -> System.out.println("Reporting bug"),
+						new TipImage(bundle.getEntry("icons/16/innosensr-logo.png")));
+				getActions().add(reportBugTipAction);
+			} catch (IOException e) {
+				LOG.error(e.getMessage(), e);
+			}
+		}
 	}
 
 	@Override
@@ -59,9 +56,11 @@ public class ShortcutTip extends Tip implements IHtmlTip {
 
 	@Override
 	public String getHTML() {
-		return "<html><head><title>Shortcut advice</title></head><body><p>The <i>" + commandName
+		return shortcut != null ? "<html><head><title>Shortcut advice</title></head><body><p>The <i>" + commandName
 				+ "</i> command has been used quite often.</p><p>Did you know about the <i>" + shortcut
-				+ "</i> shortcut to invoke this command.</p><p>Shortcuts allow you to invoke commands faster and be more efficient.</p></body></html>";
+				+ "</i> shortcut to invoke this command.</p><p>Shortcuts allow you to invoke commands faster and be more efficient.</p></body></html>"
+				: "<html><head><title>Shortcut advice</title></head><body><p>The <i>" + commandName
+						+ "</i> command has been used quite often.</p><p>But there is no keybinding defined for it, but you can specify one here <button onclick=\"openKeysPreferences()\"><b>Keys</b> preferences</button></p><p>Shortcuts allow you to invoke commands faster and be more efficient.</p></body></html>";
 	}
 
 	@Override

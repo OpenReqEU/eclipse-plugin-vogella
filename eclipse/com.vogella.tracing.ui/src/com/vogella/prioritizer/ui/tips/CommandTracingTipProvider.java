@@ -2,13 +2,21 @@ package com.vogella.prioritizer.ui.tips;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.tips.core.Tip;
 import org.eclipse.tips.core.TipImage;
 import org.eclipse.tips.core.TipProvider;
@@ -16,7 +24,13 @@ import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
+import com.vogella.prioritizer.ui.domain.CommandStats;
 import com.vogella.tips.ShortcutTip;
+
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 @SuppressWarnings("restriction")
 public class CommandTracingTipProvider extends TipProvider {
@@ -53,18 +67,60 @@ public class CommandTracingTipProvider extends TipProvider {
 		ECommandService commandService = PlatformUI.getWorkbench().getService(ECommandService.class);
 		EHandlerService handlerService = PlatformUI.getWorkbench().getService(EHandlerService.class);
 		UISynchronize uiSync = PlatformUI.getWorkbench().getService(UISynchronize.class);
+
 		ArrayList<Tip> tips = new ArrayList<>();
 		tips.add(new CommandInvocationGraphTip(getID()));
 		tips.add(new CommandInvocationShortCutTip(getID()));
 		tips.add(new MenuDepthGraphTip(getID()));
-		tips.add(new ShortcutTip(getID(), "Refresh", "F5", commandService, handlerService, uiSync));
-		tips.add(new ShortcutTip(getID(), "Properties", "ALT + ENTER", commandService, handlerService, uiSync));
-		tips.add(new ShortcutTip(getID(), "Save", "CTRL + S", commandService, handlerService, uiSync));
-		tips.add(new ShortcutTip(getID(), "Save All", "CTRL + SHIFT + S", commandService, handlerService, uiSync));
+
+		MeterRegistry meterRegistry = PlatformUI.getWorkbench().getService(MeterRegistry.class);
+		EBindingService bindingService = PlatformUI.getWorkbench().getService(EBindingService.class);
+		List<Meter> meters = meterRegistry.getMeters();
+		if (meterRegistry instanceof CompositeMeterRegistry) {
+			Set<MeterRegistry> registries = ((CompositeMeterRegistry) meterRegistry).getRegistries();
+			java.util.Optional<MeterRegistry> findAny = registries.stream()
+					.filter(SimpleMeterRegistry.class::isInstance).findAny();
+			if (findAny.isPresent()) {
+				meters = findAny.get().getMeters();
+			}
+		}
+		List<CommandStats> list = meters.stream().filter(meter -> "command.calls".equals(meter.getId().getName())
+				&& "success".equals(meter.getId().getTag("result"))).flatMap(meter -> {
+					return StreamSupport.stream(meter.measure().spliterator(), false).map(measurement -> {
+						String commandId = meter.getId().getTag("commandId");
+						double invocations = measurement.getValue();
+
+						ParameterizedCommand command = commandService.createCommand(commandId, null);
+						return new CommandStats(commandId, getCommandName(command), invocations,
+								getKeybinding(command, bindingService));
+					});
+				}).collect(Collectors.toList());
+
+		for (CommandStats commandStats : list) {
+			tips.add(new ShortcutTip(getID(), commandStats.getCommandName(), commandStats.getKeybinding(),
+					commandService, handlerService, uiSync));
+		}
 
 		setTips(tips);
 
 		return Status.OK_STATUS;
+	}
+
+	private String getKeybinding(ParameterizedCommand command, EBindingService bindingService) {
+		TriggerSequence bestSequenceFor = bindingService.getBestSequenceFor(command);
+		if (bestSequenceFor != null) {
+			return bestSequenceFor.format();
+		}
+		return null;
+	}
+
+	private String getCommandName(ParameterizedCommand command) {
+		try {
+			return command.getName();
+		} catch (NotDefinedException e) {
+			// unlikely to happen
+			return "Command does not have a name";
+		}
 	}
 
 	@Override
