@@ -34,7 +34,7 @@ public class MenuDepthGraphTip extends Tip implements IUrlTip {
 	@Override
 	public String getURL() {
 		Instant now = Instant.now();
-		Duration duration = Duration.between(now.minus(7, ChronoUnit.DAYS), now);
+		Duration duration = Duration.between(now.minus(30, ChronoUnit.MINUTES), now);
 
 		TimeZone timeZone = TimeZone.getDefault();
 
