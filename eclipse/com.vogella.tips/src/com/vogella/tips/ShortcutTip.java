@@ -5,11 +5,15 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tips.core.IHtmlTip;
 import org.eclipse.tips.core.Tip;
 import org.eclipse.tips.core.TipAction;
@@ -60,12 +64,16 @@ public class ShortcutTip extends Tip implements IHtmlTip {
 		ReportModel reportModel = new ReportModel();
 		reportModel.setTitle("No default shortcut for the " + commandName + " command.");
 		reportModel.setDescription("The " + commandName + " should have a default shortcut");
-		ReportDialog reportDialog = new ReportDialog(Display.getDefault().getActiveShell(), reportModel,
-				"Report bug in InnoSensr", "Open a new issue in InnoSensr.");
+		Shell shell = Display.getDefault().getActiveShell();
+		ReportDialog reportDialog = new ReportDialog(shell, reportModel, "Report bug in InnoSensr",
+				"Open a new issue in InnoSensr.");
 		if (Window.OK == reportDialog.open()) {
 			LOG.debug("Sending bug report to InnoSensr.");
 			innoSensrService.createRequirement("bLMk11Jc", reportModel.getTitle(), reportModel.getDescription(),
-					InnoSensrStatus.NEW).subscribeOn(Schedulers.elastic()).subscribe();
+					InnoSensrStatus.NEW).subscribeOn(Schedulers.elastic()).subscribe(System.out::println, e -> {
+						Status errorStatus = new Status(IStatus.ERROR, "com.vogella.tips", e.getMessage(), e);
+						ErrorDialog.openError(shell, "Error creating issue", e.getMessage(), errorStatus);
+					});
 		}
 	}
 

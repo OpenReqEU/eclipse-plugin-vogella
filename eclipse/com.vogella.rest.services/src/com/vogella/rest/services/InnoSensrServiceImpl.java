@@ -39,7 +39,9 @@ public class InnoSensrServiceImpl implements InnoSensrService {
 	@Override
 	public Mono<Void> createRequirement(String projectUniqueKey, String title, String description,
 			InnoSensrStatus status) {
-		return innoSensrApi.createRequirement(projectUniqueKey, title, description, status.toString());
+		InnoSensrRequirement requirement = new InnoSensrRequirement(projectUniqueKey, title, description,
+				status.toString());
+		return innoSensrApi.createRequirement(requirement);
 	}
 
 }

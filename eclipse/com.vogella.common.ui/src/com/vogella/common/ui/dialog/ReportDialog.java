@@ -31,7 +31,7 @@ public class ReportDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		getShell().setText(title);
+		getShell().setText("Report");
 		setTitle(title);
 		setMessage(infoMessage, IMessageProvider.INFORMATION);
 	}

@@ -1,6 +1,7 @@
 package com.vogella.rest.services;
 
 import reactor.core.publisher.Mono;
+import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
@@ -12,5 +13,5 @@ public interface InnoSensrApi {
 
 	@POST("/api/v1/requirement/create")
 	@Headers("Content-Type: application/json")
-	Mono<Void> createRequirement(String projectUniqueKey, String title, String description, String status);
+	Mono<Void> createRequirement(@Body InnoSensrRequirement requirement);
 }
