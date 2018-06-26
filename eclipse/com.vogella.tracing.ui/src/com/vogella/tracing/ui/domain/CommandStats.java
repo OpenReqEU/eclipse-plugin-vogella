@@ -4,10 +4,10 @@ public class CommandStats {
 
 	private String commandId;
 	private String commandName;
-	private double invocations;
+	private int invocations;
 	private String keybinding;
 
-	public CommandStats(String commandId, String commandName, double invocations, String keybinding) {
+	public CommandStats(String commandId, String commandName, int invocations, String keybinding) {
 		super();
 		this.commandId = commandId;
 		this.commandName = commandName;
@@ -31,11 +31,11 @@ public class CommandStats {
 		this.commandName = commandName;
 	}
 
-	public double getInvocations() {
+	public int getInvocations() {
 		return invocations;
 	}
 
-	public void setInvocations(double invocations) {
+	public void setInvocations(int invocations) {
 		this.invocations = invocations;
 	}
 

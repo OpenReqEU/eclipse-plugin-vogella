@@ -144,7 +144,7 @@ public class CommandStatsPart {
 						double invocations = measurement.getValue();
 
 						ParameterizedCommand command = commandService.createCommand(cmdId, null);
-						return new CommandStats(cmdId, getCommandName(command), invocations, getKeybinding(command));
+						return new CommandStats(cmdId, getCommandName(command), (int) invocations, getKeybinding(command));
 					});
 				}).collect(Collectors.toList());
 

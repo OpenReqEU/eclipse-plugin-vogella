@@ -91,7 +91,7 @@ public class CommandTracingTipProvider extends TipProvider {
 						double invocations = measurement.getValue();
 
 						ParameterizedCommand command = commandService.createCommand(commandId, null);
-						return new CommandStats(commandId, getCommandName(command), invocations,
+						return new CommandStats(commandId, getCommandName(command), (int) invocations,
 								getKeybinding(command, bindingService));
 					});
 				}).collect(Collectors.toList());
