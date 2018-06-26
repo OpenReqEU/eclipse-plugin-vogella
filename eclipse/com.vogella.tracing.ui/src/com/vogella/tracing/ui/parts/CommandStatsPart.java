@@ -137,8 +137,8 @@ public class CommandStatsPart {
 				meters = findAny.get().getMeters();
 			}
 		}
-		List<CommandStats> list = meters.stream().filter(meter -> "command.calls".equals(meter.getId().getName())
-				&& "success".equals(meter.getId().getTag("result"))).flatMap(meter -> {
+		List<CommandStats> list = meters.stream()
+				.filter(meter -> "command.calls.contributionitem".equals(meter.getId().getName())).flatMap(meter -> {
 					return StreamSupport.stream(meter.measure().spliterator(), false).map(measurement -> {
 						String cmdId = meter.getId().getTag("commandId");
 						double invocations = measurement.getValue();

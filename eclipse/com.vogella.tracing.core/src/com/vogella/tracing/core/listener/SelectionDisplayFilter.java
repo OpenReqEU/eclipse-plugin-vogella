@@ -1,7 +1,5 @@
 package com.vogella.tracing.core.listener;
 
-import java.util.AbstractMap;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -33,6 +31,22 @@ public class SelectionDisplayFilter implements Listener {
 
 	private enum CommandCallOrigin {
 		MENU, TOOLBAR
+	}
+
+	private enum ContributionItemType {
+		CommandContributionItem, HandledContributionItem, ActionContributionItem
+	}
+
+	private static class CommandData {
+		final String commandId;
+		final String commandName;
+		final ContributionItemType contributionItemType;
+
+		public CommandData(String commandId, String commandName, ContributionItemType contributionItemType) {
+			this.commandId = commandId;
+			this.commandName = commandName;
+			this.contributionItemType = contributionItemType;
+		}
 	}
 
 	private MeterRegistry meterRegistry;
@@ -70,38 +84,39 @@ public class SelectionDisplayFilter implements Listener {
 	}
 
 	private void handleItemData(Object data, CommandCallOrigin origin) {
-		Optional<Entry<String, String>> commandIdAndName = getCommandIdAndName(data);
+		Optional<CommandData> commandData = getCommandData(data);
 
-		commandIdAndName.ifPresent(idAndName -> {
-			Counter counter = meterRegistry.counter("command.calls.contributionitem", "commandId", idAndName.getKey(),
-					"commandName", idAndName.getValue(), "origin", origin.toString());
+		commandData.ifPresent(cmdData -> {
+			Counter counter = meterRegistry.counter("command.calls.contributionitem", "commandId", cmdData.commandId,
+					"commandName", cmdData.commandName, "origin", origin.toString(), "contributionItemType",
+					cmdData.contributionItemType.toString());
 			counter.increment();
 		});
 	}
 
-	private Optional<Entry<String, String>> getCommandIdAndName(Object data) {
+	private Optional<CommandData> getCommandData(Object data) {
 		if (data instanceof CommandContributionItem) {
 			ParameterizedCommand command = ((CommandContributionItem) data).getCommand();
 			try {
-				String id = command.getId();
-				String name = command.getName();
-				return Optional.of(new AbstractMap.SimpleEntry<>(id, name));
+				CommandData commandData = new CommandData(command.getId(), command.getName(),
+						ContributionItemType.CommandContributionItem);
+				return Optional.of(commandData);
 			} catch (NotDefinedException e) {
 				LOG.error(e.getMessage(), e);
 			}
 		} else if (data instanceof HandledContributionItem) {
 			MHandledItem model = ((HandledContributionItem) data).getModel();
 			MCommand command = model.getCommand();
-			String elementId = command.getElementId();
-			String commandName = command.getCommandName();
-			return Optional.of(new AbstractMap.SimpleEntry<>(elementId, commandName));
+			CommandData commandData = new CommandData(command.getElementId(), command.getCommandName(),
+					ContributionItemType.HandledContributionItem);
+			return Optional.of(commandData);
 		} else if (data instanceof ActionContributionItem) {
 			IAction action = ((ActionContributionItem) data).getAction();
-			String id = action.getId();
-			String actionText = action.getText();
-			return Optional.of(new AbstractMap.SimpleEntry<>(id, actionText));
+			CommandData commandData = new CommandData(action.getActionDefinitionId(), action.getText(),
+					ContributionItemType.ActionContributionItem);
+			return Optional.of(commandData);
 		} else if (data instanceof SubContributionItem) {
-			return getCommandIdAndName(((SubContributionItem) data).getInnerItem());
+			return getCommandData(((SubContributionItem) data).getInnerItem());
 		}
 
 		return Optional.empty();
