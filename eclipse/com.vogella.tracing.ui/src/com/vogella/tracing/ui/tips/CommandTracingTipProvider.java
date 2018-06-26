@@ -97,8 +97,11 @@ public class CommandTracingTipProvider extends TipProvider {
 				}).collect(Collectors.toList());
 
 		for (CommandStats commandStats : list) {
-			tips.add(new ShortcutTip(getID(), commandStats.getCommandName(), commandStats.getKeybinding(),
-					commandService, handlerService, uiSync, innoSensrService));
+			double invocations = commandStats.getInvocations();
+			if (invocations > 3) {
+				tips.add(new ShortcutTip(getID(), commandStats.getCommandName(), commandStats.getKeybinding(),
+						commandService, handlerService, uiSync, innoSensrService));
+			}
 		}
 
 		setTips(tips);
