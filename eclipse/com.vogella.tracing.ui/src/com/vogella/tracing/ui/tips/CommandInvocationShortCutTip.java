@@ -16,8 +16,6 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.nebula.widgets.nattable.NatTable;
-import org.eclipse.nebula.widgets.nattable.selection.SelectionUtils;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -60,6 +58,7 @@ public class CommandInvocationShortCutTip extends Tip implements ISwtTip {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void reportBug() {
 		Shell shell = Display.getDefault().getActiveShell();
 		ReportModel reportModel = new ReportModel();
