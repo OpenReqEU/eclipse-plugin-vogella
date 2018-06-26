@@ -1,7 +1,6 @@
 
 package com.vogella.tracing.ui.parts;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,13 +15,13 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
-import org.eclipse.nebula.widgets.nattable.data.IRowIdAccessor;
 import org.eclipse.nebula.widgets.nattable.data.ListDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
@@ -33,7 +32,9 @@ import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.reorder.ColumnReorderLayer;
 import org.eclipse.nebula.widgets.nattable.selection.RowSelectionModel;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
+import org.eclipse.nebula.widgets.nattable.selection.SelectionUtils;
 import org.eclipse.nebula.widgets.nattable.selection.config.DefaultRowSelectionLayerConfiguration;
+import org.eclipse.nebula.widgets.nattable.selection.event.ISelectionEvent;
 import org.eclipse.nebula.widgets.nattable.sort.config.SingleClickSortConfiguration;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Composite;
@@ -53,6 +54,8 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 @SuppressWarnings("restriction")
 public class CommandStatsPart {
 
+	public static final String COMMAND_STATS_SELECTION = "CommandStatsSelection";
+
 	@Inject
 	private MeterRegistry meterRegistry;
 
@@ -67,7 +70,7 @@ public class CommandStatsPart {
 	private SortedList<CommandStats> sortedList;
 
 	@PostConstruct
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent, MPart part) {
 		BasicEventList<CommandStats> eventList = new BasicEventList<>(500);
 		sortedList = new SortedList<>(eventList, (o1, o2) -> Double.compare(o2.getInvocations(), o1.getInvocations()));
 
@@ -82,17 +85,12 @@ public class CommandStatsPart {
 		ColumnReorderLayer columnReorderLayer = new ColumnReorderLayer(dataLayer);
 		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
 		dataLayer.setConfigLabelAccumulator(columnLabelAccumulator);
-		
+
 		SelectionLayer selectionLayer = new SelectionLayer(columnReorderLayer, false);
-		selectionLayer.setSelectionModel(
-				new RowSelectionModel<>(selectionLayer, dataProvider, new IRowIdAccessor<CommandStats>() {
-
-					@Override
-					public Serializable getRowId(CommandStats rowObject) {
-						return rowObject.getCommandId();
-					}
-
-				}));
+		RowSelectionModel<CommandStats> rowSelectionModel = new RowSelectionModel<>(selectionLayer, dataProvider,
+				rowObject -> rowObject.getCommandId());
+		rowSelectionModel.setMultipleSelectionAllowed(false);
+		selectionLayer.setSelectionModel(rowSelectionModel);
 
 		selectionLayer.addConfiguration(new DefaultRowSelectionLayerConfiguration());
 
@@ -117,6 +115,13 @@ public class CommandStatsPart {
 
 		natTable.configure();
 
+		selectionLayer.addLayerListener(event -> {
+			if (event instanceof ISelectionEvent) {
+				List<CommandStats> selection = SelectionUtils.getSelectedRowObjects(selectionLayer, dataProvider, true);
+				part.getContext().set(COMMAND_STATS_SELECTION, selection);
+			}
+		});
+
 		refreshCommandStats("");
 	}
 
@@ -139,8 +144,7 @@ public class CommandStatsPart {
 						double invocations = measurement.getValue();
 
 						ParameterizedCommand command = commandService.createCommand(cmdId, null);
-						return new CommandStats(cmdId, getCommandName(command), invocations,
-								getKeybinding(command));
+						return new CommandStats(cmdId, getCommandName(command), invocations, getKeybinding(command));
 					});
 				}).collect(Collectors.toList());
 

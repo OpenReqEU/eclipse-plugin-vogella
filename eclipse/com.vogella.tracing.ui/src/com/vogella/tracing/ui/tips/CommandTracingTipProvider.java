@@ -71,7 +71,7 @@ public class CommandTracingTipProvider extends TipProvider {
 		InnoSensrService innoSensrService = PlatformUI.getWorkbench().getService(InnoSensrService.class);
 
 		ArrayList<Tip> tips = new ArrayList<>();
-		tips.add(new CommandInvocationShortCutTip(getID()));
+		tips.add(new CommandInvocationShortCutTip(getID(), innoSensrService, uiSync));
 
 		MeterRegistry meterRegistry = PlatformUI.getWorkbench().getService(MeterRegistry.class);
 		EBindingService bindingService = PlatformUI.getWorkbench().getService(EBindingService.class);
