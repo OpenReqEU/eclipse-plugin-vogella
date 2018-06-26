@@ -13,7 +13,7 @@
    <extension
          point="org.eclipse.tips.core.tips">
                <provider
-            class="com.vogella.prioritizer.ui.tips.CommandTracingTipProvider"
+            class="com.vogella.tracing.ui.tips.CommandTracingTipProvider"
             description="Provider for tips based on user interaction with the Eclipse IDE"
             id="com.vogella.prioritizer.ui.tips.CommandTracingTipProvider">
       </provider>

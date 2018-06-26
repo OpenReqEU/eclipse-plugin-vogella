@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_EI7oACerEeWxCPrV0pAZQQ" featurename="descriptors" parentElementId="xpath:/">
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_n5LbkC6FEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.partdescriptor.stats" label="Command Stats" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/stats.png" category="Stats" closeable="true" contributionURI="bundleclass://com.vogella.tracing.ui/com.vogella.tracing.uiommandStatsPart">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_n5LbkC6FEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.partdescriptor.stats" label="Command Stats" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/stats.png" category="Stats" closeable="true" contributionURI="bundleclass://com.vogella.tracing.ui/com.vogella.tracing.ui.parts.CommandStatsPart">
       <tags>View</tags>
     </elements>
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_5gEWcGNOEeiEqeh5JjswBg" elementId="com.vogella.tracing.ui.partdescriptor.commandcallsstats" label="Graph Stats" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/stats.png" contributionURI="bundbundbundleclass://com.vogella.tracing.ui/com.vogella.tracing.uihPart">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_5gEWcGNOEeiEqeh5JjswBg" elementId="com.vogella.tracing.ui.partdescriptor.commandcallsstats" label="Graph Stats" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/stats.png" contributionURI="bundbundbundleclass://com.vogella.tracing.ui/com.vogella.tracing.ui.parts.AtlasGraphPart">
       <tags>View</tags>
     </elements>
   </fragments>
