@@ -78,7 +78,7 @@ image::img/launch-file.png[]
 
 The statistics and user usage analysis is also provided as Tip of the day in the Eclipse IDE.
 
-In order to install the _Tip of the day_ feature the _http://download.eclipse.org/eclipse/updates/4.8-I-builds_ update site can be used.
+In order to install the _Tip of the day_ feature the _http://download.eclipse.org/eclipse/updates/4.8_ update site can be used.
 
 image::img/install-tip-of-the-day.png[] 
 
