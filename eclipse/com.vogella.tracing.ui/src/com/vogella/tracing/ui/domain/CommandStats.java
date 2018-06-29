@@ -1,6 +1,8 @@
 package com.vogella.tracing.ui.domain;
 
 public class CommandStats {
+	
+	public static final String NO_KEYBINDING_DEFINED = "No keybinding definied";
 
 	private String commandId;
 	private String commandName;

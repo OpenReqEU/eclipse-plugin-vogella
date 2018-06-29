@@ -158,7 +158,8 @@ public class CommandStatsPart {
 		if (bestSequenceFor != null) {
 			return bestSequenceFor.format();
 		}
-		return "No keybinding definied";
+		// TODO create converter for nattable and remove this constant
+		return CommandStats.NO_KEYBINDING_DEFINED;
 	}
 
 	private String getCommandName(ParameterizedCommand command) {

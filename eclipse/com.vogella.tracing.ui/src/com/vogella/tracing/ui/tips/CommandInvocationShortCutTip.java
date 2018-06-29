@@ -68,7 +68,7 @@ public class CommandInvocationShortCutTip extends Tip implements ISwtTip {
 			if (commandStats.size() > 0) {
 				CommandStats commandStat = commandStats.get(0);
 				if (commandStat.getKeybinding() == null
-						|| "Keybinding not defined".equals(commandStat.getKeybinding())) {
+						|| CommandStats.NO_KEYBINDING_DEFINED.equals(commandStat.getKeybinding())) {
 					reportModel.setTitle("No default shortcut for the " + commandStat.getCommandName() + " command");
 					reportModel
 							.setDescription("The " + commandStat.getCommandName() + " should have a default shortcut.");
