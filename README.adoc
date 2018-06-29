@@ -23,7 +23,7 @@ $ cd openreq/server
 $ ./gradlew bRun
 ----
 
-This can also be run from the IDE by using the Eclipse Buildship 2.x tooling.
+This can also be run from the IDE by using the Eclipse Buildship 2.x tooling (http://projects.eclipse.org/projects/tools.buildship/downloads) and Lombok (http://www.vogella.com/tutorials/Lombok/article.html#lombok-eclipse).
 
 === Installing the Eclipse Plugin
 
