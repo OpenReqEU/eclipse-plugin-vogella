@@ -1,8 +1,8 @@
 package com.vogella.prioritizer.service;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,8 +50,8 @@ public class PrioritizerService {
 
 	public PrioritizerService() throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
-		File file = new File(classLoader.getResource("stopwords").getFile());
-		stopWordSet = WordlistLoader.getWordSet(new FileReader(file));
+		InputStream stopWordsStream = classLoader.getResource("stopwords").openStream();
+		stopWordSet = WordlistLoader.getWordSet(new InputStreamReader(stopWordsStream));
 	}
 
 	public Flux<Bug> getMostDiscussedBugsOfTheMonth(List<String> product, List<String> component) {
@@ -63,11 +63,13 @@ public class PrioritizerService {
 		return bugs.sort((b1, b2) -> Integer.compare(b2.getComments().size(), b1.getComments().size()));
 	}
 
-	public Flux<PriorityBug> findSuitableBugs(String assignee, List<String> product, List<String> component, int limit) {
+	public Flux<PriorityBug> findSuitableBugs(String assignee, List<String> product, List<String> component,
+			int limit) {
 
 		Instant oneYearAgo = LocalDateTime.now().minusYears(2).toInstant(ZoneOffset.UTC);
 		// TODO store latest bugs as prioritizer bugs in the db
-		Flux<Bug> newBugs = issueApi.getBugs(null, limit, product, component, "NEW", null, Date.from(oneYearAgo), false);
+		Flux<Bug> newBugs = issueApi.getBugs(null, limit, product, component, "NEW", null, Date.from(oneYearAgo),
+				false);
 
 		Mono<List<String>> keywords = getKeywords(assignee, null, null, limit);
 
@@ -118,8 +120,8 @@ public class PrioritizerService {
 		}).collectList();
 	}
 
-	public Mono<byte[]> getKeywordImage(String assignee, int width, int height, List<String> product, List<String> component,
-			int limit) {
+	public Mono<byte[]> getKeywordImage(String assignee, int width, int height, List<String> product,
+			List<String> component, int limit) {
 		Mono<List<String>> keywordFlux = getKeywords(assignee, product, component, limit);
 
 		return keywordFlux.map(keywords -> {
