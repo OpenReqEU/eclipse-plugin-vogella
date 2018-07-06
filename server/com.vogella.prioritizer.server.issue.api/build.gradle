@@ -14,7 +14,7 @@ dependencyManagement {
 }
 
 jar {
-	baseName = 'com.vogella.prioritizer.server.bugzilla'
+	baseName = 'com.vogella.prioritizer.server.issue.api'
 	version = '0.1.0'
 }
 
