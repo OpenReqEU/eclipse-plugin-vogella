@@ -147,6 +147,16 @@ In the Eclipse IDE you can install the Prioritzer plug-in and visualize the bugs
 
 image::img/Prioritizer-View.png[]
 
+The tracing plug-ins can also trace the usage of shortcuts in the IDE and give feedback about that by providing it as tip of the day.
+
+For a single command:
+
+image::tip-of-the-day-refresh-sample.png[] 
+
+Or as table for several commands:
+
+image::tip-of-the-day-stats.png[] 
+
 === What's next?
 
 Further statistics will be provided.
