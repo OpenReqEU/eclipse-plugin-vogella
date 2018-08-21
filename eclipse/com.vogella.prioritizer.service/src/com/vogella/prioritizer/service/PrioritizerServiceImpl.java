@@ -27,7 +27,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 				.connectTimeout(3, TimeUnit.MINUTES).addInterceptor(new HttpLoggingInterceptor().setLevel(Level.BODY))
 				.build();
 
-		Retrofit retrofit = new Retrofit.Builder().baseUrl("http://78.47.88.29:9002/").client(httpClient)
+		Retrofit retrofit = new Retrofit.Builder().baseUrl("http://217.172.12.199:9002/").client(httpClient)
 				.addConverterFactory(JacksonConverterFactory.create())
 				.addCallAdapterFactory(ReactorCallAdapterFactory.create()).build();
 		prioritizerApi = retrofit.create(PrioritizerApi.class);
