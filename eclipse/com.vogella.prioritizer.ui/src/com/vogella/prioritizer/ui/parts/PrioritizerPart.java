@@ -153,20 +153,20 @@ public class PrioritizerPart {
 		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
 		eventLayer.setConfigLabelAccumulator(columnLabelAccumulator);
 
-		SelectionLayer selectionLayer = new SelectionLayer(columnReorderLayer, false);
-		selectionLayer.setSelectionModel(
-				new RowSelectionModel<>(selectionLayer, dataProvider, new IRowIdAccessor<RankedBug>() {
+//		SelectionLayer selectionLayer = new SelectionLayer(columnReorderLayer, false);
+//		selectionLayer.setSelectionModel(
+//				new RowSelectionModel<>(selectionLayer, dataProvider, new IRowIdAccessor<RankedBug>() {
+//
+//					@Override
+//					public Serializable getRowId(RankedBug rowObject) {
+//						return rowObject.getId();
+//					}
+//
+//				}));
+//
+//		selectionLayer.addConfiguration(new DefaultRowSelectionLayerConfiguration());
 
-					@Override
-					public Serializable getRowId(RankedBug rowObject) {
-						return rowObject.getId();
-					}
-
-				}));
-
-		selectionLayer.addConfiguration(new DefaultRowSelectionLayerConfiguration());
-
-		ViewportLayer viewportLayer = new ViewportLayer(selectionLayer);
+		ViewportLayer viewportLayer = new ViewportLayer(columnReorderLayer);
 
 		IDataProvider headerDataProvider = new RankedBugHeaderDataProvider();
 		DataLayer headerDataLayer = new DataLayer(headerDataProvider);
