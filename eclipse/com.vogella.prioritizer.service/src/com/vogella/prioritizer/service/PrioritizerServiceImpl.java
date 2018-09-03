@@ -3,8 +3,13 @@ package com.vogella.prioritizer.service;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.equinox.app.IApplicationContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 import com.jakewharton.retrofit2.adapter.reactor.ReactorCallAdapterFactory;
 import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.model.RankedBug;
@@ -21,13 +26,42 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class PrioritizerServiceImpl implements PrioritizerService {
 
 	private PrioritizerApi prioritizerApi;
+	private String[] args;
 
-	public PrioritizerServiceImpl() {
+	@Reference
+	void args(IApplicationContext context) {
+        args = (String[])context.getArguments().get("application.args");
+	}
+
+	void unargs(IApplicationContext context) {
+		args = null;
+	}
+	
+	public class ServerSettings {
+		@Parameter(names = "-serverUrl", description = "Specify a custom server url for the prioritizer")
+		private String serverUrl = "http://129.27.202.66:9002/";
+
+		public String getServerUrl() {
+			return serverUrl;
+		}
+
+		public void setServerUrl(String serverUrl) {
+			this.serverUrl = serverUrl;
+		}
+	}
+
+	@Activate
+	public void createPrioritizerApi() {
+		ServerSettings serverSettings = new ServerSettings();
+		JCommander.newBuilder().acceptUnknownOptions(true).addObject(serverSettings).build().parse(args);
+		
 		final OkHttpClient httpClient = new OkHttpClient.Builder().readTimeout(3, TimeUnit.MINUTES)
 				.connectTimeout(3, TimeUnit.MINUTES).addInterceptor(new HttpLoggingInterceptor().setLevel(Level.BODY))
 				.build();
+		
+		String serverUrl = serverSettings.getServerUrl();
 
-		Retrofit retrofit = new Retrofit.Builder().baseUrl("http://217.172.12.199:9002/").client(httpClient)
+		Retrofit retrofit = new Retrofit.Builder().baseUrl(serverUrl).client(httpClient)
 				.addConverterFactory(JacksonConverterFactory.create())
 				.addCallAdapterFactory(ReactorCallAdapterFactory.create()).build();
 		prioritizerApi = retrofit.create(PrioritizerApi.class);

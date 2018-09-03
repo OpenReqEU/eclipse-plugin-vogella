@@ -15,7 +15,9 @@ Require-Bundle: com.squareup.retrofit2.retrofit;bundle-version="2.3.0",
  com.jakewharton.retrofit.2-reactor-adapter;bundle-version="2.1.0",
  io.projectreactor.reactor-core;bundle-version="3.1.4",
  org.reactivestreams.reactive-streams;bundle-version="1.0.2",
- com.squareup.okhttp3.logging-interceptor;bundle-version="3.10.0"
+ com.squareup.okhttp3.logging-interceptor;bundle-version="3.10.0",
+ org.eclipse.equinox.app,
+ jcommander
 Service-Component: OSGI-INF/com.vogella.prioritizer.service.PrioritizerServiceImpl.xml
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: com.vogella.prioritizer.service
