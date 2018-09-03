@@ -275,7 +275,7 @@ public class PrioritizerPart {
 					natTable.refresh(true);
 				}, err -> {
 					LOG.error(err.getMessage(), err);
-					MessageDialog.openError(mainComposite.getShell(), "Error", err.getMessage());
+//					MessageDialog.openError(mainComposite.getShell(), "Error", err.getMessage());
 				}));
 	}
 
@@ -369,7 +369,8 @@ public class PrioritizerPart {
 					});
 					browser.setUrl(url);
 				}, err -> {
-					MessageDialog.openError(settingsComposite.getShell(), "Error", err.getMessage());
+					LOG.error(err.getMessage(), err);
+//					MessageDialog.openError(settingsComposite.getShell(), "Error", err.getMessage());
 				}));
 	}
 
