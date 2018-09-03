@@ -50,7 +50,7 @@ public class ShortcutTip extends Tip implements IHtmlTip {
 		if (null == shortcut) {
 			Bundle bundle = FrameworkUtil.getBundle(getClass());
 			try {
-				TipAction reportBugTipAction = new TipAction("Report Bug", "Create a bug report in InnoSensr.",
+				TipAction reportBugTipAction = new TipAction("Report Bug", "Create a bug report in OpenReq Live",
 						() -> uiSync.asyncExec(this::reportBug),
 						new TipImage(bundle.getEntry("icons/16/innosensr-logo.png")));
 				getActions().add(reportBugTipAction);
@@ -65,8 +65,8 @@ public class ShortcutTip extends Tip implements IHtmlTip {
 		reportModel.setTitle("No default shortcut for the " + commandName + " command.");
 		reportModel.setDescription("The " + commandName + " should have a default shortcut");
 		Shell shell = Display.getDefault().getActiveShell();
-		ReportDialog reportDialog = new ReportDialog(shell, reportModel, "Report bug in InnoSensr",
-				"Open a new issue in InnoSensr.");
+		ReportDialog reportDialog = new ReportDialog(shell, reportModel, "Report bug in OpenReq Live",
+				"Open a new issue in OpenReq Live");
 		if (Window.OK == reportDialog.open()) {
 			LOG.debug("Sending bug report to InnoSensr.");
 			innoSensrService.createRequirement("bLMk11Jc", reportModel.getTitle(), reportModel.getDescription(),

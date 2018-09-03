@@ -50,7 +50,7 @@ public class CommandInvocationShortCutTip extends Tip implements ISwtTip {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
 		try {
 			TipImage tipImage = new TipImage(bundle.getEntry("icons/16/innosensr-logo.png"));
-			TipAction reportBugTipAction = new TipAction("Report Bug", "Create a bug report in InnoSensr.",
+			TipAction reportBugTipAction = new TipAction("Report Bug", "Create a bug report in OpenReq Live",
 					() -> uiSync.asyncExec(this::reportBug), tipImage);
 			getActions().add(reportBugTipAction);
 		} catch (IOException e) {
