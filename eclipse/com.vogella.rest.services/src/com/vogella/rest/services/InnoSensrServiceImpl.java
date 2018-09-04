@@ -25,7 +25,7 @@ public class InnoSensrServiceImpl implements InnoSensrService {
 				.connectTimeout(2, TimeUnit.MINUTES).addInterceptor(new HttpLoggingInterceptor().setLevel(Level.BODY))
 				.build();
 
-		Retrofit retrofit = new Retrofit.Builder().baseUrl("http://innosensr.com/").client(httpClient)
+		Retrofit retrofit = new Retrofit.Builder().baseUrl("http://openreq.ist.tugraz.at:9001").client(httpClient)
 				.addConverterFactory(JacksonConverterFactory.create())
 				.addCallAdapterFactory(ReactorCallAdapterFactory.create()).build();
 		innoSensrApi = retrofit.create(InnoSensrApi.class);

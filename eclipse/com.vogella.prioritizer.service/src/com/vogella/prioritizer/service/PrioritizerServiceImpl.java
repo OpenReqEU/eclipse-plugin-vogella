@@ -30,16 +30,16 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 
 	@Reference
 	void args(IApplicationContext context) {
-        args = (String[])context.getArguments().get("application.args");
+		args = (String[]) context.getArguments().get("application.args");
 	}
 
 	void unargs(IApplicationContext context) {
 		args = null;
 	}
-	
+
 	public class ServerSettings {
 		@Parameter(names = "-serverUrl", description = "Specify a custom server url for the prioritizer")
-		private String serverUrl = "http://129.27.202.66:9002/";
+		private String serverUrl = "http://129.27.202.66:9001/";
 
 		public String getServerUrl() {
 			return serverUrl;
@@ -54,11 +54,11 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	public void createPrioritizerApi() {
 		ServerSettings serverSettings = new ServerSettings();
 		JCommander.newBuilder().acceptUnknownOptions(true).addObject(serverSettings).build().parse(args);
-		
+
 		final OkHttpClient httpClient = new OkHttpClient.Builder().readTimeout(3, TimeUnit.MINUTES)
 				.connectTimeout(3, TimeUnit.MINUTES).addInterceptor(new HttpLoggingInterceptor().setLevel(Level.BODY))
 				.build();
-		
+
 		String serverUrl = serverSettings.getServerUrl();
 
 		Retrofit retrofit = new Retrofit.Builder().baseUrl(serverUrl).client(httpClient)
@@ -89,7 +89,6 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 		bugzillaRequest.setProducts(product);
 		bugzillaRequest.setComponents(component);
 		// TODO replace is a current workaround for port problems
-		return prioritizerApi.getKeyWordUrl(bugzillaRequest)
-				.map(kwur -> kwur.getUrl().replace("openreq.ist.tugraz.at", "78.47.88.29"));
+		return prioritizerApi.getKeyWordUrl(bugzillaRequest).map(kwur -> kwur.getUrl());
 	}
 }
