@@ -39,7 +39,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 
 	public class ServerSettings {
 		@Parameter(names = "-serverUrl", description = "Specify a custom server url for the prioritizer")
-		private String serverUrl = "http://129.27.202.66:9002/";
+		private String serverUrl = "http://217.172.12.199:9002/";
 
 		public String getServerUrl() {
 			return serverUrl;
