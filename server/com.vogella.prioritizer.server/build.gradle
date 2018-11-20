@@ -22,30 +22,14 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compile('org.springframework.boot:spring-boot-starter-data-rest')
-	compile('org.springframework.data:spring-data-rest-hal-browser')
-	compile('org.springframework.boot:spring-boot-starter-hateoas')
-	compile('org.springframework.boot:spring-boot-starter-mail')
-	// compile('org.springframework.boot:spring-boot-starter-security')
-	compile('org.springframework.boot:spring-boot-starter-web')
+	implementation('org.springframework.boot:spring-boot-starter-actuator')
+	implementation('org.springframework.boot:spring-boot-starter-security')
+	implementation('org.springframework.boot:spring-boot-starter-webflux')
 	runtime('mysql:mysql-connector-java')
 	compileOnly('org.projectlombok:lombok')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
-	// testCompile('org.springframework.security:spring-security-test')
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testImplementation('org.springframework.security:spring-security-test')
 	
-	compile('io.reactivex.rxjava2:rxjava:2.1.9')
-	compile('com.squareup.retrofit2:retrofit:2.3.0')
-	compile('com.squareup.retrofit2:adapter-rxjava2:2.3.0')
-	compile('com.squareup.retrofit2:converter-jackson:2.3.0')
-
-	compile('org.json:json:20180130')
-	
-	compile('org.knowm.xchart:xchart:3.5.0')
-	
-	compile('org.apache.lucene:lucene-analyzers-common:7.2.1')
-	
-	compile project (':com.vogella.prioritizer.server.bugzilla')
-	compile project (':com.vogella.prioritizer.server.issue.api')
+	implementation project (':com.vogella.prioritizer.server.bugzilla')
+	implementation project (':com.vogella.prioritizer.server.issue.api')
 }
