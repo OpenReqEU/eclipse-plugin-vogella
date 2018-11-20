@@ -1,4 +1,4 @@
-rootProject.name = 'openreq-prioritizer-server'
+rootProject.name = 'openreq-eclipse-plugin-server'
 
 include 'com.vogella.prioritizer.server.issue.api'
 include 'com.vogella.prioritizer.server.bugzilla'
