@@ -1,37 +1,18 @@
 package com.vogella.tracing.ui.tips;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.core.commands.ECommandService;
-import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.ui.bindings.EBindingService;
-import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.tips.core.Tip;
 import org.eclipse.tips.core.TipImage;
 import org.eclipse.tips.core.TipProvider;
-import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
-
-import com.vogella.services.InnoSensrService;
-import com.vogella.tips.ShortcutTip;
-import com.vogella.tracing.ui.domain.CommandStats;
-
-import io.micrometer.core.instrument.Meter;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 @SuppressWarnings("restriction")
 public class CommandTracingTipProvider extends TipProvider {
@@ -65,46 +46,46 @@ public class CommandTracingTipProvider extends TipProvider {
 	@Override
 	public IStatus loadNewTips(IProgressMonitor monitor) {
 
-		ECommandService commandService = PlatformUI.getWorkbench().getService(ECommandService.class);
-		EHandlerService handlerService = PlatformUI.getWorkbench().getService(EHandlerService.class);
-		UISynchronize uiSync = PlatformUI.getWorkbench().getService(UISynchronize.class);
-		InnoSensrService innoSensrService = PlatformUI.getWorkbench().getService(InnoSensrService.class);
-
-		ArrayList<Tip> tips = new ArrayList<>();
-		tips.add(new CommandInvocationShortCutTip(getID(), innoSensrService, uiSync));
-
-		MeterRegistry meterRegistry = PlatformUI.getWorkbench().getService(MeterRegistry.class);
-		EBindingService bindingService = PlatformUI.getWorkbench().getService(EBindingService.class);
-		List<Meter> meters = meterRegistry.getMeters();
-		if (meterRegistry instanceof CompositeMeterRegistry) {
-			Set<MeterRegistry> registries = ((CompositeMeterRegistry) meterRegistry).getRegistries();
-			java.util.Optional<MeterRegistry> findAny = registries.stream()
-					.filter(SimpleMeterRegistry.class::isInstance).findAny();
-			if (findAny.isPresent()) {
-				meters = findAny.get().getMeters();
-			}
-		}
-		List<CommandStats> list = meters.stream()
-				.filter(meter -> "command.calls.contributionitem".equals(meter.getId().getName())).flatMap(meter -> {
-					return StreamSupport.stream(meter.measure().spliterator(), false).map(measurement -> {
-						String commandId = meter.getId().getTag("commandId");
-						double invocations = measurement.getValue();
-
-						ParameterizedCommand command = commandService.createCommand(commandId, null);
-						return new CommandStats(commandId, getCommandName(command), (int) invocations,
-								getKeybinding(command, bindingService));
-					});
-				}).collect(Collectors.toList());
-
-		for (CommandStats commandStats : list) {
-			double invocations = commandStats.getInvocations();
-			if (invocations > 3) {
-				tips.add(new ShortcutTip(getID(), commandStats.getCommandName(), commandStats.getKeybinding(),
-						commandService, handlerService, uiSync, innoSensrService));
-			}
-		}
-
-		setTips(tips);
+//		ECommandService commandService = PlatformUI.getWorkbench().getService(ECommandService.class);
+//		EHandlerService handlerService = PlatformUI.getWorkbench().getService(EHandlerService.class);
+//		UISynchronize uiSync = PlatformUI.getWorkbench().getService(UISynchronize.class);
+//		InnoSensrService innoSensrService = PlatformUI.getWorkbench().getService(InnoSensrService.class);
+//
+//		ArrayList<Tip> tips = new ArrayList<>();
+//		tips.add(new CommandInvocationShortCutTip(getID(), innoSensrService, uiSync));
+//
+//		MeterRegistry meterRegistry = PlatformUI.getWorkbench().getService(MeterRegistry.class);
+//		EBindingService bindingService = PlatformUI.getWorkbench().getService(EBindingService.class);
+//		List<Meter> meters = meterRegistry.getMeters();
+//		if (meterRegistry instanceof CompositeMeterRegistry) {
+//			Set<MeterRegistry> registries = ((CompositeMeterRegistry) meterRegistry).getRegistries();
+//			java.util.Optional<MeterRegistry> findAny = registries.stream()
+//					.filter(SimpleMeterRegistry.class::isInstance).findAny();
+//			if (findAny.isPresent()) {
+//				meters = findAny.get().getMeters();
+//			}
+//		}
+//		List<CommandStats> list = meters.stream()
+//				.filter(meter -> "command.calls.contributionitem".equals(meter.getId().getName())).flatMap(meter -> {
+//					return StreamSupport.stream(meter.measure().spliterator(), false).map(measurement -> {
+//						String commandId = meter.getId().getTag("commandId");
+//						double invocations = measurement.getValue();
+//
+//						ParameterizedCommand command = commandService.createCommand(commandId, null);
+//						return new CommandStats(commandId, getCommandName(command), (int) invocations,
+//								getKeybinding(command, bindingService));
+//					});
+//				}).collect(Collectors.toList());
+//
+//		for (CommandStats commandStats : list) {
+//			double invocations = commandStats.getInvocations();
+//			if (invocations > 3) {
+//				tips.add(new ShortcutTip(getID(), commandStats.getCommandName(), commandStats.getKeybinding(),
+//						commandService, handlerService, uiSync, innoSensrService));
+//			}
+//		}
+//
+//		setTips(tips);
 
 		return Status.OK_STATUS;
 	}

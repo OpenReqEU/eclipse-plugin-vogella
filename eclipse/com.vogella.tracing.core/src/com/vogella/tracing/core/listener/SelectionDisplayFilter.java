@@ -20,10 +20,6 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.DistributionSummary;
-import io.micrometer.core.instrument.MeterRegistry;
-
 @SuppressWarnings("restriction")
 public class SelectionDisplayFilter implements Listener {
 
@@ -49,49 +45,25 @@ public class SelectionDisplayFilter implements Listener {
 		}
 	}
 
-	private MeterRegistry meterRegistry;
-
-	private Counter menuSelectionCounter;
-	private Counter toolbarSelectionCounter;
-
-	public SelectionDisplayFilter(MeterRegistry meterRegistry) {
-		this.meterRegistry = meterRegistry;
-		menuSelectionCounter = Counter.builder("selection.menu").tags("selection", "menu").register(meterRegistry);
-		toolbarSelectionCounter = Counter.builder("selection.toolbar").tags("selection", "toolbar")
-				.register(meterRegistry);
-	}
-
 	@Override
 	public void handleEvent(Event event) {
 		Widget widget = event.widget;
 
 		if (widget instanceof MenuItem) {
 			MenuItem menuItem = (MenuItem) widget;
-			menuSelectionCounter.increment();
 
 			int menuDepth = getMenuDepth(menuItem.getParent(), 0);
-			DistributionSummary menuDepthCounter = meterRegistry.summary("selection.menu", "menuText",
-					menuItem.getText());
-			menuDepthCounter.record(menuDepth);
 
 			LOG.debug(menuItem.getText() + " has a depth of " + menuDepth);
 
 			handleItemData(menuItem.getData(), CommandCallOrigin.MENU);
 		} else if (widget instanceof ToolItem) {
-			toolbarSelectionCounter.increment();
 			handleItemData(widget.getData(), CommandCallOrigin.TOOLBAR);
 		}
 	}
 
-	private void handleItemData(Object data, CommandCallOrigin origin) {
-		Optional<CommandData> commandData = getCommandData(data);
-
-		commandData.ifPresent(cmdData -> {
-			Counter counter = meterRegistry.counter("command.calls.contributionitem", "commandId", cmdData.commandId,
-					"commandName", cmdData.commandName, "origin", origin.toString(), "contributionItemType",
-					cmdData.contributionItemType.toString());
-			counter.increment();
-		});
+	private void handleItemData(Object data, CommandCallOrigin toolbar) {
+		// TODO propagate data differently
 	}
 
 	private Optional<CommandData> getCommandData(Object data) {

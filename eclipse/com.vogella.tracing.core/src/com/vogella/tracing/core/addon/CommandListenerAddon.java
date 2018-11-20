@@ -21,16 +21,10 @@ import org.slf4j.LoggerFactory;
 
 import com.vogella.tracing.core.constants.CommandListenerEvents;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-
 @SuppressWarnings("restriction")
 public class CommandListenerAddon {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CommandListenerAddon.class);
-
-	@Inject
-	private MeterRegistry meterRegistry;
 
 	private IExecutionListener executionListener;
 
@@ -43,44 +37,24 @@ public class CommandListenerAddon {
 
 			@Override
 			public void notHandled(String commandId, NotHandledException exception) {
-				// TODO create constants
-				Counter counter = meterRegistry.counter("command.calls", "commandId", commandId, "commandName",
-						getCommandName(commandManager, commandId), "result", "notHandled");
-				counter.increment();
-
 				// always fire event after metrics are done
 				broker.post(CommandListenerEvents.TOPIC_COMMAND_NOT_HANDLED, commandId);
 			}
 
 			@Override
 			public void postExecuteFailure(String commandId, ExecutionException exception) {
-				// TODO create constants
-				Counter counter = meterRegistry.counter("command.calls", "commandId", commandId, "commandName",
-						getCommandName(commandManager, commandId), "result", "failure");
-				counter.increment();
-
 				// always fire event after metrics are done
 				broker.post(CommandListenerEvents.TOPIC_COMMAND_EXECUTE_FAILURE, commandId);
 			}
 
 			@Override
 			public void postExecuteSuccess(String commandId, Object returnValue) {
-				// TODO create constants
-				Counter counter = meterRegistry.counter("command.calls", "commandId", commandId, "commandName",
-						getCommandName(commandManager, commandId), "result", "success");
-				counter.increment();
-
 				// always fire event after metrics are done
 				broker.post(CommandListenerEvents.TOPIC_COMMAND_POST_EXECUTE_SUCCESS, commandId);
 			}
 
 			@Override
 			public void preExecute(String commandId, ExecutionEvent event) {
-				// TODO create constants
-				Counter counter = meterRegistry.counter("command.calls", "commandId", commandId, "commandName",
-						getCommandName(commandManager, commandId), "result", "pre");
-				counter.increment();
-
 				// always fire event after metrics are done
 				broker.post(CommandListenerEvents.TOPIC_COMMAND_PRE_EXECUTE, commandId);
 			}

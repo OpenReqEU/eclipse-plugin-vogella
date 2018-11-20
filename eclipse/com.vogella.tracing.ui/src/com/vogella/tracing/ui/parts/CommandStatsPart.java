@@ -2,9 +2,6 @@
 package com.vogella.tracing.ui.parts;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -46,18 +43,11 @@ import com.vogella.tracing.ui.nattable.CommandStatsHeaderDataProvider;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.SortedList;
-import io.micrometer.core.instrument.Meter;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 @SuppressWarnings("restriction")
 public class CommandStatsPart {
 
 	public static final String COMMAND_STATS_SELECTION = "CommandStatsSelection";
-
-	@Inject
-	private MeterRegistry meterRegistry;
 
 	@Inject
 	private EBindingService bindingService;
@@ -128,29 +118,29 @@ public class CommandStatsPart {
 	@Inject
 	@Optional
 	public void refreshCommandStats(@UIEventTopic(CommandListenerEvents.TOPIC_COMMAND_PRE_EXECUTE) String commandId) {
-		List<Meter> meters = meterRegistry.getMeters();
-		if (meterRegistry instanceof CompositeMeterRegistry) {
-			Set<MeterRegistry> registries = ((CompositeMeterRegistry) meterRegistry).getRegistries();
-			java.util.Optional<MeterRegistry> findAny = registries.stream()
-					.filter(SimpleMeterRegistry.class::isInstance).findAny();
-			if (findAny.isPresent()) {
-				meters = findAny.get().getMeters();
-			}
-		}
-		List<CommandStats> list = meters.stream()
-				.filter(meter -> "command.calls.contributionitem".equals(meter.getId().getName())).flatMap(meter -> {
-					return StreamSupport.stream(meter.measure().spliterator(), false).map(measurement -> {
-						String cmdId = meter.getId().getTag("commandId");
-						double invocations = measurement.getValue();
-
-						ParameterizedCommand command = commandService.createCommand(cmdId, null);
-						return new CommandStats(cmdId, getCommandName(command), (int) invocations, getKeybinding(command));
-					});
-				}).collect(Collectors.toList());
-
-		sortedList.clear();
-		sortedList.addAll(list);
-		natTable.refresh();
+//		List<Meter> meters = meterRegistry.getMeters();
+//		if (meterRegistry instanceof CompositeMeterRegistry) {
+//			Set<MeterRegistry> registries = ((CompositeMeterRegistry) meterRegistry).getRegistries();
+//			java.util.Optional<MeterRegistry> findAny = registries.stream()
+//					.filter(SimpleMeterRegistry.class::isInstance).findAny();
+//			if (findAny.isPresent()) {
+//				meters = findAny.get().getMeters();
+//			}
+//		}
+//		List<CommandStats> list = meters.stream()
+//				.filter(meter -> "command.calls.contributionitem".equals(meter.getId().getName())).flatMap(meter -> {
+//					return StreamSupport.stream(meter.measure().spliterator(), false).map(measurement -> {
+//						String cmdId = meter.getId().getTag("commandId");
+//						double invocations = measurement.getValue();
+//
+//						ParameterizedCommand command = commandService.createCommand(cmdId, null);
+//						return new CommandStats(cmdId, getCommandName(command), (int) invocations, getKeybinding(command));
+//					});
+//				}).collect(Collectors.toList());
+//
+//		sortedList.clear();
+//		sortedList.addAll(list);
+//		natTable.refresh();
 	}
 
 	private String getKeybinding(ParameterizedCommand command) {
