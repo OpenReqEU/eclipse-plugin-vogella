@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.eclipse.nebula.widgets.nattable.data.IColumnPropertyAccessor;
 
-import com.vogella.tracing.ui.domain.CommandStats;
+import com.vogella.common.core.domain.CommandStats;
 
 public class CommandStatsColumnPropertyAccessor implements IColumnPropertyAccessor<CommandStats> {
 

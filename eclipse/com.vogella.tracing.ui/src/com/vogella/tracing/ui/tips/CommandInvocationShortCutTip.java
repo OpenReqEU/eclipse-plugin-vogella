@@ -29,11 +29,11 @@ import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vogella.common.core.domain.CommandStats;
 import com.vogella.common.ui.dialog.ReportDialog;
 import com.vogella.common.ui.dialog.ReportModel;
 import com.vogella.services.InnoSensrService;
 import com.vogella.services.InnoSensrStatus;
-import com.vogella.tracing.ui.domain.CommandStats;
 import com.vogella.tracing.ui.parts.CommandStatsPart;
 
 import reactor.core.scheduler.Schedulers;

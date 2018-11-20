@@ -1,4 +1,4 @@
-package com.vogella.tracing.ui.domain;
+package com.vogella.common.core.domain;
 
 public class CommandStats {
 	

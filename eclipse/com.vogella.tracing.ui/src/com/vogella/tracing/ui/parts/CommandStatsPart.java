@@ -6,14 +6,9 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
@@ -36,13 +31,16 @@ import org.eclipse.nebula.widgets.nattable.sort.config.SingleClickSortConfigurat
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Composite;
 
+import com.vogella.common.core.domain.CommandStats;
+import com.vogella.common.core.service.CommandStatsPersistenceService;
 import com.vogella.tracing.core.constants.CommandListenerEvents;
-import com.vogella.tracing.ui.domain.CommandStats;
 import com.vogella.tracing.ui.nattable.CommandStatsColumnPropertyAccessor;
 import com.vogella.tracing.ui.nattable.CommandStatsHeaderDataProvider;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.SortedList;
+import reactor.core.publisher.Flux;
+import reactor.swing.SwtScheduler;
 
 @SuppressWarnings("restriction")
 public class CommandStatsPart {
@@ -50,10 +48,7 @@ public class CommandStatsPart {
 	public static final String COMMAND_STATS_SELECTION = "CommandStatsSelection";
 
 	@Inject
-	private EBindingService bindingService;
-
-	@Inject
-	private ECommandService commandService;
+	private CommandStatsPersistenceService commandStatsPersistenceService;
 
 	private NatTable natTable;
 
@@ -118,46 +113,12 @@ public class CommandStatsPart {
 	@Inject
 	@Optional
 	public void refreshCommandStats(@UIEventTopic(CommandListenerEvents.TOPIC_COMMAND_PRE_EXECUTE) String commandId) {
-//		List<Meter> meters = meterRegistry.getMeters();
-//		if (meterRegistry instanceof CompositeMeterRegistry) {
-//			Set<MeterRegistry> registries = ((CompositeMeterRegistry) meterRegistry).getRegistries();
-//			java.util.Optional<MeterRegistry> findAny = registries.stream()
-//					.filter(SimpleMeterRegistry.class::isInstance).findAny();
-//			if (findAny.isPresent()) {
-//				meters = findAny.get().getMeters();
-//			}
-//		}
-//		List<CommandStats> list = meters.stream()
-//				.filter(meter -> "command.calls.contributionitem".equals(meter.getId().getName())).flatMap(meter -> {
-//					return StreamSupport.stream(meter.measure().spliterator(), false).map(measurement -> {
-//						String cmdId = meter.getId().getTag("commandId");
-//						double invocations = measurement.getValue();
-//
-//						ParameterizedCommand command = commandService.createCommand(cmdId, null);
-//						return new CommandStats(cmdId, getCommandName(command), (int) invocations, getKeybinding(command));
-//					});
-//				}).collect(Collectors.toList());
-//
-//		sortedList.clear();
-//		sortedList.addAll(list);
-//		natTable.refresh();
-	}
+		Flux<CommandStats> flux = commandStatsPersistenceService.get();
+		sortedList.clear();
+		flux.subscribeOn(SwtScheduler.from(natTable.getDisplay())).subscribe(cmdStats -> {
+			sortedList.add(cmdStats);
+			natTable.refresh();
+		});
 
-	private String getKeybinding(ParameterizedCommand command) {
-		TriggerSequence bestSequenceFor = bindingService.getBestSequenceFor(command);
-		if (bestSequenceFor != null) {
-			return bestSequenceFor.format();
-		}
-		// TODO create converter for nattable and remove this constant
-		return CommandStats.NO_KEYBINDING_DEFINED;
-	}
-
-	private String getCommandName(ParameterizedCommand command) {
-		try {
-			return command.getName();
-		} catch (NotDefinedException e) {
-			// unlikely to happen
-			return "Command does not have a name";
-		}
 	}
 }
