@@ -39,7 +39,11 @@ To install the Eclipse Plugin into the Eclipse IDE the following packages have t
 * All features from the NatTable Update Site - http://download.eclipse.org/nattable/releases/1.5.0/repository/
 * All features from the vogella OpenReq 3rd party dependencies - https://dl.bintray.com/vogellacompany/OpenReq-Eclipse/
 
-Since the actual Eclipse plugin has not been released yet the update site has to be generated like this:
+The p2 update site can be found here: http://217.172.12.199/eclipse
+
+[NOTE]
+====
+You can also generate a p2 update site by cloning this repo and running the following command:
 
 [source, console]
 ----
@@ -54,6 +58,7 @@ image::img/local_update_site.png[]
 Just press on the btn:[Local] and point to the update site folder.
 
 This will list the required features, which have to be installed.
+====
 
 [[Eclise-Plugin-Running-From-IDE]]
 === Running the Eclipse Plugin from the IDE
