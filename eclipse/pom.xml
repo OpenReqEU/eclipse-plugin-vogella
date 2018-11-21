@@ -21,7 +21,10 @@
 
 		<module>com.vogella.tips</module>
 
+		<module>com.vogella.common.core</module>
 		<module>com.vogella.common.ui</module>
+		
+		<module>com.vogella.localpersistence</module>
 
 		<module>com.vogella.prioritizer.core</module>
 		<module>com.vogella.prioritizer.ui</module>
@@ -29,7 +32,6 @@
 		<module>com.vogella.prioritizer.service.browser</module>
 
 		<module>com.vogella.tracing.core</module>
-		<module>com.vogella.tracing.meterregistry</module>
 		<module>com.vogella.tracing.ui</module>
 		<module>com.vogella.tracing.datalog</module>
 
