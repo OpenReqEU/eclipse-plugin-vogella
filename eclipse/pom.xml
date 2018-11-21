@@ -37,6 +37,7 @@
 
 		<module>com.vogella.prioritizer.feature</module>
 		<module>com.vogella.tracing.feature</module>
+		<module>logging.feature</module>
 
 		<module>update-site</module>
 	</modules>
