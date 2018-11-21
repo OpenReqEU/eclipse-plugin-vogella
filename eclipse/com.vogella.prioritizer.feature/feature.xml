@@ -45,6 +45,10 @@
          id="org.eclipse.nebula.widgets.nattable.extension.nebula.feature"
          version="0.0.0"/>
 
+   <includes
+         id="jcommander"
+         version="0.0.0"/>
+
    <plugin
          id="com.vogella.prioritizer.core"
          download-size="0"
