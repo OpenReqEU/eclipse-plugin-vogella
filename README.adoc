@@ -27,19 +27,18 @@ This can also be run from the IDE by using the Eclipse Buildship 2.x tooling (ht
 
 === Installing the Eclipse Plugin
 
+A p2 update site can be found here: http://217.172.12.199/eclipse
+
+This p2 update site can be entered in the following dialog by clicking menu:Help[Install New Software...].
+
+image::img/install-eclipse-plugins.png[]
+
 [TIP]
 ====
 Since the Eclipse plug-in is under active development you should consider starting it from the Eclipse IDE.
 
 See <<Eclise-Plugin-Running-From-IDE>>.
 ====
-
-To install the Eclipse Plugin into the Eclipse IDE the following packages have to be installed:
-
-* All features from the NatTable Update Site - http://download.eclipse.org/nattable/releases/1.5.0/repository/
-* All features from the vogella OpenReq 3rd party dependencies - https://dl.bintray.com/vogellacompany/OpenReq-Eclipse/
-
-The p2 update site can be found here: http://217.172.12.199/eclipse
 
 [NOTE]
 ====
