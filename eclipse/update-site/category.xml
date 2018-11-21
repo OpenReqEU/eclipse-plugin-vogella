@@ -27,6 +27,9 @@
    <feature url="features/org.eclipse.nebula.widgets.nattable.extension.nebula.feature_1.1.0.201703192131.jar" id="org.eclipse.nebula.widgets.nattable.extension.nebula.feature" version="1.1.0.201703192131">
       <category name="dependencies"/>
    </feature>
+   <feature url="features/logging.feature_1.0.0.qualifier.jar" id="logging.feature" version="1.0.0.qualifier">
+      <category name="dependencies"/>
+   </feature>
    <category-def name="Prioritizer" label="Prioritizer"/>
    <category-def name="Tracing" label="Tracing"/>
    <category-def name="dependencies" label="Dependencies"/>
