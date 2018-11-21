@@ -4,27 +4,21 @@ package com.vogella.tracing.core.addon;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
-import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.osgi.service.event.Event;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vogella.tracing.core.constants.CommandListenerEvents;
 
 @SuppressWarnings("restriction")
 public class CommandListenerAddon {
-
-	private static final Logger LOG = LoggerFactory.getLogger(CommandListenerAddon.class);
 
 	private IExecutionListener executionListener;
 
@@ -68,16 +62,4 @@ public class CommandListenerAddon {
 	public void dispose(CommandManager commandManager) {
 		commandManager.removeExecutionListener(executionListener);
 	}
-
-	private String getCommandName(CommandManager commandManager, String commandId) {
-		Command command = commandManager.getCommand(commandId);
-		try {
-			return command.getName();
-		} catch (NotDefinedException e) {
-			// should not happen in this listener
-			LOG.error(e.getMessage(), e);
-		}
-		return "No command name";
-	}
-
 }
