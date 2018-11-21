@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.vogella.prioritizer.feature"
-      label="Feature"
+      label="Prioritizer"
       version="1.0.100.qualifier"
       provider-name="VOGELLA">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+      Recommendations for Eclipse Contributors concerning bugs
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -16,6 +16,18 @@
    <license url="http://www.example.com/license">
       [Enter License Description here.]
    </license>
+
+   <includes
+         id="Project-Reactor"
+         version="0.0.0"/>
+
+   <includes
+         id="Retrofit"
+         version="0.0.0"/>
+
+   <includes
+         id="logback-classic"
+         version="0.0.0"/>
 
    <plugin
          id="com.vogella.prioritizer.core"
