@@ -6,6 +6,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem;
@@ -33,6 +34,7 @@ public class SelectionDisplayFilter implements Listener {
 	private CommandStatsPersistenceService commandStatsPersistenceService;
 	private ECommandService commandService;
 	private EBindingService bindingService;
+	private MApplication app;
 
 	private enum CommandCallOrigin {
 		MENU, TOOLBAR
@@ -54,11 +56,12 @@ public class SelectionDisplayFilter implements Listener {
 		}
 	}
 
-	public SelectionDisplayFilter(CommandStatsPersistenceService commandStatsPersistenceService, ECommandService commandService,
-			EBindingService bindingService) {
+	public SelectionDisplayFilter(CommandStatsPersistenceService commandStatsPersistenceService,
+			ECommandService commandService, EBindingService bindingService, MApplication app) {
 		this.commandStatsPersistenceService = commandStatsPersistenceService;
 		this.commandService = commandService;
 		this.bindingService = bindingService;
+		this.app = app;
 	}
 
 	@Override
@@ -83,19 +86,19 @@ public class SelectionDisplayFilter implements Listener {
 
 		commandData.ifPresent(cmdData -> {
 			Optional<CommandStats> optional = commandStatsPersistenceService.get(cmdData.commandId);
-			
-			if(optional.isPresent()) {
+
+			if (optional.isPresent()) {
 				optional.get().incrementInvocations();
 			} else {
 				CommandStats commandStats = new CommandStats();
 				commandStats.setCommandId(cmdData.commandId);
 				commandStats.setCommandName(cmdData.commandName);
-				
+
 				setKeyBinding(cmdData, commandStats);
-				
+
 				commandStats.setMenuDepth(menuDepth);
 				commandStats.setInvocations(1);
-				
+
 				commandStatsPersistenceService.save(commandStats);
 			}
 		});
@@ -114,17 +117,14 @@ public class SelectionDisplayFilter implements Listener {
 	private Optional<CommandData> getCommandData(Object data) {
 		if (data instanceof CommandContributionItem) {
 			ParameterizedCommand command = ((CommandContributionItem) data).getCommand();
-			try {
-				CommandData commandData = new CommandData(command.getId(), command.getName(),
-						ContributionItemType.CommandContributionItem);
-				return Optional.of(commandData);
-			} catch (NotDefinedException e) {
-				LOG.error(e.getMessage(), e);
-			}
+			MCommand mCommand = app.getCommand(command.getId());
+			CommandData commandData = new CommandData(command.getId(), mCommand.getLocalizedCommandName(),
+					ContributionItemType.CommandContributionItem);
+			return Optional.of(commandData);
 		} else if (data instanceof HandledContributionItem) {
 			MHandledItem model = ((HandledContributionItem) data).getModel();
 			MCommand command = model.getCommand();
-			CommandData commandData = new CommandData(command.getElementId(), command.getCommandName(),
+			CommandData commandData = new CommandData(command.getElementId(), command.getLocalizedCommandName(),
 					ContributionItemType.HandledContributionItem);
 			return Optional.of(commandData);
 		} else if (data instanceof ActionContributionItem) {

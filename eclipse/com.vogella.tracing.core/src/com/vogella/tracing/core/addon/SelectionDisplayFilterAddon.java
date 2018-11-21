@@ -3,13 +3,13 @@ package com.vogella.tracing.core.addon;
 
 import java.io.IOException;
 
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -30,18 +30,20 @@ public class SelectionDisplayFilterAddon {
 	private CommandStatsPersistenceService persistenceService;
 	private ECommandService commandService;
 	private EBindingService bindingService;
+	private MApplication app;
 
 	@Inject
 	public SelectionDisplayFilterAddon(ECommandService commandService, EBindingService bindingService,
-			CommandStatsPersistenceService persistenceService) {
+			CommandStatsPersistenceService persistenceService, MApplication app) {
 		this.commandService = commandService;
 		this.bindingService = bindingService;
 		this.persistenceService = persistenceService;
+		this.app = app;
 	}
 
 	@Inject
 	public void initSelectionDisplayFilter(Display display) {
-		selectionListener = new SelectionDisplayFilter(persistenceService, commandService, bindingService);
+		selectionListener = new SelectionDisplayFilter(persistenceService, commandService, bindingService, app);
 		display.addFilter(SWT.Selection, selectionListener);
 	}
 

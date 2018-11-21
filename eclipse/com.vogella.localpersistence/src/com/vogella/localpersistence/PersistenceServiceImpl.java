@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,7 +47,11 @@ public class PersistenceServiceImpl implements CommandStatsPersistenceService {
 
 		try (JsonReader reader = new JsonReader(new FileReader(COMMANDSTATS_HOME))) {
 			List<CommandStats> fromJson = gson.fromJson(reader, REVIEW_TYPE);
-			commandStats = fromJson.stream().collect(Collectors.toMap(CommandStats::getCommandId, Function.identity()));
+			if(fromJson != null) {
+				commandStats = fromJson.stream().collect(Collectors.toMap(CommandStats::getCommandId, Function.identity()));
+			} else {
+				commandStats = new HashMap<>();
+			}
 		} catch (IOException e) {
 			LOG.error(e.getMessage(), e);
 		}
