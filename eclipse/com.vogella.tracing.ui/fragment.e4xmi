@@ -4,8 +4,5 @@
     <elements xsi:type="basic:PartDescriptor" xmi:id="_n5LbkC6FEei8C8uLdCEuDg" elementId="com.vogella.tracing.ui.partdescriptor.stats" label="Command Stats" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/stats.png" category="Stats" closeable="true" contributionURI="bundleclass://com.vogella.tracing.ui/com.vogella.tracing.ui.parts.CommandStatsPart">
       <tags>View</tags>
     </elements>
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_5gEWcGNOEeiEqeh5JjswBg" elementId="com.vogella.tracing.ui.partdescriptor.commandcallsstats" label="Graph Stats" iconURI="platform:/plugin/com.vogella.tracing.ui/icons/16/stats.png" contributionURI="bundleclass://com.vogella.tracing.ui/com.vogella.tracing.ui.parts.AtlasGraphPart">
-      <tags>View</tags>
-    </elements>
   </fragments>
 </fragment:ModelFragments>
