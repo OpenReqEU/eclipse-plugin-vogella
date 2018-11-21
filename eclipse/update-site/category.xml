@@ -15,9 +15,6 @@
    <feature url="features/jcommander_1.71.0.jar" id="jcommander" version="1.71.0">
       <category name="dependencies"/>
    </feature>
-   <feature url="features/logback-classic_1.2.3.jar" id="logback-classic" version="1.2.3">
-      <category name="dependencies"/>
-   </feature>
    <feature url="features/org.eclipse.nebula.widgets.nattable.core.feature_1.5.0.201703192131.jar" id="org.eclipse.nebula.widgets.nattable.core.feature" version="1.5.0.201703192131">
       <category name="dependencies"/>
    </feature>

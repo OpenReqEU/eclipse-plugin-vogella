@@ -13,7 +13,6 @@ Require-Bundle: io.projectreactor.reactor-core;bundle-version="3.1.5",
  com.squareup.retrofit2.converter-jackson,
  com.jakewharton.retrofit.2-reactor-adapter,
  com.squareup.okhttp3.logging-interceptor,
- slf4j.api,
  com.fasterxml.jackson.core.jackson-annotations
 Import-Package: org.osgi.service.component.annotations;version="1.3.0";resolution:=optional
 Service-Component: OSGI-INF/com.vogella.rest.services.InnoSensrServiceImpl.xml
