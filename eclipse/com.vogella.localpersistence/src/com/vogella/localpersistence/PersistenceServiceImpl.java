@@ -36,7 +36,7 @@ public class PersistenceServiceImpl implements CommandStatsPersistenceService {
 
 	private Gson gson;
 
-	private Map<String, CommandStats> commandStats;
+	private Map<String, CommandStats> commandStats = new HashMap<>();;
 
 	@Activate
 	public void activate() {
@@ -49,8 +49,6 @@ public class PersistenceServiceImpl implements CommandStatsPersistenceService {
 			List<CommandStats> fromJson = gson.fromJson(reader, REVIEW_TYPE);
 			if(fromJson != null) {
 				commandStats = fromJson.stream().collect(Collectors.toMap(CommandStats::getCommandId, Function.identity()));
-			} else {
-				commandStats = new HashMap<>();
 			}
 		} catch (IOException e) {
 			LOG.error(e.getMessage(), e);
