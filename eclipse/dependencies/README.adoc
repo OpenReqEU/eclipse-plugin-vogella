@@ -14,7 +14,15 @@ Dependencies which are currently added:
 
 * Reactor IO
 * Retrofit with Reactor IO Adapter and Jackson converter
+* JCommander
 
 The latest update site is available here:
 
 https://dl.bintray.com/vogellacompany/OpenReq-Eclipse/
+
+== Uploading to bintray
+
+[source, console]
+----
+curl -T updatesite.zip -u<user-id>:<api-token> -H "X-Bintray-Explode: 1" -H "X-Bintray-Package:Eclipse-Plugin-Deps" -H "X-Bintray-Version:0.5.0" https://api.bintray.com/content/vogellacompany/OpenReq-Eclipse/0.5.0/ 
+----
