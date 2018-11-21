@@ -17,38 +17,6 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="Project-Reactor"
-         version="0.0.0"/>
-
-   <includes
-         id="Retrofit"
-         version="0.0.0"/>
-
-   <includes
-         id="logback-classic"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.nebula.widgets.nattable.core.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.nebula.widgets.nattable.extension.e4.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.nebula.widgets.nattable.extension.glazedlists.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.nebula.widgets.nattable.extension.nebula.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="jcommander"
-         version="0.0.0"/>
-
    <plugin
          id="com.vogella.tracing.core"
          download-size="0"
@@ -68,5 +36,47 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="com.vogella.localpersistence"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.vogella.common.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.vogella.common.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.vogella.logging.config"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.vogella.rest.services"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.vogella.services"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
