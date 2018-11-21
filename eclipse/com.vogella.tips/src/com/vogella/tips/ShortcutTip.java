@@ -40,8 +40,7 @@ public class ShortcutTip extends Tip implements IHtmlTip {
 
 	private InnoSensrService innoSensrService;
 
-	public ShortcutTip(String providerId, String commandName, String shortcut, ECommandService commandService,
-			EHandlerService handlerService, UISynchronize uiSync, InnoSensrService innoSensrService) {
+	public ShortcutTip(String providerId, String commandName, String shortcut, UISynchronize uiSync, InnoSensrService innoSensrService) {
 		super(providerId);
 		this.commandName = commandName;
 		this.shortcut = shortcut;

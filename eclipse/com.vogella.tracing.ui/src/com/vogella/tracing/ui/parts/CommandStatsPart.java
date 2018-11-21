@@ -1,6 +1,7 @@
 
 package com.vogella.tracing.ui.parts;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -39,10 +40,7 @@ import com.vogella.tracing.ui.nattable.CommandStatsHeaderDataProvider;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.SortedList;
-import reactor.core.publisher.Flux;
-import reactor.swing.SwtScheduler;
 
-@SuppressWarnings("restriction")
 public class CommandStatsPart {
 
 	public static final String COMMAND_STATS_SELECTION = "CommandStatsSelection";
@@ -113,12 +111,9 @@ public class CommandStatsPart {
 	@Inject
 	@Optional
 	public void refreshCommandStats(@UIEventTopic(CommandListenerEvents.TOPIC_COMMAND_PRE_EXECUTE) String commandId) {
-		Flux<CommandStats> flux = commandStatsPersistenceService.get();
+		Collection<CommandStats> commandStats = commandStatsPersistenceService.get();
 		sortedList.clear();
-		flux.subscribeOn(SwtScheduler.from(natTable.getDisplay())).subscribe(cmdStats -> {
-			sortedList.add(cmdStats);
-			natTable.refresh();
-		});
-
+		sortedList.addAll(commandStats);
+		natTable.refresh();
 	}
 }

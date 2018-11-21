@@ -7,13 +7,17 @@ public class CommandStats {
 	private String commandId;
 	private String commandName;
 	private int invocations;
+	private int menuDepth;
 	private String keybinding;
+	
+	public CommandStats() {
+	}
 
-	public CommandStats(String commandId, String commandName, int invocations, String keybinding) {
-		super();
+	public CommandStats(String commandId, String commandName, int invocations,int menuDepth, String keybinding) {
 		this.commandId = commandId;
 		this.commandName = commandName;
 		this.invocations = invocations;
+		this.menuDepth = menuDepth;
 		this.keybinding = keybinding;
 	}
 
@@ -41,11 +45,23 @@ public class CommandStats {
 		this.invocations = invocations;
 	}
 
+	public int getMenuDepth() {
+		return menuDepth;
+	}
+
+	public void setMenuDepth(int menuDepth) {
+		this.menuDepth = menuDepth;
+	}
+
 	public String getKeybinding() {
 		return keybinding;
 	}
 
 	public void setKeybinding(String keybinding) {
 		this.keybinding = keybinding;
+	}
+	
+	public void incrementInvocations() {
+		this.invocations++;
 	}
 }

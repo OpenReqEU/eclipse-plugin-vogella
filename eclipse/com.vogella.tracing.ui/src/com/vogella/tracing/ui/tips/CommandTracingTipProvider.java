@@ -1,20 +1,24 @@
 package com.vogella.tracing.ui.tips;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
-import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.ui.bindings.EBindingService;
-import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.tips.core.Tip;
 import org.eclipse.tips.core.TipImage;
 import org.eclipse.tips.core.TipProvider;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-@SuppressWarnings("restriction")
+import com.vogella.common.core.domain.CommandStats;
+import com.vogella.common.core.service.CommandStatsPersistenceService;
+import com.vogella.services.InnoSensrService;
+import com.vogella.tips.ShortcutTip;
+
 public class CommandTracingTipProvider extends TipProvider {
 
 	private TipImage tipImage;
@@ -45,66 +49,23 @@ public class CommandTracingTipProvider extends TipProvider {
 
 	@Override
 	public IStatus loadNewTips(IProgressMonitor monitor) {
+		CommandStatsPersistenceService persistenceService = PlatformUI.getWorkbench().getService(CommandStatsPersistenceService.class);
+		UISynchronize uiSync = PlatformUI.getWorkbench().getService(UISynchronize.class);
+		InnoSensrService innoSensrService = PlatformUI.getWorkbench().getService(InnoSensrService.class);
+		ArrayList<Tip> tips = new ArrayList<>();
+		tips.add(new CommandInvocationShortCutTip(getID(), innoSensrService, uiSync));
 
-//		ECommandService commandService = PlatformUI.getWorkbench().getService(ECommandService.class);
-//		EHandlerService handlerService = PlatformUI.getWorkbench().getService(EHandlerService.class);
-//		UISynchronize uiSync = PlatformUI.getWorkbench().getService(UISynchronize.class);
-//		InnoSensrService innoSensrService = PlatformUI.getWorkbench().getService(InnoSensrService.class);
-//
-//		ArrayList<Tip> tips = new ArrayList<>();
-//		tips.add(new CommandInvocationShortCutTip(getID(), innoSensrService, uiSync));
-//
-//		MeterRegistry meterRegistry = PlatformUI.getWorkbench().getService(MeterRegistry.class);
-//		EBindingService bindingService = PlatformUI.getWorkbench().getService(EBindingService.class);
-//		List<Meter> meters = meterRegistry.getMeters();
-//		if (meterRegistry instanceof CompositeMeterRegistry) {
-//			Set<MeterRegistry> registries = ((CompositeMeterRegistry) meterRegistry).getRegistries();
-//			java.util.Optional<MeterRegistry> findAny = registries.stream()
-//					.filter(SimpleMeterRegistry.class::isInstance).findAny();
-//			if (findAny.isPresent()) {
-//				meters = findAny.get().getMeters();
-//			}
-//		}
-//		List<CommandStats> list = meters.stream()
-//				.filter(meter -> "command.calls.contributionitem".equals(meter.getId().getName())).flatMap(meter -> {
-//					return StreamSupport.stream(meter.measure().spliterator(), false).map(measurement -> {
-//						String commandId = meter.getId().getTag("commandId");
-//						double invocations = measurement.getValue();
-//
-//						ParameterizedCommand command = commandService.createCommand(commandId, null);
-//						return new CommandStats(commandId, getCommandName(command), (int) invocations,
-//								getKeybinding(command, bindingService));
-//					});
-//				}).collect(Collectors.toList());
-//
-//		for (CommandStats commandStats : list) {
-//			double invocations = commandStats.getInvocations();
-//			if (invocations > 3) {
-//				tips.add(new ShortcutTip(getID(), commandStats.getCommandName(), commandStats.getKeybinding(),
-//						commandService, handlerService, uiSync, innoSensrService));
-//			}
-//		}
-//
-//		setTips(tips);
+		for (CommandStats commandStats : persistenceService.get()) {
+			double invocations = commandStats.getInvocations();
+			if (invocations > 3) {
+				tips.add(new ShortcutTip(getID(), commandStats.getCommandName(), commandStats.getKeybinding(),
+						uiSync, innoSensrService));
+			}
+		}
+
+		setTips(tips);
 
 		return Status.OK_STATUS;
-	}
-
-	private String getKeybinding(ParameterizedCommand command, EBindingService bindingService) {
-		TriggerSequence bestSequenceFor = bindingService.getBestSequenceFor(command);
-		if (bestSequenceFor != null) {
-			return bestSequenceFor.format();
-		}
-		return null;
-	}
-
-	private String getCommandName(ParameterizedCommand command) {
-		try {
-			return command.getName();
-		} catch (NotDefinedException e) {
-			// unlikely to happen
-			return "Command does not have a name";
-		}
 	}
 
 	@Override
