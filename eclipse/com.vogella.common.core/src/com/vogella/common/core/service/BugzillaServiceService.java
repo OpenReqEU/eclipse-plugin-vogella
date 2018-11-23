@@ -2,10 +2,10 @@ package com.vogella.common.core.service;
 
 import java.util.List;
 
-import com.vogella.common.core.domain.Product;
+import com.vogella.common.core.domain.BugProduct;
 
 import reactor.core.publisher.Mono;
 
 public interface BugzillaServiceService {
-	Mono<List<Product>> getProducts();
+	Mono<List<BugProduct>> getProducts();
 }

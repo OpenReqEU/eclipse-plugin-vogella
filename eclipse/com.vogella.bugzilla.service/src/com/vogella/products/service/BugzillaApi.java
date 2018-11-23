@@ -3,7 +3,7 @@ package com.vogella.products.service;
 import java.util.Date;
 import java.util.List;
 
-import com.vogella.common.core.domain.Product;
+import com.vogella.common.core.domain.BugProduct;
 
 import okhttp3.ResponseBody;
 import reactor.core.publisher.Mono;
@@ -30,5 +30,5 @@ public interface BugzillaApi {
 	Mono<ResponseBody> getAttachments(@Path("bugId") long bugId);
 
 	@GET("rest/product?type=accessible")
-	Mono<List<Product>> getProducts();
+	Mono<List<BugProduct>> getProducts();
 }

@@ -1,6 +1,10 @@
 package com.vogella.common.core.domain;
 
-public class Component {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class BugComponent {
+	
 	private long id;
 	private String name;
 
@@ -18,5 +22,9 @@ public class Component {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public BugComponent(String name) {
+		this.name = name;
 	}
 }

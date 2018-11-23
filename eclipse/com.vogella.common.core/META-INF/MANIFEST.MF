@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: VOGELLA
 Automatic-Module-Name: com.vogella.common.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: io.projectreactor.reactor-core;bundle-version="3.1.5"
+Require-Bundle: io.projectreactor.reactor-core;bundle-version="3.1.5",
+ com.fasterxml.jackson.core.jackson-annotations
 Export-Package: com.vogella.common.core.domain,
  com.vogella.common.core.service

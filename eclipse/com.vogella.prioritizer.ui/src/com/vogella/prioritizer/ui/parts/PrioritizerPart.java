@@ -19,6 +19,11 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
@@ -62,6 +67,9 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vogella.common.core.domain.BugComponent;
+import com.vogella.common.core.domain.BugProduct;
+import com.vogella.common.core.service.BugzillaServiceService;
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.model.RankedBug;
@@ -92,6 +100,9 @@ public class PrioritizerPart {
 
 	@Inject
 	private PrioritizerService prioritizerService;
+
+	@Inject
+	private BugzillaServiceService bugzillaService;
 
 	@Inject
 	private BrowserService browserService;
@@ -303,33 +314,62 @@ public class PrioritizerPart {
 		Label productLabel = new Label(settingsPanel, SWT.FLAT);
 		productLabel.setText("Product");
 
-		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
+		ComboViewer productViewer = new ComboViewer(settingsPanel);
+		productViewer.setContentProvider(ArrayContentProvider.getInstance());
+		productViewer.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((BugProduct) element).getName();
+			}
+		});
+		productViewer.getControl().setToolTipText("Product");
 
-		Text productText = new Text(settingsPanel, SWT.BORDER);
-		productText.setText(queryProduct);
-		productText.setToolTipText("Product");
-		productText.setMessage("Product");
-		productText.addModifyListener(event -> {
-			preferences.put(Preferences.QUERY_PRODUCT, productText.getText());
+		compositeDisposable.add(bugzillaService.getProducts().publishOn(SwtScheduler.from(settingsPanel.getDisplay()))
+				.subscribe(pl -> {
+					productViewer.setInput(pl);
+
+					// set selection
+					String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
+					pl.stream().filter(p -> queryProduct.equals(p.getName())).findAny().ifPresent(p -> productViewer.setSelection(new StructuredSelection(p)));
+				}, err -> LOG.error(err.getMessage(), err)));
+		
+
+		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
+		componentLabel.setText("Component");
+
+		ComboViewer componentViewer = new ComboViewer(settingsPanel);
+		componentViewer.setContentProvider(ArrayContentProvider.getInstance());
+		componentViewer.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((BugComponent) element).getName();
+			}
+		});
+		componentViewer.getControl().setToolTipText("Product");
+		
+		productViewer.addSelectionChangedListener(event -> {
+			IStructuredSelection ss = event.getStructuredSelection();
+			BugProduct product = (BugProduct) ss.getFirstElement();
+			preferences.put(Preferences.QUERY_PRODUCT, product.getName());
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
 				LOG.error(e.getMessage(), e);
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
+			
+			componentViewer.setInput(product.getComponents());
+			
+			// set selection
+			String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
+			product.getComponents().stream().filter(c -> queryComponent.equals(c.getName())).findAny().ifPresent(c -> componentViewer.setSelection(new StructuredSelection(c)));
+
 		});
 
-		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
-		componentLabel.setText("Component");
-
-		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
-
-		Text componentText = new Text(settingsPanel, SWT.BORDER);
-		componentText.setText(queryComponent);
-		componentText.setToolTipText("Component");
-		componentText.setMessage("Component");
-		componentText.addModifyListener(event -> {
-			preferences.put(Preferences.QUERY_COMPONENT, componentText.getText());
+		componentViewer.addSelectionChangedListener(event -> {
+			IStructuredSelection ss = event.getStructuredSelection();
+			BugComponent component = (BugComponent) ss.getFirstElement();
+			preferences.put(Preferences.QUERY_COMPONENT, component.getName());
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {

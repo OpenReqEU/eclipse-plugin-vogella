@@ -1,14 +1,15 @@
 package com.vogella.tips;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.core.commands.ECommandService;
-import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.Window;
@@ -30,7 +31,6 @@ import com.vogella.services.InnoSensrStatus;
 
 import reactor.core.scheduler.Schedulers;
 
-@SuppressWarnings("restriction")
 public class ShortcutTip extends Tip implements IHtmlTip {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ShortcutTip.class);
@@ -48,10 +48,11 @@ public class ShortcutTip extends Tip implements IHtmlTip {
 
 		if (null == shortcut) {
 			Bundle bundle = FrameworkUtil.getBundle(getClass());
+			URL innosensrIcon = FileLocator.find(bundle, new Path("icons/16/innosensr-logo.png"));
 			try {
 				TipAction reportBugTipAction = new TipAction("Report Bug", "Create a bug report in OpenReq Live",
 						() -> uiSync.asyncExec(this::reportBug),
-						new TipImage(bundle.getEntry("icons/16/innosensr-logo.png")));
+						new TipImage(innosensrIcon));
 				getActions().add(reportBugTipAction);
 			} catch (IOException e) {
 				LOG.error(e.getMessage(), e);

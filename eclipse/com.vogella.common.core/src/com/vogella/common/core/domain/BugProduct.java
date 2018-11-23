@@ -2,10 +2,13 @@ package com.vogella.common.core.domain;
 
 import java.util.List;
 
-public class Product {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class BugProduct {
 	private long id;
 	private String name;
-	private List<Component> components;
+	private List<BugComponent> components;
 
 	public long getId() {
 		return id;
@@ -23,11 +26,11 @@ public class Product {
 		this.name = name;
 	}
 
-	public List<Component> getComponents() {
+	public List<BugComponent> getComponents() {
 		return components;
 	}
 
-	public void setComponents(List<Component> components) {
+	public void setComponents(List<BugComponent> components) {
 		this.components = components;
 	}
 }
