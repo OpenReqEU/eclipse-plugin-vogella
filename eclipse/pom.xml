@@ -17,6 +17,7 @@
 		<module>com.vogella.logging.config</module>
 		
 		<module>com.vogella.services</module>
+		<module>com.vogella.bugzilla.service</module>
 		<module>com.vogella.rest.services</module>
 
 		<module>com.vogella.tips</module>
