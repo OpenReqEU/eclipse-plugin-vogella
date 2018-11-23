@@ -20,7 +20,7 @@ image::img/install-eclipse-plugins.png[]
 
 === Installing the Tip of the day feature
 
-The statistics and user usage analysis is also provided as Tip of the day in the Eclipse IDE.
+The user usage analysis of the Eclipse IDE is also provided as Tip of the day in the Eclipse IDE.
 
 In order to install the _Tip of the day_ feature the _http://download.eclipse.org/eclipse/updates/4.8_ update site can be used.
 
