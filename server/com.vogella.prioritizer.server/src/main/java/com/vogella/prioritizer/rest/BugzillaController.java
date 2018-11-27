@@ -23,8 +23,8 @@ class BugzillaController {
 	}
 
 	@GetMapping("/mostDiscussedBugsOfTheMonth")
-	public Flux<Bug> getMostDiscussedBugsOfTheMonth(@RequestParam(name = "product", required = false) List<String> product,
-			@RequestParam(name = "component", required = false) List<String> component) {
+	public Flux<Bug> getMostDiscussedBugsOfTheMonth(@RequestParam(name = "product", required = false, defaultValue="Platform") List<String> product,
+			@RequestParam(name = "component", required = false, defaultValue="UI") List<String> component) {
 		return prioritizerService.getMostDiscussedBugsOfTheMonth(product, component);
 	}
 }

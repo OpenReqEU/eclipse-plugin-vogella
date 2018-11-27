@@ -1,7 +1,6 @@
 package com.vogella.prioritizer.bugzilla.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import com.vogella.prioritizer.bugzilla.BugzillaApi;
 import com.vogella.prioritizer.bugzilla.model.BugzillaBug;
 import com.vogella.prioritizer.bugzilla.model.BugzillaComment;
 import com.vogella.prioritizer.bugzilla.model.json.JSONBugResponse;
-import com.vogella.prioritizer.bugzilla.model.json.JSONBugzillaBug;
 import com.vogella.prioritizer.server.issue.api.IssueService;
 import com.vogella.prioritizer.server.issue.api.model.Bug;
 import com.vogella.prioritizer.server.issue.api.model.Comment;
@@ -40,21 +38,30 @@ public class BugzillaIssueService implements IssueService {
 		Mono<JSONBugResponse> bugzillaBugs = bugzillaApi.getBugs(assignee, product, component, limit, status,
 				creationTime, lastChangeTime);
 
-		return bugzillaBugs.map(JSONBugResponse::getBugs).flatMapIterable(jsonBugs -> {
-			List<Bug> bugs = new ArrayList<>();
-			for (JSONBugzillaBug jsonBugzillaBug : jsonBugs) {
-				Flux<Comment> commentsFlux = getComments(jsonBugzillaBug.getId());
-				// TODO implement getAttachments
-				Bug bug = BugzillaBug.of(jsonBugzillaBug);
-				// FIXME make this non blocking
-				if (withComments) {
-					List<Comment> comments = commentsFlux.collectList().block();
-					bug.setComments(comments);
-				}
-				bugs.add(bug);
-			}
+//		return bugzillaBugs.map(JSONBugResponse::getBugs).flatMapIterable(jsonBugs -> {
+//			List<Bug> bugs = new ArrayList<>();
+//			for (JSONBugzillaBug jsonBugzillaBug : jsonBugs) {
+//				Flux<Comment> commentsFlux = getComments(jsonBugzillaBug.getId());
+//				// TODO implement getAttachments
+//				Bug bug = BugzillaBug.of(jsonBugzillaBug);
+//				// FIXME make this non blocking
+//				if (withComments) {
+//					List<Comment> comments = commentsFlux.collectList().block();
+//					bug.setComments(comments);
+//				}
+//				bugs.add(bug);
+//			}
+//
+//			return bugs;
+//		});
 
-			return bugs;
+		return bugzillaBugs.map(JSONBugResponse::getBugs).flatMapMany(Flux::fromIterable).flatMap(jsonBug -> {
+			Mono<List<Comment>> comments = getComments(jsonBug.getId());
+			return comments.map(c -> {
+				Bug of = BugzillaBug.of(jsonBug);
+				of.setComments(c);
+				return of;
+			});
 		});
 	}
 
@@ -70,7 +77,7 @@ public class BugzillaIssueService implements IssueService {
 		});
 	}
 
-	private Flux<Comment> getComments(long bugId) {
+	private Mono<List<Comment>> getComments(long bugId) {
 		Mono<ResponseBody> comments = bugzillaApi.getComments(bugId);
 		return comments.map(t -> {
 			try {
@@ -78,7 +85,7 @@ public class BugzillaIssueService implements IssueService {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-		}).flatMapIterable((jsonString -> {
+		}).map(jsonString -> {
 
 			JSONObject rootJsonObject = new JSONObject(jsonString);
 
@@ -93,11 +100,12 @@ public class BugzillaIssueService implements IssueService {
 			CollectionType javaType = mapper.getTypeFactory().constructCollectionType(List.class,
 					BugzillaComment.class);
 			try {
-				return mapper.readValue(jsonArray.toString(), javaType);
+				List<Comment> readValue = mapper.readValue(jsonArray.toString(), javaType);
+				return readValue;
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-		}));
+		});
 	}
 
 }
