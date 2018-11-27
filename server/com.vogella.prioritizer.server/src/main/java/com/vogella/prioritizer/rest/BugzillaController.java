@@ -13,7 +13,7 @@ import com.vogella.prioritizer.service.BugzillaService;
 import reactor.core.publisher.Flux;
 
 @RestController
-@RequestMapping("bugzilla")
+@RequestMapping("/bugzilla")
 class BugzillaController {
 
 	private BugzillaService prioritizerService;
