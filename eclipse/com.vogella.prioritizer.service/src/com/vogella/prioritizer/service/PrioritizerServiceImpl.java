@@ -56,7 +56,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 		JCommander.newBuilder().acceptUnknownOptions(true).addObject(serverSettings).build().parse(args);
 
 		final OkHttpClient httpClient = new OkHttpClient.Builder().readTimeout(3, TimeUnit.MINUTES)
-				.connectTimeout(3, TimeUnit.MINUTES).addInterceptor(new HttpLoggingInterceptor().setLevel(Level.BODY))
+				.connectTimeout(3, TimeUnit.MINUTES)
 				.build();
 
 		String serverUrl = serverSettings.getServerUrl();
