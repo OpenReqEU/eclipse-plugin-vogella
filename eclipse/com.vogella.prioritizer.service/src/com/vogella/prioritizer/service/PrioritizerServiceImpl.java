@@ -16,8 +16,6 @@ import com.vogella.prioritizer.core.model.RankedBug;
 import com.vogella.prioritizer.core.service.PrioritizerService;
 
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import okhttp3.logging.HttpLoggingInterceptor.Level;
 import reactor.core.publisher.Mono;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
