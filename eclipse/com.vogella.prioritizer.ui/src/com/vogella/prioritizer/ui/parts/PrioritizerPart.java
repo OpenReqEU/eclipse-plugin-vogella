@@ -75,6 +75,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vogella.common.ui.util.WidgetUtils;
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.model.RankedBug;
@@ -98,10 +99,6 @@ import reactor.swing.SwtScheduler;
 public class PrioritizerPart {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PrioritizerPart.class);
-	
-	private static final String LCL = "abcdefghijklmnopqrstuvwxyz";
-    private static final String UCL = LCL.toUpperCase();
-    private static final String NUMS = "0123456789";
 
 	@Inject
 	@Preference
@@ -138,11 +135,11 @@ public class PrioritizerPart {
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 		resourceManager = new LocalResourceManager(JFaceResources.getResources(), parent);
-		
-        Bundle bundle = FrameworkUtil.getBundle(getClass());
-        URL find = FileLocator.find(bundle, new Path("/icons/smartmode.png"));
-        smartModeImageDescriptor = ImageDescriptor.createFromURL(find);
-		
+
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
+		URL find = FileLocator.find(bundle, new Path("/icons/smartmode.png"));
+		smartModeImageDescriptor = ImageDescriptor.createFromURL(find);
+
 		stackLayout = new StackLayout();
 		parent.setLayout(stackLayout);
 
@@ -345,8 +342,8 @@ public class PrioritizerPart {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
-		
-		createContentAssist(productText, "Platform", "PDE", "JDT", "Nebula");
+
+		WidgetUtils.createContentAssist(productText, resourceManager, "Platform", "PDE", "JDT", "Nebula");
 
 		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
 		componentLabel.setText("Component");
@@ -366,8 +363,8 @@ public class PrioritizerPart {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
-		
-		createContentAssist(componentText, "Core", "UI");
+
+		WidgetUtils.createContentAssist(componentText, resourceManager,"Core", "UI");
 
 		GridLayoutFactory.swtDefaults().extendedMargins(5, 0, 0, 0).generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);
@@ -377,38 +374,6 @@ public class PrioritizerPart {
 
 		subscribeChart();
 	}
-
-	private void createContentAssist(Text text, String... proposals) {
-		SimpleContentProposalProvider proposalProvider = new SimpleContentProposalProvider(proposals);
-        ContentProposalAdapter proposalAdapter = new ContentProposalAdapter(
-            text,
-            new TextContentAdapter(),
-            proposalProvider,
-            getActivationKeystroke(),
-            getAutoactivationChars());
-        proposalProvider.setFiltering(false);
-        proposalAdapter.setPropagateKeys(false);
-        proposalAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_INSERT);
-        
-        ControlDecoration decoration = new ControlDecoration(text, SWT.TOP | SWT.LEFT);
-        decoration.setImage(resourceManager.createImage(smartModeImageDescriptor));
-        decoration.setDescriptionText("This text field has content assist. (CTRL + SPACE)");
-        decoration.setShowOnlyOnFocus(true);
-	}
-	
-	
-	
-    private static char[] getAutoactivationChars() {
-        // To enable content proposal on deleting a char
-        String allChars = LCL + UCL + NUMS;
-        return allChars.toCharArray();
-    }
- 
-    private static KeyStroke getActivationKeystroke() {
-        KeyStroke keyStroke = KeyStroke.getInstance(
-                SWT.CTRL, ' ');
-        return keyStroke;
-    }
 
 	private void subscribeChart() {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
