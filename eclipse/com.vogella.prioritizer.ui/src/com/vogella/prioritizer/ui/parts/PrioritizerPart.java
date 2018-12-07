@@ -302,7 +302,7 @@ public class PrioritizerPart {
 		emailText.setToolTipText("Email");
 		emailText.setMessage("Email");
 		emailText.addModifyListener(event -> {
-			preferences.put(Preferences.USER_EMAIL, emailText.getText());
+			preferences.put(Preferences.USER_EMAIL, ((Text) event.getSource()).getText());
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
@@ -314,62 +314,33 @@ public class PrioritizerPart {
 		Label productLabel = new Label(settingsPanel, SWT.FLAT);
 		productLabel.setText("Product");
 
-		ComboViewer productViewer = new ComboViewer(settingsPanel);
-		productViewer.setContentProvider(ArrayContentProvider.getInstance());
-		productViewer.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return ((BugProduct) element).getName();
-			}
-		});
-		productViewer.getControl().setToolTipText("Product");
+		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platfrom");
 
-		compositeDisposable.add(bugzillaService.getProducts().publishOn(SwtScheduler.from(settingsPanel.getDisplay()))
-				.subscribe(pl -> {
-					productViewer.setInput(pl);
-
-					// set selection
-					String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
-					pl.stream().filter(p -> queryProduct.equals(p.getName())).findAny().ifPresent(p -> productViewer.setSelection(new StructuredSelection(p)));
-				}, err -> LOG.error(err.getMessage(), err)));
-		
-
-		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
-		componentLabel.setText("Component");
-
-		ComboViewer componentViewer = new ComboViewer(settingsPanel);
-		componentViewer.setContentProvider(ArrayContentProvider.getInstance());
-		componentViewer.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return ((BugComponent) element).getName();
-			}
-		});
-		componentViewer.getControl().setToolTipText("Product");
-		
-		productViewer.addSelectionChangedListener(event -> {
-			IStructuredSelection ss = event.getStructuredSelection();
-			BugProduct product = (BugProduct) ss.getFirstElement();
-			preferences.put(Preferences.QUERY_PRODUCT, product.getName());
+		Text productText = new Text(settingsPanel, SWT.BORDER);
+		productText.setText(queryProduct);
+		productText.setMessage("Product");
+		productText.setToolTipText("Product");
+		productText.addModifyListener(event -> {
+			preferences.put(Preferences.QUERY_PRODUCT, ((Text) event.getSource()).getText());
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
 				LOG.error(e.getMessage(), e);
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
-			
-			componentViewer.setInput(product.getComponents());
-			
-			// set selection
-			String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
-			product.getComponents().stream().filter(c -> queryComponent.equals(c.getName())).findAny().ifPresent(c -> componentViewer.setSelection(new StructuredSelection(c)));
-
 		});
 
-		componentViewer.addSelectionChangedListener(event -> {
-			IStructuredSelection ss = event.getStructuredSelection();
-			BugComponent component = (BugComponent) ss.getFirstElement();
-			preferences.put(Preferences.QUERY_COMPONENT, component.getName());
+		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
+		componentLabel.setText("Component");
+
+		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
+
+		Text componentText = new Text(settingsPanel, SWT.BORDER);
+		componentText.setText(queryComponent);
+		componentText.setMessage("Component");
+		componentText.setToolTipText("Component");
+		componentText.addModifyListener(event -> {
+			preferences.put(Preferences.QUERY_COMPONENT, ((Text) event.getSource()).getText());
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
