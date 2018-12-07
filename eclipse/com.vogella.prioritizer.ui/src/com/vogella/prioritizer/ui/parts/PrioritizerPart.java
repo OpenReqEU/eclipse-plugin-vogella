@@ -12,6 +12,8 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
@@ -19,10 +21,15 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
@@ -62,6 +69,8 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,8 +131,18 @@ public class PrioritizerPart {
 
 	private Browser browser;
 
+	private ResourceManager resourceManager;
+
+	private ImageDescriptor smartModeImageDescriptor;
+
 	@PostConstruct
 	public void createPartControl(Composite parent) {
+		resourceManager = new LocalResourceManager(JFaceResources.getResources(), parent);
+		
+        Bundle bundle = FrameworkUtil.getBundle(getClass());
+        URL find = FileLocator.find(bundle, new Path("/icons/smartmode.png"));
+        smartModeImageDescriptor = ImageDescriptor.createFromURL(find);
+		
 		stackLayout = new StackLayout();
 		parent.setLayout(stackLayout);
 
@@ -350,7 +369,7 @@ public class PrioritizerPart {
 		
 		createContentAssist(componentText, "Core", "UI");
 
-		GridLayoutFactory.fillDefaults().generateLayout(settingsPanel);
+		GridLayoutFactory.swtDefaults().extendedMargins(5, 0, 0, 0).generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);
 
 		browser = new Browser(settingsComposite, SWT.NONE);
@@ -370,14 +389,18 @@ public class PrioritizerPart {
         proposalProvider.setFiltering(false);
         proposalAdapter.setPropagateKeys(false);
         proposalAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_INSERT);
+        
+        ControlDecoration decoration = new ControlDecoration(text, SWT.TOP | SWT.LEFT);
+        decoration.setImage(resourceManager.createImage(smartModeImageDescriptor));
+        decoration.setDescriptionText("This text field has content assist. (CTRL + SPACE)");
+        decoration.setShowOnlyOnFocus(true);
 	}
 	
 	
 	
     private static char[] getAutoactivationChars() {
         // To enable content proposal on deleting a char
-        String delete = new String(new char[] { 8 });
-        String allChars = LCL + UCL + NUMS + delete;
+        String allChars = LCL + UCL + NUMS;
         return allChars.toCharArray();
     }
  
