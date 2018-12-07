@@ -16,14 +16,13 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
@@ -67,9 +66,6 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vogella.common.core.domain.BugComponent;
-import com.vogella.common.core.domain.BugProduct;
-import com.vogella.common.core.service.BugzillaServiceService;
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.model.RankedBug;
@@ -93,6 +89,10 @@ import reactor.swing.SwtScheduler;
 public class PrioritizerPart {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PrioritizerPart.class);
+	
+	private static final String LCL = "abcdefghijklmnopqrstuvwxyz";
+    private static final String UCL = LCL.toUpperCase();
+    private static final String NUMS = "0123456789";
 
 	@Inject
 	@Preference
@@ -100,9 +100,6 @@ public class PrioritizerPart {
 
 	@Inject
 	private PrioritizerService prioritizerService;
-
-	@Inject
-	private BugzillaServiceService bugzillaService;
 
 	@Inject
 	private BrowserService browserService;
@@ -314,7 +311,7 @@ public class PrioritizerPart {
 		Label productLabel = new Label(settingsPanel, SWT.FLAT);
 		productLabel.setText("Product");
 
-		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platfrom");
+		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
 
 		Text productText = new Text(settingsPanel, SWT.BORDER);
 		productText.setText(queryProduct);
@@ -329,6 +326,8 @@ public class PrioritizerPart {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
+		
+		createContentAssist(productText, "Platform", "PDE", "JDT", "Nebula");
 
 		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
 		componentLabel.setText("Component");
@@ -348,6 +347,8 @@ public class PrioritizerPart {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
+		
+		createContentAssist(componentText, "Core", "UI");
 
 		GridLayoutFactory.fillDefaults().generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);
@@ -357,6 +358,34 @@ public class PrioritizerPart {
 
 		subscribeChart();
 	}
+
+	private void createContentAssist(Text text, String... proposals) {
+		SimpleContentProposalProvider proposalProvider = new SimpleContentProposalProvider(proposals);
+        ContentProposalAdapter proposalAdapter = new ContentProposalAdapter(
+            text,
+            new TextContentAdapter(),
+            proposalProvider,
+            getActivationKeystroke(),
+            getAutoactivationChars());
+        proposalProvider.setFiltering(false);
+        proposalAdapter.setPropagateKeys(false);
+        proposalAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_INSERT);
+	}
+	
+	
+	
+    private static char[] getAutoactivationChars() {
+        // To enable content proposal on deleting a char
+        String delete = new String(new char[] { 8 });
+        String allChars = LCL + UCL + NUMS + delete;
+        return allChars.toCharArray();
+    }
+ 
+    private static KeyStroke getActivationKeystroke() {
+        KeyStroke keyStroke = KeyStroke.getInstance(
+                SWT.CTRL, ' ');
+        return keyStroke;
+    }
 
 	private void subscribeChart() {
 		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
