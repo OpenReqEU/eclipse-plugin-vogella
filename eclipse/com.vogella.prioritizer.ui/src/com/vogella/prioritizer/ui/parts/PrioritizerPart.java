@@ -12,21 +12,13 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
-import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.fieldassist.ContentProposalAdapter;
-import org.eclipse.jface.fieldassist.ControlDecoration;
-import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
-import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
@@ -69,8 +61,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,15 +120,9 @@ public class PrioritizerPart {
 
 	private ResourceManager resourceManager;
 
-	private ImageDescriptor smartModeImageDescriptor;
-
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 		resourceManager = new LocalResourceManager(JFaceResources.getResources(), parent);
-
-		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		URL find = FileLocator.find(bundle, new Path("/icons/smartmode.png"));
-		smartModeImageDescriptor = ImageDescriptor.createFromURL(find);
 
 		stackLayout = new StackLayout();
 		parent.setLayout(stackLayout);

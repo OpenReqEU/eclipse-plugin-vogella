@@ -22,8 +22,8 @@ public class WidgetUtils {
 	
 	private static ImageDescriptor smartModeImageDescriptor;
 	
-	{
-        Bundle bundle = FrameworkUtil.getBundle(getClass());
+	static {
+        Bundle bundle = FrameworkUtil.getBundle(WidgetUtils.class);
         URL find = FileLocator.find(bundle, new Path("/icons/smartmode.png"));
         smartModeImageDescriptor = ImageDescriptor.createFromURL(find);
 	}

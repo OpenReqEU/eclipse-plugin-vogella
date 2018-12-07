@@ -18,6 +18,9 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
@@ -50,6 +53,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vogella.common.ui.util.WidgetUtils;
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.preferences.Preferences;
@@ -95,9 +99,12 @@ public class MostDiscussedBugsOfTheMonthPart {
 
 	private Disposable mostDiscussedBugQuery;
 
+	private ResourceManager resourceManager;
+	
 	@PostConstruct
 	public void createPartControl(Composite parent) {
-
+		resourceManager = new LocalResourceManager(JFaceResources.getResources(), parent);
+		
 		stackLayout = new StackLayout();
 		parent.setLayout(stackLayout);
 
@@ -251,6 +258,8 @@ public class MostDiscussedBugsOfTheMonthPart {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
+		
+		WidgetUtils.createContentAssist(productText, resourceManager,"Core", "UI");
 
 		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
 		componentLabel.setText("Component");
@@ -270,10 +279,11 @@ public class MostDiscussedBugsOfTheMonthPart {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
+		
+		WidgetUtils.createContentAssist(componentText, resourceManager,"Core", "UI");
 
-		GridLayoutFactory.fillDefaults().generateLayout(settingsPanel);
+		GridLayoutFactory.swtDefaults().extendedMargins(5, 0, 0, 0).generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);
-
 	}
 
 	@PreDestroy
