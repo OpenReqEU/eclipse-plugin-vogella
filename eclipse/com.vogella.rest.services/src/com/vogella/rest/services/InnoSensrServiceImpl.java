@@ -5,8 +5,8 @@ import java.util.concurrent.TimeUnit;
 import org.osgi.service.component.annotations.Component;
 
 import com.jakewharton.retrofit2.adapter.reactor.ReactorCallAdapterFactory;
-import com.vogella.services.InnoSensrService;
-import com.vogella.services.InnoSensrStatus;
+import com.vogella.services.innosensr.InnoSensrService;
+import com.vogella.services.innosensr.InnoSensrStatus;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;

@@ -16,7 +16,7 @@ import org.osgi.framework.FrameworkUtil;
 
 import com.vogella.common.core.domain.CommandStats;
 import com.vogella.common.core.service.CommandStatsPersistenceService;
-import com.vogella.services.InnoSensrService;
+import com.vogella.services.innosensr.InnoSensrService;
 import com.vogella.tips.ShortcutTip;
 
 public class CommandTracingTipProvider extends TipProvider {

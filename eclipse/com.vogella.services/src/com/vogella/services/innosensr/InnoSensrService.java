@@ -1,4 +1,4 @@
-package com.vogella.services;
+package com.vogella.services.innosensr;
 
 import reactor.core.publisher.Mono;
 

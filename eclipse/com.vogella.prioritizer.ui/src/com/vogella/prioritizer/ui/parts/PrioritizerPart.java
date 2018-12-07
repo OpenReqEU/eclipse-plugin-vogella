@@ -65,6 +65,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vogella.common.core.service.BugzillaService;
 import com.vogella.common.ui.util.WidgetUtils;
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
@@ -96,6 +97,9 @@ public class PrioritizerPart {
 
 	@Inject
 	private PrioritizerService prioritizerService;
+
+	@Inject
+	private BugzillaService bugzillaService;
 
 	@Inject
 	private BrowserService browserService;
@@ -327,6 +331,11 @@ public class PrioritizerPart {
 			}
 		});
 
+		Mono<List<String>> products = bugzillaService.getProducts();
+		products.subscribeOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
+			WidgetUtils.createContentAssist(productText, resourceManager, l.toArray(new String[l.size()]));
+		});
+
 		WidgetUtils.createContentAssist(productText, resourceManager, "Platform", "PDE", "JDT", "Nebula");
 
 		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
@@ -348,7 +357,10 @@ public class PrioritizerPart {
 			}
 		});
 
-		WidgetUtils.createContentAssist(componentText, resourceManager,"Core", "UI");
+		Mono<List<String>> components = bugzillaService.getComponents();
+		components.subscribeOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
+			WidgetUtils.createContentAssist(componentText, resourceManager, l.toArray(new String[l.size()]));
+		});
 
 		GridLayoutFactory.swtDefaults().extendedMargins(5, 0, 0, 0).generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);

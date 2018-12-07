@@ -40,8 +40,8 @@ public class WidgetUtils {
             proposalProvider,
             getActivationKeystroke(),
             getAutoactivationChars());
-        proposalProvider.setFiltering(false);
-        proposalAdapter.setPropagateKeys(false);
+        proposalProvider.setFiltering(true);
+        proposalAdapter.setPropagateKeys(true);
         proposalAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_INSERT);
         
         ControlDecoration decoration = new ControlDecoration(text, SWT.TOP | SWT.LEFT);

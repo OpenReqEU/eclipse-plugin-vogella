@@ -1,63 +1,69 @@
 package com.vogella.products.service;
 
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.runtime.jobs.Job;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
-import com.jakewharton.retrofit2.adapter.reactor.ReactorCallAdapterFactory;
-import com.vogella.common.core.domain.BugProduct;
-import com.vogella.common.core.service.BugzillaServiceService;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.vogella.common.core.service.BugzillaService;
 
 import reactor.core.publisher.Mono;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 @Component
-public class BugzillaServiceImpl implements BugzillaServiceService {
+public class BugzillaServiceImpl implements BugzillaService {
 
-	private BugzillaApi bugzillaApi;
-	private Mono<List<BugProduct>> cachedProducts;
+	private Mono<List<String>> cachedProducts;
+	private Mono<List<String>> cachedComponents;
 
 	@Activate
-	public void activate() {
-		Retrofit retrofit = new Retrofit.Builder().baseUrl(BugzillaApi.BASE_URL)
-				.addConverterFactory(JacksonConverterFactory.create())
-				.addCallAdapterFactory(ReactorCallAdapterFactory.create()).build();
-		bugzillaApi = retrofit.create(BugzillaApi.class);
+	public void activate(BundleContext bundleContext) {
+		Mono<List<String>> productread = getJsonReadMono(bundleContext, "resources/products.json");
+		cachedProducts = productread.retry(3).cache();
+		cachedProducts.subscribe();
 
-		// call the products once the service is activated
-//		cachedProducts = bugzillaApi.getProducts().subscribeOn(Schedulers.elastic());
-		
-		ArrayList<BugProduct> arrayList = new ArrayList<>();
-		BugProduct product = new BugProduct();
-		product.setName("Platform");
-		product.setComponents(Collections.singletonList(new com.vogella.common.core.domain.BugComponent("UI")));
-		arrayList.add(product);
+		Mono<List<String>> componentRead = getJsonReadMono(bundleContext, "resources/components.json");
+		cachedComponents = componentRead.retry(3).cache();
+		cachedComponents.subscribe();
+	}
 
-		product = new BugProduct();
-		product.setName("PDE");
-		
-		ArrayList<com.vogella.common.core.domain.BugComponent> arrayList2 = new ArrayList<>();
-		arrayList2.add(new com.vogella.common.core.domain.BugComponent("CORE"));
-		arrayList2.add(new com.vogella.common.core.domain.BugComponent("UI"));
-		product.setComponents(arrayList2);
-		arrayList.add(product);
+	private Mono<List<String>> getJsonReadMono(BundleContext bundleContext, String filePath) {
+		Mono<List<String>> productread = Mono.create(sink -> {
+			Job job = Job.create("Fetching " + filePath, monitor -> {
+				Bundle bundle = bundleContext.getBundle();
+				URL resource = bundle.getResource(filePath);
+				try(InputStreamReader isr = new InputStreamReader(resource.openStream())) {
+					Type listType = new TypeToken<ArrayList<String>>(){}.getType();
 
-		product = new BugProduct();
-		product.setName("JDT");
-		product.setComponents(Collections.singletonList(new com.vogella.common.core.domain.BugComponent("UI")));
-		arrayList.add(product);
-		
-		
-		cachedProducts = Mono.just(arrayList);
-		cachedProducts.subscribe(pl -> pl.forEach(p -> System.out.println(p.getName())), Throwable::printStackTrace);
+					Gson gson = new GsonBuilder().create();
+					ArrayList<String> fromJson = gson.fromJson(isr, listType);
+					
+					sink.success(fromJson);
+				} catch (Exception e) {
+					sink.error(e);
+				}
+			});
+			job.schedule();
+		});
+		return productread;
 	}
 
 	@Override
-	public Mono<List<BugProduct>> getProducts() {
+	public Mono<List<String>> getProducts() {
 		return cachedProducts;
+	}
+
+	@Override
+	public Mono<List<String>> getComponents() {
+		return cachedComponents;
 	}
 }

@@ -26,8 +26,8 @@ import org.slf4j.LoggerFactory;
 
 import com.vogella.common.ui.dialog.ReportDialog;
 import com.vogella.common.ui.dialog.ReportModel;
-import com.vogella.services.InnoSensrService;
-import com.vogella.services.InnoSensrStatus;
+import com.vogella.services.innosensr.InnoSensrService;
+import com.vogella.services.innosensr.InnoSensrStatus;
 
 import reactor.core.scheduler.Schedulers;
 
