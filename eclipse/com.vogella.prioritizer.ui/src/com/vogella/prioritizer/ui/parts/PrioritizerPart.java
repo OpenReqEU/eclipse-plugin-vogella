@@ -12,6 +12,8 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
@@ -19,13 +21,16 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.nebula.widgets.nattable.NatTable;
+import org.eclipse.nebula.widgets.nattable.config.AbstractUiBindingConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
+import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.data.ListDataProvider;
 import org.eclipse.nebula.widgets.nattable.data.convert.PercentageDisplayConverter;
@@ -37,6 +42,8 @@ import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnLabelAccumulator;
+import org.eclipse.nebula.widgets.nattable.painter.cell.ButtonCellPainter;
+import org.eclipse.nebula.widgets.nattable.painter.cell.ImagePainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.PercentageBarCellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.PercentageBarDecorator;
 import org.eclipse.nebula.widgets.nattable.reorder.ColumnReorderLayer;
@@ -50,6 +57,9 @@ import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.TextDecorationEnum;
 import org.eclipse.nebula.widgets.nattable.style.VerticalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.ui.NatEventData;
+import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
+import org.eclipse.nebula.widgets.nattable.ui.matcher.CellLabelMouseEventMatcher;
+import org.eclipse.nebula.widgets.nattable.ui.matcher.MouseEventMatcher;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
@@ -57,11 +67,14 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +88,7 @@ import com.vogella.prioritizer.core.preferences.Preferences;
 import com.vogella.prioritizer.core.service.BrowserService;
 import com.vogella.prioritizer.core.service.PrioritizerService;
 import com.vogella.prioritizer.ui.nattable.LinkClickConfiguration;
+import com.vogella.prioritizer.ui.nattable.NatTableButtonTooltip;
 import com.vogella.prioritizer.ui.nattable.RankedBugColumnPropertyAccessor;
 import com.vogella.prioritizer.ui.nattable.RankedBugHeaderDataProvider;
 
@@ -153,10 +167,12 @@ public class PrioritizerPart {
 		DataLayer dataLayer = new DataLayer(dataProvider);
 		dataLayer.setColumnPercentageSizing(true);
 		dataLayer.setColumnWidthPercentageByPosition(0, 7);
-		dataLayer.setColumnWidthPercentageByPosition(1, 60);
+		dataLayer.setColumnWidthPercentageByPosition(1, 48);
 		dataLayer.setColumnWidthPercentageByPosition(2, 11);
 		dataLayer.setColumnWidthPercentageByPosition(3, 11);
 		dataLayer.setColumnWidthPercentageByPosition(4, 11);
+		dataLayer.setColumnWidthPercentageByPosition(5, 6);
+		dataLayer.setColumnWidthPercentageByPosition(6, 6);
 		GlazedListsEventLayer<RankedBug> eventLayer = new GlazedListsEventLayer<RankedBug>(dataLayer, sortedList);
 		ColumnReorderLayer columnReorderLayer = new ColumnReorderLayer(eventLayer);
 		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
@@ -244,17 +260,83 @@ public class PrioritizerPart {
 		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, new PercentageBarCellPainter(),
 				DisplayMode.NORMAL, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 2);
 
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
+		
+		URL delete = FileLocator.find(bundle, new Path("/icons/delete.png"));
+		ButtonCellPainter notSuitableButton = createButtonToColumn(configRegistry,
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 5, ImageDescriptor.createFromURL(delete));
+
+		URL alarmSnooze = FileLocator.find(bundle, new Path("/icons/alarm-snooze.png"));
+		ButtonCellPainter notNowButton = createButtonToColumn(configRegistry,
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6, ImageDescriptor.createFromURL(alarmSnooze));
+
 		natTable = new NatTable(mainComposite, compositeLayer, false);
 		natTable.setConfigRegistry(configRegistry);
 		natTable.addConfiguration(new DefaultNatTableStyleConfiguration());
 		natTable.addConfiguration(new SingleClickSortConfiguration());
 		natTable.addConfiguration(linkClickConfiguration);
+		natTable.addConfiguration(
+				new ButtonClickConfiguration(notSuitableButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 5));
+		natTable.addConfiguration(
+				new ButtonClickConfiguration(notNowButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6));
 
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(natTable);
 
 		natTable.configure();
+		
+        new NatTableButtonTooltip(natTable, GridRegion.BODY);
 
 		subscribeBugTable();
+	}
+
+	private ButtonCellPainter createButtonToColumn(IConfigRegistry configRegistry, String configLabel,
+			ImageDescriptor imageDescriptor) {
+		Image image = resourceManager.createImage(imageDescriptor);
+		ButtonCellPainter buttonPainter = new ButtonCellPainter(new ImagePainter(image));
+
+		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, buttonPainter, DisplayMode.NORMAL,
+				configLabel);
+
+		// Add your listener to the button
+		buttonPainter.addClickListener((natTable, event) -> {
+			// TODO send data
+		});
+
+		// Set the color of the cell. This is picked up by the button painter to
+		// style the button
+		Style style = new Style();
+		style.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, GUIHelper.COLOR_WHITE);
+
+		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, style, DisplayMode.NORMAL, configLabel);
+		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, style, DisplayMode.SELECT, configLabel);
+
+		return buttonPainter;
+	}
+
+	class ButtonClickConfiguration extends AbstractUiBindingConfiguration {
+
+		private final ButtonCellPainter buttonCellPainter;
+		private String configLabel;
+
+		public ButtonClickConfiguration(ButtonCellPainter buttonCellPainter, String configLabel) {
+			this.buttonCellPainter = buttonCellPainter;
+			this.configLabel = configLabel;
+		}
+
+		/**
+		 * Configure the UI bindings for the mouse click
+		 */
+		@Override
+		public void configureUiBindings(UiBindingRegistry uiBindingRegistry) {
+			// Match a mouse event on the body, when the left button is clicked
+			// and the custom cell label is present
+			CellLabelMouseEventMatcher mouseEventMatcher = new CellLabelMouseEventMatcher(GridRegion.BODY,
+					MouseEventMatcher.LEFT_BUTTON, configLabel);
+
+			// Inform the button painter of the click.
+			uiBindingRegistry.registerMouseDownBinding(mouseEventMatcher, this.buttonCellPainter);
+		}
+
 	}
 
 	private void subscribeBugTable() {
@@ -362,7 +444,7 @@ public class PrioritizerPart {
 		components.subscribeOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
 			WidgetUtils.createContentAssist(componentText, resourceManager, l.toArray(new String[l.size()]));
 		});
-		
+
 		Button newComerBugs = new Button(settingsPanel, SWT.CHECK);
 		newComerBugs.setText("Show me newcomer bugs");
 

@@ -10,7 +10,7 @@ import com.vogella.prioritizer.core.model.RankedBug;
 public class RankedBugColumnPropertyAccessor implements IColumnPropertyAccessor<RankedBug> {
 
 	private static final List<String> propertyNames = Arrays.asList("id", "summary", "userpriority", "platform",
-			"component");
+			"component", "Not suitable", "Not now");
 	private double max;
 	private double min;
 
@@ -32,6 +32,10 @@ public class RankedBugColumnPropertyAccessor implements IColumnPropertyAccessor<
 			return bug.getProduct();
 		case 4:
 			return bug.getComponent();
+		case 5:
+			return "Not suitable";
+		case 6:
+			return "Not now";
 		}
 
 		return bug;
