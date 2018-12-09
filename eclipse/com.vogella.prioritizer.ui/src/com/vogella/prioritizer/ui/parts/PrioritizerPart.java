@@ -58,6 +58,7 @@ import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -361,6 +362,9 @@ public class PrioritizerPart {
 		components.subscribeOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
 			WidgetUtils.createContentAssist(componentText, resourceManager, l.toArray(new String[l.size()]));
 		});
+		
+		Button newComerBugs = new Button(settingsPanel, SWT.CHECK);
+		newComerBugs.setText("Show me newcomer bugs");
 
 		GridLayoutFactory.swtDefaults().extendedMargins(5, 0, 0, 0).generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);
