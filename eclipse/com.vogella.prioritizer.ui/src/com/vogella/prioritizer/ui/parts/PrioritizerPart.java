@@ -444,6 +444,13 @@ public class PrioritizerPart {
 		components.subscribeOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
 			WidgetUtils.createContentAssist(componentText, resourceManager, l.toArray(new String[l.size()]));
 		});
+		
+		new Label(settingsPanel, SWT.FLAT).setText("Snooze Bug for (days)");
+		
+		Text snoozeText = new Text(settingsPanel, SWT.BORDER);
+		snoozeText.setText("30");
+		snoozeText.setMessage("Days to snooze bug");
+		snoozeText.setToolTipText("Days to snooze bug");
 
 		Button newComerBugs = new Button(settingsPanel, SWT.CHECK);
 		newComerBugs.setText("Show me newcomer bugs");

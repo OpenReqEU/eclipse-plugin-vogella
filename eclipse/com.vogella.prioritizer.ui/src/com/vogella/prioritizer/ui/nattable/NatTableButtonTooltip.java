@@ -18,7 +18,7 @@ public class NatTableButtonTooltip extends NatTableContentTooltip {
 		case 5:
 			return "Bug is not suitable";
 		case 6:
-			return "Ask me later (See settings panel)";
+			return "Snooze bug aka Ask me later\n(See settings panel)";
 		default:
 			return super.getText(event); 
 		}
