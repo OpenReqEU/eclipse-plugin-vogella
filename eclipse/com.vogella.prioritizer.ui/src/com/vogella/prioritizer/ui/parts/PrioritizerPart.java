@@ -42,6 +42,7 @@ import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnLabelAccumulator;
+import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ButtonCellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ImagePainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.PercentageBarCellPainter;
@@ -261,7 +262,7 @@ public class PrioritizerPart {
 				DisplayMode.NORMAL, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 2);
 
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		
+
 		URL delete = FileLocator.find(bundle, new Path("/icons/delete.png"));
 		ButtonCellPainter notSuitableButton = createButtonToColumn(configRegistry,
 				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 5, ImageDescriptor.createFromURL(delete));
@@ -283,8 +284,8 @@ public class PrioritizerPart {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(natTable);
 
 		natTable.configure();
-		
-        new NatTableButtonTooltip(natTable, GridRegion.BODY);
+
+		new NatTableButtonTooltip(natTable, GridRegion.BODY);
 
 		subscribeBugTable();
 	}
@@ -299,7 +300,14 @@ public class PrioritizerPart {
 
 		// Add your listener to the button
 		buttonPainter.addClickListener((natTable, event) -> {
-			// TODO send data
+			int col = this.natTable.getColumnPositionByX(event.x);
+			int row = this.natTable.getRowPositionByY(event.y);
+
+			ILayerCell cell = this.natTable.getCellByPosition(col, row);
+
+			int originRowPosition = cell.getOriginRowPosition();
+
+			eventList.remove(originRowPosition - 1);
 		});
 
 		// Set the color of the cell. This is picked up by the button painter to
@@ -444,9 +452,9 @@ public class PrioritizerPart {
 		components.subscribeOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
 			WidgetUtils.createContentAssist(componentText, resourceManager, l.toArray(new String[l.size()]));
 		});
-		
+
 		new Label(settingsPanel, SWT.FLAT).setText("Snooze Bug for (days)");
-		
+
 		Text snoozeText = new Text(settingsPanel, SWT.BORDER);
 		snoozeText.setText("30");
 		snoozeText.setMessage("Days to snooze bug");
