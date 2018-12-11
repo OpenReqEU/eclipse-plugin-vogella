@@ -1,5 +1,7 @@
 == OpenReq Eclipse Integration image:https://travis-ci.org/vogellacompany/openreq.svg?branch=master["Build Status", link="https://travis-ci.org/vogellacompany/openreq"] image:https://img.shields.io/badge/License-EPL%202.0-blue.svg["EPL 2.0", link="https://www.eclipse.org/legal/epl-2.0/"]
 
+This plugin was created as a result of the OpenReq project funded by the European Union Horizon 2020 Research and Innovation programme under grant agreement No 732463.
+
 The following technologies are used:
 
 * Spring Boot (-> http://www.vogella.com/tutorials/SpringBoot2/article.html)
@@ -141,4 +143,13 @@ http://blog.florian-hopf.de/2016/04/learning-lucene.html
 http://projectreactor.io/docs/core/release/reference/
 
 https://sanaulla.info/2017/09/15/using-gmail-as-smtp-server-from-java-spring-boot-apps/
+
+== How to contribute
+
+See OpenReq project contribution link:[guidelines]
+
+== License
+
+Free use of this software is granted under the terms of the EPL version 2 (EPL2.0).
+
 
