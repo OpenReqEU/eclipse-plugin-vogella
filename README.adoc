@@ -27,7 +27,7 @@ After the user enters his Email Address, Eclipse Project, and Components of inte
 
 As for the newcomer bugs: The user will see all bugs which are suitable for newcomers within the 'Prioritizer' view.
 
-As for the most discussed bugs: Users will see in a view the bugs with the largest amount of comments in the last 30 days for a specified Product - Component combination in the 'Most discussed bugs' view
+As for the most discussed bugs: Users will see the bugs with the largest amount of comments in the last 30 days for a specified Product - Component combination in the 'Most discussed bugs' view.
 
 As for the Tip of the day with personalized tips: A service for the standard Eclipse Tip of the Day provides the user with personalized tips on how to improve his/her own usage of the Eclipse IDE.
 
