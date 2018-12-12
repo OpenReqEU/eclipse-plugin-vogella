@@ -21,16 +21,20 @@ The Eclipse Plug-in offers the following features:
 * Most discussed bugs 
 * Tip of the day with personalized tips for a better usage of the Eclipse IDE
 
-As for the personalized prioritization of requirements: The user can see directly in the Eclipse IDE, in a View, which requirements would fit not only to his/her own interests but would also be of 
+As for the personalized prioritisation of requirements: The user can see directly in the Eclipse IDE, in the 'Prioritizer' View, which requirements would fit not only to his/her own interests but would also be of 
 interest for the community and good for the Eclipse project. 
 After the user enters his Email Address, Eclipse Project, and Components of interest, the user gets a personalized and prioritized list of bugs. 
 
-As for the newcomer bugs: A microservice is called which identifies bugs which are suitable for newcomers.
+As for the newcomer bugs: The user will see all bugs which are suitable for newcomers within the 'Prioritizer' view.
 
-As for the most discussed bugs: Users interested in what bugs are the most discussed in the Eclipse community, can use the ‘Most discussed bugs’ feature which will show them a view 
-containing the bugs with the largest amount of comments for the current month for a specified Product - Component combination.
+As for the most discussed bugs: Users will see in a view the bugs with the largest amount of comments in the last 30 days for a specified Product - Component combination in the 'Most discussed bugs' view
 
-As for the Tip of the day with personalized tips: a service for the standard Eclipse Tip of the Day provides the user with personalized tips on how to improve his/her own usage of the Eclipse IDE.
+As for the Tip of the day with personalized tips: A service for the standard Eclipse Tip of the Day provides the user with personalized tips on how to improve his/her own usage of the Eclipse IDE.
+
+=== Work in progress
+
+* In the 'Prioritizer' view, the user can already remove bugs from his list by deleting or snoozing them. This functionality is not yet implemented on the server side. It will be available shortly.
+* The newcomer bugs are not yet integrated to the 'Prioritizer' view.
 
 
 === Installing the Eclipse Plugin
