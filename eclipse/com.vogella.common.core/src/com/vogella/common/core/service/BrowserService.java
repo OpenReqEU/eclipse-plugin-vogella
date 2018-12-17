@@ -1,4 +1,4 @@
-package com.vogella.prioritizer.core.service;
+package com.vogella.common.core.service;
 
 import java.net.URL;
 

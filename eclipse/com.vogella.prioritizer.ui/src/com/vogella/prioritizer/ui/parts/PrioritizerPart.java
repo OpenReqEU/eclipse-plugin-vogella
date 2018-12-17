@@ -80,13 +80,13 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vogella.common.core.service.BrowserService;
 import com.vogella.common.core.service.BugzillaService;
 import com.vogella.common.ui.util.WidgetUtils;
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.model.RankedBug;
 import com.vogella.prioritizer.core.preferences.Preferences;
-import com.vogella.prioritizer.core.service.BrowserService;
 import com.vogella.prioritizer.core.service.PrioritizerService;
 import com.vogella.prioritizer.ui.nattable.LinkClickConfiguration;
 import com.vogella.prioritizer.ui.nattable.NatTableButtonTooltip;

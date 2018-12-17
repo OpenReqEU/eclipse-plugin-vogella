@@ -12,5 +12,6 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.ui;bundle-version="3.109.0",
  org.eclipse.core.runtime;bundle-version="3.13.0",
  org.eclipse.ui.ide;bundle-version="3.13.1",
- org.eclipse.ui.ide.application;bundle-version="1.2.0"
+ org.eclipse.ui.ide.application;bundle-version="1.2.0",
+ com.vogella.common.core
 Automatic-Module-Name: com.vogella.prioritizer.service.browser

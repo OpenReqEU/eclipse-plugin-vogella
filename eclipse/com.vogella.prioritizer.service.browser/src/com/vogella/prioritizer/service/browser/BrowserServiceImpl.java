@@ -6,7 +6,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.component.annotations.Component;
 
-import com.vogella.prioritizer.core.service.BrowserService;
+import com.vogella.common.core.service.BrowserService;
 
 @Component
 public class BrowserServiceImpl implements BrowserService {
