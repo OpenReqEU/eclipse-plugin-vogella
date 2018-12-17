@@ -264,7 +264,7 @@ public class MostDiscussedBugsOfTheMonthPart {
 		});
 
 		Mono<List<String>> products = bugzillaService.getProducts();
-		products.subscribeOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
+		products.subscribeOn(Schedulers.elastic()).publishOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
 			WidgetUtils.createContentAssist(productText, resourceManager, l.toArray(new String[l.size()]));
 		});
 
@@ -286,9 +286,9 @@ public class MostDiscussedBugsOfTheMonthPart {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
-
+		
 		Mono<List<String>> components = bugzillaService.getComponents();
-		components.subscribeOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
+		components.subscribeOn(Schedulers.elastic()).publishOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
 			WidgetUtils.createContentAssist(componentText, resourceManager, l.toArray(new String[l.size()]));
 		});
 
