@@ -348,9 +348,9 @@ public class PrioritizerPart {
 	}
 
 	private void subscribeBugTable() {
-		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
-		List<String> queryProduct = Arrays.asList(preferences.get(Preferences.QUERY_PRODUCT, "Platform").split(","));
-		List<String> queryComponent = Arrays.asList(preferences.get(Preferences.QUERY_COMPONENT, "UI").split(","));
+		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "simon.scholz@vogella.com");
+		List<String> queryProduct = Arrays.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
+		List<String> queryComponent = Arrays.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
 		Mono<List<RankedBug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, queryProduct,
 				queryComponent);
 
@@ -387,14 +387,14 @@ public class PrioritizerPart {
 		Label emailLabel = new Label(settingsPanel, SWT.FLAT);
 		emailLabel.setText("Email");
 
-		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
+		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "simon.scholz@vogella.com");
 
 		Text emailText = new Text(settingsPanel, SWT.BORDER);
 		emailText.setText(userEmail);
 		emailText.setToolTipText("Email");
 		emailText.setMessage("Email");
 		emailText.addModifyListener(event -> {
-			preferences.put(Preferences.USER_EMAIL, ((Text) event.getSource()).getText());
+			preferences.put(Preferences.PRIORITIZER_USER_EMAIL, ((Text) event.getSource()).getText());
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
@@ -406,14 +406,14 @@ public class PrioritizerPart {
 		Label productLabel = new Label(settingsPanel, SWT.FLAT);
 		productLabel.setText("Product");
 
-		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
+		String queryProduct = preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform");
 
 		Text productText = new Text(settingsPanel, SWT.BORDER);
 		productText.setText(queryProduct);
 		productText.setMessage("Product");
 		productText.setToolTipText("Product");
 		productText.addModifyListener(event -> {
-			preferences.put(Preferences.QUERY_PRODUCT, ((Text) event.getSource()).getText());
+			preferences.put(Preferences.PRIORITIZER_QUERY_PRODUCT, ((Text) event.getSource()).getText());
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
@@ -432,14 +432,14 @@ public class PrioritizerPart {
 		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
 		componentLabel.setText("Component");
 
-		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
+		String queryComponent = preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI");
 
 		Text componentText = new Text(settingsPanel, SWT.BORDER);
 		componentText.setText(queryComponent);
 		componentText.setMessage("Component");
 		componentText.setToolTipText("Component");
 		componentText.addModifyListener(event -> {
-			preferences.put(Preferences.QUERY_COMPONENT, ((Text) event.getSource()).getText());
+			preferences.put(Preferences.PRIORITIZER_QUERY_COMPONENT, ((Text) event.getSource()).getText());
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
@@ -473,9 +473,9 @@ public class PrioritizerPart {
 	}
 
 	private void subscribeChart() {
-		String userEmail = preferences.get(Preferences.USER_EMAIL, "simon.scholz@vogella.com");
-		List<String> queryProduct = Arrays.asList(preferences.get(Preferences.QUERY_PRODUCT, "Platform").split(","));
-		List<String> queryComponent = Arrays.asList(preferences.get(Preferences.QUERY_COMPONENT, "UI").split(","));
+		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "simon.scholz@vogella.com");
+		List<String> queryProduct = Arrays.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
+		List<String> queryComponent = Arrays.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
 		Mono<String> keywordImage = prioritizerService.getKeyWordUrl(userEmail, queryProduct, queryComponent);
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.elastic())

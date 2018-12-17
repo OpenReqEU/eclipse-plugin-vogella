@@ -209,12 +209,12 @@ public class MostDiscussedBugsOfTheMonthPart {
 			mostDiscussedBugQuery.dispose();
 		}
 
-		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
+		String queryProduct = preferences.get(Preferences.MDB_QUERY_PRODUCT, "Platform");
 		List<String> queryProducts = null;
 		if (!queryProduct.isEmpty()) {
 			queryProducts = Arrays.asList(queryProduct.split(","));
 		}
-		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
+		String queryComponent = preferences.get(Preferences.MDB_QUERY_COMPONENT, "UI");
 		List<String> queryComponents = null;
 		if (!queryComponent.isEmpty()) {
 			queryComponents = Arrays.asList(queryComponent.split(","));
@@ -247,14 +247,14 @@ public class MostDiscussedBugsOfTheMonthPart {
 		Label productLabel = new Label(settingsPanel, SWT.FLAT);
 		productLabel.setText("Product");
 
-		String queryProduct = preferences.get(Preferences.QUERY_PRODUCT, "Platform");
+		String queryProduct = preferences.get(Preferences.MDB_QUERY_PRODUCT, "Platform");
 
 		Text productText = new Text(settingsPanel, SWT.BORDER);
 		productText.setText(queryProduct);
 		productText.setToolTipText("Product");
 		productText.setMessage("Product");
 		productText.addModifyListener(event -> {
-			preferences.put(Preferences.QUERY_PRODUCT, productText.getText());
+			preferences.put(Preferences.MDB_QUERY_PRODUCT, productText.getText());
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
@@ -271,14 +271,14 @@ public class MostDiscussedBugsOfTheMonthPart {
 		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
 		componentLabel.setText("Component");
 
-		String queryComponent = preferences.get(Preferences.QUERY_COMPONENT, "UI");
+		String queryComponent = preferences.get(Preferences.MDB_QUERY_COMPONENT, "UI");
 
 		Text componentText = new Text(settingsPanel, SWT.BORDER);
 		componentText.setText(queryComponent);
 		componentText.setToolTipText("Component");
 		componentText.setMessage("Component");
 		componentText.addModifyListener(event -> {
-			preferences.put(Preferences.QUERY_COMPONENT, componentText.getText());
+			preferences.put(Preferences.MDB_QUERY_COMPONENT, componentText.getText());
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
