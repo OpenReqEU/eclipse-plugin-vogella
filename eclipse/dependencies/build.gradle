@@ -1,16 +1,6 @@
-buildscript {
-	repositories {
-		jcenter()
-	    maven {
-	      url 'http://oss.sonatype.org/content/repositories/snapshots/'
-	    }
-	}
-	dependencies {
-		classpath 'org.standardout:bnd-platform:1.7.0-SNAPSHOT'
-	}
+plugins {
+  id "org.standardout.bnd-platform" version "1.7.0"
 }
-
-apply plugin: 'org.standardout.bnd-platform'
 
 repositories {
 	jcenter()
