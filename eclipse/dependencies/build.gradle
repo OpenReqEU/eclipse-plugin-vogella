@@ -28,19 +28,27 @@ platform {
 	useFeatureHashQualifiers = false
 	defaultQualifierMap.prefix = ''
 
-	feature(id: 'Project-Reactor', name: 'Project Reactor', version: '3.1.5') {
+	feature(id: 'Project-Reactor', name: 'Project Reactor', version: '3.2.0') {
 
-		plugin('io.projectreactor:reactor-core:3.1.5.RELEASE') {
+		plugin('io.projectreactor:reactor-core:3.2.0.RELEASE') {
 			bnd {
 				optionalImport 'javax.swing'
 				optionalImport 'kotlin'
+				optionalImport 'kotlin.jvm'
 				optionalImport 'kotlin.jvm.functions'
 				optionalImport 'kotlin.jvm.internal'
+				optionalImport 'kotlin.collections'
+				optionalImport 'kotlin.jvm.internal.markers'
+				optionalImport 'kotlin.reflect'
+				optionalImport 'kotlin.sequences'
 				optionalImport 'sun.misc'
+				optionalImport 'io.micrometer.core.instrument'
+				optionalImport 'io.micrometer.core.instrument.composite'
+				optionalImport 'javax.swing'
 			}
 		}
 
-		plugin('io.projectreactor.addons:reactor-extra:3.1.5.RELEASE') {
+		plugin('io.projectreactor.addons:reactor-extra:3.2.0.RELEASE') {
 			bnd {
 				optionalImport 'javax.swing'
 				optionalImport 'kotlin'
@@ -50,31 +58,35 @@ platform {
 		}
 	}
 	
-	feature(id: 'Retrofit', name: 'Retrofit', version: '2.4.0') {
+	feature(id: 'Retrofit', name: 'Retrofit', version: '2.5.0') {
 		// Convert the retrofit artifact to OSGi, make android.os optional and handle the split package problems in OSGi
-		plugin('com.squareup.retrofit2:retrofit:2.4.0'){
+		plugin('com.squareup.retrofit2:retrofit:2.5.0'){
 			bnd {
-				optionalImport 'android.os'
-				optionalImport 'android.net'
+					optionalImport 'android.os'
+					optionalImport 'android.net'
+					optionalImport 'javax.annotation.meta'
+					optionalImport 'kotlin'
+					optionalImport 'kotlin.jvm.internal'
 		    	}
 		}
 	
 		// Convert the retrofit jackson converter artifact to OSGi and handle the split package problems in OSGi
-		plugin('com.squareup.retrofit2:converter-jackson:2.3.0')
+		plugin('com.squareup.retrofit2:converter-jackson:2.5.0')
 
 		// lets retrofit return reactor types
 		plugin('com.jakewharton.retrofit:retrofit2-reactor-adapter:2.1.0')
 	
 		// Convert okhttp3 artifact to OSGi without android
-		plugin('com.squareup.okhttp3:okhttp:3.10.0') {
+		plugin('com.squareup.okhttp3:okhttp:3.12.0') {
 			bnd{
 				optionalImport 'android.os'
 				optionalImport 'android.util'
 				optionalImport 'org.conscrypt'
+				optionalImport 'javax.annotation.meta'
 			}
 		}
 
-		plugin('com.squareup.okhttp3:logging-interceptor:3.10.0')
+		plugin('com.squareup.okhttp3:logging-interceptor:3.12.0')
 	}
 
 /*
@@ -124,8 +136,8 @@ platform {
 		}
 	}
 */
-	feature(id: 'jcommander', name: 'jcommander', version: '1.71.0') {
-			plugin('com.beust:jcommander:1.71')
+	feature(id: 'jcommander', name: 'jcommander', version: '1.72.0') {
+			plugin('com.beust:jcommander:1.72')
 	 }
 
 }
