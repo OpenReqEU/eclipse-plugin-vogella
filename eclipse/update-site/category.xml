@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/Project-Reactor_3.1.5.jar" id="Project-Reactor" version="3.1.5">
+   <feature id="Retrofit" version="2.5.0">
       <category name="dependencies"/>
    </feature>
-   <feature url="features/Retrofit_2.4.0.jar" id="Retrofit" version="2.4.0">
+   <feature id="jcommander" version="1.72.0">
       <category name="dependencies"/>
    </feature>
-   <feature url="features/jcommander_1.71.0.jar" id="jcommander" version="1.71.0">
+   <feature id="org.eclipse.nebula.widgets.nattable.core.feature" version="1.5.0.201703192131">
       <category name="dependencies"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.nattable.core.feature_1.5.0.201703192131.jar" id="org.eclipse.nebula.widgets.nattable.core.feature" version="1.5.0.201703192131">
+   <feature id="org.eclipse.nebula.widgets.nattable.extension.e4.feature" version="1.1.0.201703192131">
       <category name="dependencies"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.nattable.extension.e4.feature_1.1.0.201703192131.jar" id="org.eclipse.nebula.widgets.nattable.extension.e4.feature" version="1.1.0.201703192131">
+   <feature id="org.eclipse.nebula.widgets.nattable.extension.glazedlists.feature" version="1.5.0.201703192131">
       <category name="dependencies"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.nattable.extension.glazedlists.feature_1.5.0.201703192131.jar" id="org.eclipse.nebula.widgets.nattable.extension.glazedlists.feature" version="1.5.0.201703192131">
+   <feature id="org.eclipse.nebula.widgets.nattable.extension.nebula.feature" version="1.1.0.201703192131">
       <category name="dependencies"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.nattable.extension.nebula.feature_1.1.0.201703192131.jar" id="org.eclipse.nebula.widgets.nattable.extension.nebula.feature" version="1.1.0.201703192131">
+   <feature id="logging.feature" version="1.0.0.qualifier">
       <category name="dependencies"/>
    </feature>
-   <feature url="features/logging.feature_1.0.0.qualifier.jar" id="logging.feature" version="1.0.0.qualifier">
-      <category name="dependencies"/>
-   </feature>
-   <feature url="features/com.vogella.prioritizer.feature_1.0.0.qualifier.jar" id="com.vogella.prioritizer.feature" version="1.0.0.qualifier">
+   <feature id="com.vogella.prioritizer.feature">
       <category name="Prioritizer"/>
    </feature>
-   <feature url="features/com.vogella.tracing.feature_1.0.0.qualifier.jar" id="com.vogella.tracing.feature" version="1.0.0.qualifier">
+   <feature id="com.vogella.tracing.feature">
       <category name="Tracing"/>
+   </feature>
+   <feature id="Project-Reactor" version="3.2.0">
+      <category name="dependencies"/>
    </feature>
    <category-def name="Prioritizer" label="Prioritizer"/>
    <category-def name="Tracing" label="Tracing"/>
