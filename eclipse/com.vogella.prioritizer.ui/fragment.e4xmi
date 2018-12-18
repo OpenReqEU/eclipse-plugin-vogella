@@ -9,7 +9,9 @@
           <parameters xmi:id="_VOLhwBicEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.parameter.prioritizer.pagetype" name="PAGE_TYPE" value="SETTINGS"/>
           <parameters xmi:id="_5jHTcBicEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.parameter.partid" name="PART_ID" value="PrioritizerPart"/>
         </children>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_SYNVUA2HEeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.handledtoolitem.0" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/refresh.png" command="_OMx2sA2HEeijCoQO9b84Zg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_SYNVUA2HEeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.handledtoolitem.0" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/refresh.png" command="_OMx2sA2HEeijCoQO9b84Zg">
+          <parameters xmi:id="_dxgloAK4EemPDenh-8TLDg" elementId="com.vogella.prioritizer.ui.parameter.viewId" name="com.vogella.prioritizer.ui.commandparameter.viewId" value="com.vogella.prioritizer.ui.partdescriptor.prioritizerpart"/>
+        </children>
       </toolbar>
     </elements>
     <elements xsi:type="basic:PartDescriptor" xmi:id="_eP-9oBiVEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.partdescriptor.mostdiscussedbugs" label="Most discussed bugs" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/discuss.png" category="Prioritizer" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.parts.MostDiscussedBugsOfTheMonthPart">
@@ -19,7 +21,9 @@
           <parameters xmi:id="_UTWw4RifEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.parameter.prioritizer.pagetype" name="PAGE_TYPE" value="SETTINGS"/>
           <parameters xmi:id="_UTWw4hifEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.parameter.partid" name="PART_ID" value="MostDiscussedBugsOfTheMonthPart"/>
         </children>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_gP7_ABicEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.handledtoolitem.0" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/refresh.png" command="_OMx2sA2HEeijCoQO9b84Zg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_gP7_ABicEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.handledtoolitem.0" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/refresh.png" command="_OMx2sA2HEeijCoQO9b84Zg">
+          <parameters xmi:id="_YLzhYAK4EemPDenh-8TLDg" elementId="com.vogella.prioritizer.ui.parameter.viewId" name="com.vogella.prioritizer.ui.commandparameter.viewId" value="com.vogella.prioritizer.ui.partdescriptor.mostdiscussedbugs"/>
+        </children>
       </toolbar>
     </elements>
   </fragments>
@@ -28,7 +32,9 @@
       <parameters xmi:id="_9hHPgBibEei0erOA8_EOUg" elementId="PAGE_TYPE" name="PAGE_TYPE" optional="false"/>
       <parameters xmi:id="_w_fFgBicEei0erOA8_EOUg" elementId="PART_ID" name="PART_ID" optional="false"/>
     </elements>
-    <elements xsi:type="commands:Command" xmi:id="_OMx2sA2HEeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.command.refresh" commandName="Refresh"/>
+    <elements xsi:type="commands:Command" xmi:id="_OMx2sA2HEeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.command.refresh" commandName="Refresh">
+      <parameters xmi:id="_VCoJ8AK4EemPDenh-8TLDg" elementId="com.vogella.prioritizer.ui.commandparameter.viewId" name="viewId" optional="false"/>
+    </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_GqfZYBidEei0erOA8_EOUg" featurename="handlers" parentElementId="xpath:/">
     <elements xsi:type="commands:Handler" xmi:id="_LQmo4BidEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.handler.refresh" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.handler.RefreshHandler" command="_OMx2sA2HEeijCoQO9b84Zg"/>

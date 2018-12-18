@@ -517,7 +517,7 @@ public class PrioritizerPart {
 
 	@Inject
 	@Optional
-	public void refresh(@UIEventTopic(Events.REFRESH) boolean refresh) {
+	public void refresh(@UIEventTopic(Events.REFRESH_PRIORITIZER) boolean refresh) {
 		subscribeBugTable();
 		subscribeChart();
 	}

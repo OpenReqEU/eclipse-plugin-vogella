@@ -318,7 +318,7 @@ public class MostDiscussedBugsOfTheMonthPart {
 
 	@Inject
 	@Optional
-	public void refresh(@UIEventTopic(Events.REFRESH) boolean refresh) {
+	public void refresh(@UIEventTopic(Events.REFRESH_MDB) boolean refresh) {
 		subscribeBugTable();
 	}
 
