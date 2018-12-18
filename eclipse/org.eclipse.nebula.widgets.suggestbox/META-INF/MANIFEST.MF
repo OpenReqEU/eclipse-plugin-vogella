@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Suggestbox
+Bundle-SymbolicName: org.eclipse.nebula.widgets.suggestbox
+Bundle-Version: 0.1.0.qualifier
+Automatic-Module-Name: org.eclipse.nebula.widgets.suggestbox
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.swt;bundle-version="3.0.0",
+ org.eclipse.jface;bundle-version="3.0.0",
+ org.eclipse.core.runtime;bundle-version="3.0.0"
+Export-Package: org.eclipse.nebula.widgets.suggestbox,
+ org.eclipse.nebula.widgets.suggestbox.listener

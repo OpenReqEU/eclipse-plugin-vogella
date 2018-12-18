@@ -40,6 +40,9 @@
 		<module>com.vogella.tracing.feature</module>
 		<module>logging.feature</module>
 
+		<module>org.eclipse.nebula.widgets.proposal</module>
+		<module>org.eclipse.nebula.widgets.suggestbox</module>
+
 		<module>update-site</module>
 	</modules>
 
