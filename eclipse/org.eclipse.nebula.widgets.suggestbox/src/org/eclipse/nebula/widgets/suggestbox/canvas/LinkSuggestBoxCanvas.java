@@ -42,14 +42,6 @@ public class LinkSuggestBoxCanvas extends SuggestBoxCanvas {
 	}
 
 	@Override
-	public void dispose() {
-		removeListener(SWT.MouseDown, hyperlinkListener);
-		removeMouseMoveListener(hoverListener);
-		removeMouseTrackListener(hoverListener);
-		super.dispose();
-	}
-
-	@Override
 	public void addListener(int eventType, Listener listener) {
 		if (SWT.Selection == eventType) {
 			this.listeners.add(listener);
@@ -57,6 +49,11 @@ public class LinkSuggestBoxCanvas extends SuggestBoxCanvas {
 		}
 
 		super.addListener(eventType, listener);
+		addDisposeListener(d -> {
+			removeListener(SWT.MouseDown, hyperlinkListener);
+			removeMouseMoveListener(hoverListener);
+			removeMouseTrackListener(hoverListener);
+		});
 	}
 
 	protected void addListener() {

@@ -18,20 +18,17 @@ import org.eclipse.nebula.widgets.suggestbox.canvas.LinkSuggestBoxCanvas;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
-public class LinkSuggestBoxEntry<T> extends ClosableSuggestBoxEntry<T> {
+public class LinkSuggestBoxEntry<T> extends ClosableSuggestBoxEntryImpl<T> {
 
 	private String hyperlinkText;
 
-	public LinkSuggestBoxEntry(T input, ILabelProvider labelProvider,
-			String hyperlinkText) {
+	public LinkSuggestBoxEntry(T input, ILabelProvider labelProvider, String hyperlinkText) {
 		super(input, labelProvider);
 		this.hyperlinkText = hyperlinkText;
 	}
 
 	@Override
-	protected Canvas createCanvas(Composite parent, int style, Object input,
-			ILabelProvider labelProvider) {
-		return new LinkSuggestBoxCanvas(parent, style, input, labelProvider,
-				hyperlinkText);
+	protected Canvas createCanvas(Composite parent, int style, Object input, ILabelProvider labelProvider) {
+		return new LinkSuggestBoxCanvas(parent, style, input, labelProvider, hyperlinkText);
 	}
 }

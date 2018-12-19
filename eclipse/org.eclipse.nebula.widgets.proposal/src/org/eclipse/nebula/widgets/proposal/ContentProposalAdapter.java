@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Table;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
 /**
  * This class connects the widget, which is wrapped in a {@link IControlAdapter}
@@ -706,8 +706,9 @@ public class ContentProposalAdapter<T> {
 				}
 			}
 
-			Mono<T> input = proposalConfigurator.getInput(filterContent);
-			input.doOnSubscribe(s -> proposalDialog.showLoading()).subscribe(proposalDialog::setInput,
+			Flux<T> input = proposalConfigurator.getInput(filterContent);
+			proposalDialog.clearElements();
+			input.doOnSubscribe(s -> proposalDialog.showLoading()).subscribe(proposalDialog::addElement,
 					this::handleError);
 		}
 	}

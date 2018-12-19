@@ -16,6 +16,8 @@ package org.eclipse.nebula.widgets.suggestbox;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -24,7 +26,6 @@ import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
-import org.eclipse.nebula.widgets.suggestbox.listener.SuggestBoxListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -34,7 +35,6 @@ import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -44,12 +44,15 @@ import org.eclipse.swt.widgets.Text;
  * 
  * @author Simon Scholz
  *
- * @param <T>
- *            types of the elements, which are selected in this SuggestBox.
+ * @param <T> types of the elements, which are selected in this SuggestBox.
  */
 public class SuggestBox<T> extends Composite {
 
 	public static final int INFINITE_SUGGESTBOXENTRY_AMOUNT = -1;
+
+	private ArrayList<Consumer<SuggestBoxEntry<T>>> addedBoxesListener = new ArrayList<>();
+
+	private ArrayList<Consumer<SuggestBoxEntry<T>>> removedBoxesListener = new ArrayList<>();
 
 	private ResourceManager resourceManager;
 
@@ -62,8 +65,7 @@ public class SuggestBox<T> extends Composite {
 
 	public SuggestBox(Composite parent, int style) {
 		super(parent, style | SWT.BORDER);
-		resourceManager = new LocalResourceManager(
-				JFaceResources.getResources(), this);
+		resourceManager = new LocalResourceManager(JFaceResources.getResources(), this);
 		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		suggestBoxEntries = new ArrayList<SuggestBoxEntry<T>>();
 		createWidgets();
@@ -95,11 +97,7 @@ public class SuggestBox<T> extends Composite {
 	 * @return collection of elements, which are selected in this widget.
 	 */
 	public Collection<T> getElements() {
-		Collection<T> input = new ArrayList<T>();
-		for (SuggestBoxEntry<T> suggestBoxEntry : getSuggestBoxEntries()) {
-			input.add(suggestBoxEntry.getInput());
-		}
-		return input;
+		return getSuggestBoxEntries().stream().map(SuggestBoxEntry::getInput).collect(Collectors.toList());
 	}
 
 	/**
@@ -124,18 +122,16 @@ public class SuggestBox<T> extends Composite {
 	 * </p>
 	 * <p>
 	 * In case the maxElements are reached, when invoking this method the
-	 * {@link Text} control will be hidden from the layout, as typing text in
-	 * order to get proposals is not allowed then.
+	 * {@link Text} control will be hidden from the layout, as typing text in order
+	 * to get proposals is not allowed then.
 	 * </p>
 	 * 
-	 * @param maxElements
-	 *            maximum amount of {@link SuggestBoxEntry} objects or
-	 *            {@link SuggestBox#INFINITE_SUGGESTBOXENTRY_AMOUNT}
+	 * @param maxElements maximum amount of {@link SuggestBoxEntry} objects or
+	 *                    {@link SuggestBox#INFINITE_SUGGESTBOXENTRY_AMOUNT}
 	 */
 	public void setMaxElements(int maxElements) {
 		this.maxElements = maxElements;
-		if (maxElements != INFINITE_SUGGESTBOXENTRY_AMOUNT
-				&& maxElements < getSuggestBoxEntries().size()) {
+		if (maxElements != INFINITE_SUGGESTBOXENTRY_AMOUNT && maxElements < getSuggestBoxEntries().size()) {
 			for (int i = getSuggestBoxEntries().size() - maxElements - 1; i >= 0; i--) {
 				removeBox(i);
 			}
@@ -151,8 +147,9 @@ public class SuggestBox<T> extends Composite {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (SWT.BS == e.character) {
-					if (!suggestBoxEntries.isEmpty()
-							&& text.getCaretPosition() == 0) {
+					if (!suggestBoxEntries.isEmpty() && text.getCaretPosition() == 0) {
+						SuggestBoxEntry<T> suggestBoxEntry = suggestBoxEntries.get(suggestBoxEntries.size() - 1);
+						removedBoxesListener.forEach(c -> c.accept(suggestBoxEntry));
 						removeBox(suggestBoxEntries.size() - 1);
 					}
 				}
@@ -172,7 +169,7 @@ public class SuggestBox<T> extends Composite {
 		boxComposite.setLayout(rowLayout);
 		boxComposite.setVisible(false);
 		GridDataFactory.fillDefaults().exclude(true).applyTo(boxComposite);
-		text = new Text(this, SWT.NONE);
+		text = new Text(this, SWT.SINGLE);
 		text.setFont(resourceManager.createFont(getFontDescriptor()));
 		text.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(text);
@@ -189,39 +186,39 @@ public class SuggestBox<T> extends Composite {
 	/**
 	 * Add a new entry to this widget.
 	 * 
-	 * @param suggestBoxEntry
-	 *            {@link SuggestBoxEntry}
+	 * @param newSuggestBoxEntry {@link SuggestBoxEntry}
 	 */
-	public void addBox(SuggestBoxEntry<T> suggestBoxEntry) {
-		if (getMaxElements() == INFINITE_SUGGESTBOXENTRY_AMOUNT
-				|| getSuggestBoxEntries().size() < getMaxElements()) {
-			suggestBoxEntries.add(suggestBoxEntry);
+	public void addBox(SuggestBoxEntry<T> newSuggestBoxEntry) {
+		if (getMaxElements() == INFINITE_SUGGESTBOXENTRY_AMOUNT || getSuggestBoxEntries().size() < getMaxElements()) {
+			suggestBoxEntries.add(newSuggestBoxEntry);
 			checkTextVisible();
-			suggestBoxEntry.create(boxComposite);
-			suggestBoxEntry.addListener(SWT.Dispose, new SuggestBoxListener<T>() {
-
-				@Override
-				public void handleEvent(SuggestBoxEntry<T> suggestBoxEntry,
-						Event event) {
-					suggestBoxEntries.remove(suggestBoxEntry);
-					if (suggestBoxEntries.isEmpty()) {
-						changeVisible(boxComposite, false);
-					}
-					SuggestBox.this.layout();
+			newSuggestBoxEntry.create(boxComposite);
+			newSuggestBoxEntry.addListener(SWT.Dispose, (suggestBoxEntry, event) -> {
+				removeBox(suggestBoxEntry);
+				if (suggestBoxEntries.isEmpty()) {
+					changeVisible(boxComposite, false);
 				}
+				SuggestBox.this.layout();
 			});
+			if (newSuggestBoxEntry instanceof ClosableSuggestBoxEntry) {
+				((ClosableSuggestBoxEntry) newSuggestBoxEntry).addCloseClickListener((suggestBoxEntry, event) -> {
+					removeBox(suggestBoxEntry);
+					removedBoxesListener.forEach(c -> c.accept(suggestBoxEntry));
+				});
+			}
 			changeVisible(boxComposite, true);
 			boxComposite.pack();
+			addedBoxesListener.forEach(consumer -> consumer.accept(newSuggestBoxEntry));
 		}
 	}
 
 	/**
 	 * remove an entry from this widget.
 	 * 
-	 * @param suggestBoxEntry
-	 *            {@link SuggestBoxEntry}
+	 * @param suggestBoxEntry {@link SuggestBoxEntry}
 	 */
 	public void removeBox(SuggestBoxEntry<T> suggestBoxEntry) {
+		suggestBoxEntries.remove(suggestBoxEntry);
 		suggestBoxEntry.dispose();
 		checkTextVisible();
 		SuggestBox.this.layout();
@@ -230,14 +227,29 @@ public class SuggestBox<T> extends Composite {
 	/**
 	 * Remove an entry at a given index.
 	 * 
-	 * @param index
-	 *            of the {@link SuggestBoxEntry}
+	 * @param index of the {@link SuggestBoxEntry}
 	 */
 	public void removeBox(int index) {
-		SuggestBoxEntry<?> remove = suggestBoxEntries.get(index);
+		SuggestBoxEntry<T> remove = suggestBoxEntries.remove(index);
 		remove.dispose();
 		checkTextVisible();
 		SuggestBox.this.layout();
+	}
+
+	public void addSuggestBoxEntryAddedListener(Consumer<SuggestBoxEntry<T>> addedBoxListener) {
+		addedBoxesListener.add(addedBoxListener);
+	}
+
+	public void removeSuggestBoxEntryAddedListener(Consumer<SuggestBoxEntry<T>> addedBoxListener) {
+		addedBoxesListener.remove(addedBoxListener);
+	}
+
+	public void addSuggestBoxEntryRemovedListener(Consumer<SuggestBoxEntry<T>> addedBoxListener) {
+		removedBoxesListener.add(addedBoxListener);
+	}
+
+	public void removeSuggestBoxEntryRemovedListener(Consumer<SuggestBoxEntry<T>> addedBoxListener) {
+		removedBoxesListener.remove(addedBoxListener);
 	}
 
 	private void checkTextVisible() {

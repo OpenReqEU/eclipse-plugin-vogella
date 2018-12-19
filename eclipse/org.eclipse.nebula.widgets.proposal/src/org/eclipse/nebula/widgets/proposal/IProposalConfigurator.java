@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerColumn;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -59,5 +60,5 @@ public interface IProposalConfigurator<T> {
 	 * @return {@link Mono} object, which can be used to receive the input of
 	 *         the proposal viewer asyc.
 	 */
-	public Mono<T> getInput(String filterContent);
+	public Flux<T> getInput(String filterContent);
 }

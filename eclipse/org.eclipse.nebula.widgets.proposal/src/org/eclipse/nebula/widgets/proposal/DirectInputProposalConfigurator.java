@@ -15,11 +15,13 @@ package org.eclipse.nebula.widgets.proposal;
 
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -33,7 +35,7 @@ import reactor.core.publisher.Mono;
  */
 public class DirectInputProposalConfigurator<T> implements IProposalConfigurator<T> {
 
-	private T input;
+	private Flux<T> inputMono;
 	private CellLabelProvider cellLabelProvider;
 
 	/**
@@ -48,13 +50,35 @@ public class DirectInputProposalConfigurator<T> implements IProposalConfigurator
 	/**
 	 * Constructor.
 	 * 
+	 * @param input object, which will be passed to the {@link ProposalDialog}
+	 */
+	public DirectInputProposalConfigurator(Flux<T> input) {
+		this(input, new ColumnLabelProvider());
+	}
+
+	/**
+	 * Constructor.
+	 * 
 	 * @param input             object, which will be passed to the
 	 *                          {@link ProposalDialog}
 	 * @param cellLabelProvider {@link CellLabelProvider} object, which is attached
 	 *                          to the viewer.
 	 */
 	public DirectInputProposalConfigurator(T input, CellLabelProvider cellLabelProvider) {
-		this.input = input;
+		this.inputMono = Flux.just(input);
+		this.cellLabelProvider = cellLabelProvider;
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param input             object, which will be passed to the
+	 *                          {@link ProposalDialog}
+	 * @param cellLabelProvider {@link CellLabelProvider} object, which is attached
+	 *                          to the viewer.
+	 */
+	public DirectInputProposalConfigurator(Flux<T> input, CellLabelProvider cellLabelProvider) {
+		this.inputMono = input;
 		this.cellLabelProvider = cellLabelProvider;
 	}
 
@@ -69,7 +93,10 @@ public class DirectInputProposalConfigurator<T> implements IProposalConfigurator
 	}
 
 	@Override
-	public Mono<T> getInput(String filterContent) {
-		return Mono.just(input);
+	public Flux<T> getInput(String filterContent) {
+		if(cellLabelProvider instanceof ILabelProvider && filterContent != null) {
+			return inputMono.filter(element -> ((ILabelProvider) cellLabelProvider).getText(element).toLowerCase().startsWith(filterContent.toLowerCase()));
+		}
+		return inputMono;
 	}
 }

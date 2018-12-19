@@ -3,9 +3,12 @@ package com.vogella.prioritizer.ui.parts;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.OptionalDouble;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -25,6 +28,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.AbstractUiBindingConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
@@ -63,6 +67,12 @@ import org.eclipse.nebula.widgets.nattable.ui.matcher.CellLabelMouseEventMatcher
 import org.eclipse.nebula.widgets.nattable.ui.matcher.MouseEventMatcher;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
+import org.eclipse.nebula.widgets.proposal.ContentProposalAdapter;
+import org.eclipse.nebula.widgets.proposal.DirectInputProposalConfigurator;
+import org.eclipse.nebula.widgets.proposal.controladapter.TextControlAdapter;
+import org.eclipse.nebula.widgets.suggestbox.ClosableSuggestBoxEntryImpl;
+import org.eclipse.nebula.widgets.suggestbox.SuggestBox;
+import org.eclipse.nebula.widgets.suggestbox.SuggestBoxEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressAdapter;
@@ -82,7 +92,6 @@ import org.slf4j.LoggerFactory;
 
 import com.vogella.common.core.service.BrowserService;
 import com.vogella.common.core.service.BugzillaService;
-import com.vogella.common.ui.util.WidgetUtils;
 import com.vogella.prioritizer.core.events.Events;
 import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.model.RankedBug;
@@ -98,6 +107,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;
 import reactor.core.Disposable;
 import reactor.core.Disposables;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.swing.SwtScheduler;
@@ -349,8 +359,10 @@ public class PrioritizerPart {
 
 	private void subscribeBugTable() {
 		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "simon.scholz@vogella.com");
-		List<String> queryProduct = Arrays.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
-		List<String> queryComponent = Arrays.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
+		List<String> queryProduct = Arrays
+				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
+		List<String> queryComponent = Arrays
+				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
 		Mono<List<RankedBug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, queryProduct,
 				queryComponent);
 
@@ -406,52 +418,83 @@ public class PrioritizerPart {
 		Label productLabel = new Label(settingsPanel, SWT.FLAT);
 		productLabel.setText("Product");
 
+		SuggestBox<String> suggestBoxProduct = new SuggestBox<>(settingsPanel, SWT.NONE);
+		suggestBoxProduct.getTextControl().setMessage("Product");
+		suggestBoxProduct.getTextControl().setToolTipText("Product");
 		String queryProduct = preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform");
+		String[] savedProducts = queryProduct.split(",");
+		for (String string : savedProducts) {
+			suggestBoxProduct.addBox(new ClosableSuggestBoxEntryImpl<String>(string));
+		}
 
-		Text productText = new Text(settingsPanel, SWT.BORDER);
-		productText.setText(queryProduct);
-		productText.setMessage("Product");
-		productText.setToolTipText("Product");
-		productText.addModifyListener(event -> {
-			preferences.put(Preferences.PRIORITIZER_QUERY_PRODUCT, ((Text) event.getSource()).getText());
+		Flux<String> products = bugzillaService.getProducts().flatMapMany(Flux::fromIterable);
+		TextControlAdapter productControlAdapter = new TextControlAdapter(suggestBoxProduct.getTextControl());
+		DirectInputProposalConfigurator<String> productProposalConfigurator = new DirectInputProposalConfigurator<>(
+				products);
+		ContentProposalAdapter<String> productProposalAdapter = new ContentProposalAdapter<>(productControlAdapter,
+				productProposalConfigurator);
+		productProposalAdapter.addSelectionChangedListener(selection -> {
+			IStructuredSelection sSel = (IStructuredSelection) selection;
+			if (!selection.isEmpty()) {
+				suggestBoxProduct.addBox(new ClosableSuggestBoxEntryImpl<String>(sSel.getFirstElement().toString()));
+				suggestBoxProduct.getTextControl().setText("");
+			}
+		});
+
+		Consumer<SuggestBoxEntry<String>> productChangeListener = t -> {
+			Collection<String> elements = suggestBoxProduct.getElements();
+			preferences.put(Preferences.PRIORITIZER_QUERY_PRODUCT, elements.stream().collect(Collectors.joining(",")));
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
 				LOG.error(e.getMessage(), e);
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
-		});
+		};
 
-		Mono<List<String>> products = bugzillaService.getProducts();
-		products.subscribeOn(Schedulers.elastic()).publishOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
-			WidgetUtils.createContentAssist(productText, resourceManager, l.toArray(new String[l.size()]));
-		});
-
-		WidgetUtils.createContentAssist(productText, resourceManager, "Platform", "PDE", "JDT", "Nebula");
+		suggestBoxProduct.addSuggestBoxEntryAddedListener(productChangeListener);
+		suggestBoxProduct.addSuggestBoxEntryRemovedListener(productChangeListener);
 
 		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
 		componentLabel.setText("Component");
 
+		SuggestBox<String> suggestBoxComponent = new SuggestBox<>(settingsPanel, SWT.NONE);
+		suggestBoxComponent.getTextControl().setMessage("Component");
+		suggestBoxComponent.getTextControl().setToolTipText("Component");
 		String queryComponent = preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI");
+		String[] savedComponents = queryComponent.split(",");
+		for (String string : savedComponents) {
+			suggestBoxComponent.addBox(new ClosableSuggestBoxEntryImpl<String>(string));
+		}
 
-		Text componentText = new Text(settingsPanel, SWT.BORDER);
-		componentText.setText(queryComponent);
-		componentText.setMessage("Component");
-		componentText.setToolTipText("Component");
-		componentText.addModifyListener(event -> {
-			preferences.put(Preferences.PRIORITIZER_QUERY_COMPONENT, ((Text) event.getSource()).getText());
+		Flux<String> components = bugzillaService.getComponents().flatMapMany(Flux::fromIterable);
+		TextControlAdapter componentControlAdapter = new TextControlAdapter(suggestBoxComponent.getTextControl());
+		DirectInputProposalConfigurator<String> componentProposalConfigurator = new DirectInputProposalConfigurator<>(
+				components);
+		ContentProposalAdapter<String> componentProposalAdapter = new ContentProposalAdapter<>(componentControlAdapter,
+				componentProposalConfigurator);
+		componentProposalAdapter.addSelectionChangedListener(selection -> {
+			IStructuredSelection sSel = (IStructuredSelection) selection;
+			if (!selection.isEmpty()) {
+				suggestBoxComponent.addBox(new ClosableSuggestBoxEntryImpl<String>(sSel.getFirstElement().toString()));
+				suggestBoxComponent.getTextControl().setText("");
+			}
+		});
+
+		Consumer<SuggestBoxEntry<String>> componentChangeListener = t -> {
+			Collection<String> elements = suggestBoxComponent.getElements();
+			preferences.put(Preferences.PRIORITIZER_QUERY_COMPONENT,
+					elements.stream().collect(Collectors.joining(",")));
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
 				LOG.error(e.getMessage(), e);
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
-		});
+		};
 
-		Mono<List<String>> components = bugzillaService.getComponents();
-		components.subscribeOn(Schedulers.elastic()).publishOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
-			WidgetUtils.createContentAssist(componentText, resourceManager, l.toArray(new String[l.size()]));
-		});
+		suggestBoxComponent.addSuggestBoxEntryAddedListener(componentChangeListener);
+		suggestBoxComponent.addSuggestBoxEntryRemovedListener(componentChangeListener);
 
 		new Label(settingsPanel, SWT.FLAT).setText("Snooze Bug for (days)");
 
@@ -474,25 +517,15 @@ public class PrioritizerPart {
 
 	private void subscribeChart() {
 		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "simon.scholz@vogella.com");
-		List<String> queryProduct = Arrays.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
-		List<String> queryComponent = Arrays.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
+		List<String> queryProduct = Arrays
+				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
+		List<String> queryComponent = Arrays
+				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
 		Mono<String> keywordImage = prioritizerService.getKeyWordUrl(userEmail, queryProduct, queryComponent);
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.elastic())
-				.publishOn(SwtScheduler.from(settingsComposite.getDisplay())).subscribe(url -> {
-
-					// FIXME see https://bugs.eclipse.org/bugs/show_bug.cgi?id=300174#c3
-					browser.addProgressListener(new ProgressAdapter() {
-						public void completed(ProgressEvent event) {
-							browser.removeProgressListener(this);
-							browser.refresh();
-						}
-					});
-					browser.setUrl(url);
-				}, err -> {
-					LOG.error(err.getMessage(), err);
-//					MessageDialog.openError(settingsComposite.getShell(), "Error", err.getMessage());
-				}));
+				.publishOn(SwtScheduler.from(settingsComposite.getDisplay()))
+				.subscribe(url -> browser.setUrl(url), err -> LOG.error(err.getMessage(), err)));
 	}
 
 	@PreDestroy

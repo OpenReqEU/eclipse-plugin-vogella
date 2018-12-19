@@ -13,10 +13,11 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.proposal;
 
+import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -68,6 +69,8 @@ public class ProposalDialog<T> extends PopupDialog {
 	private Point popupSize;
 
 	private TableViewer tableViewer;
+	
+	private WritableList<T> elements = new WritableList<>();
 
 	private Composite stackParent;
 
@@ -149,7 +152,9 @@ public class ProposalDialog<T> extends PopupDialog {
 			}
 		});
 
-		tableViewer.setContentProvider(new ArrayContentProvider());
+		tableViewer.setContentProvider(new ObservableListContentProvider());
+		
+		tableViewer.setInput(elements);
 
 		proposalConfigurator.configureViewer(tableViewer);
 
@@ -169,13 +174,41 @@ public class ProposalDialog<T> extends PopupDialog {
 	}
 
 	/**
-	 * Sets the {@link TableViewer}s input and places the {@link TableViewer} on top
-	 * of the {@link StackLayout}, if it is not already on top.
+	 * Add a new element to the {@link TableViewer}s input and places the
+	 * {@link TableViewer} on top of the {@link StackLayout}, if it is not already
+	 * on top.
 	 * 
-	 * @param input of the {@link TableViewer}
+	 * @param element of the {@link TableViewer}
 	 */
-	public void setInput(Object input) {
-		tableViewer.setInput(input);
+	public void addElement(T element) {
+		elements.add(element);
+		tableViewer.refresh();
+		setStackTopControl(tableViewer.getControl());
+	}
+
+	/**
+	 * Remove an element to the {@link TableViewer}s input and places the
+	 * {@link TableViewer} on top of the {@link StackLayout}, if it is not already
+	 * on top.
+	 * 
+	 * @param element of the {@link TableViewer}
+	 */
+	public void removeElement(T element) {
+		elements.remove(element);
+		tableViewer.refresh();
+		setStackTopControl(tableViewer.getControl());
+	}
+
+	/**
+	 * Add a new element to the {@link TableViewer}s input and places the
+	 * {@link TableViewer} on top of the {@link StackLayout}, if it is not already
+	 * on top.
+	 * 
+	 * @param element of the {@link TableViewer}
+	 */
+	public void clearElements() {
+		elements.clear();
+		tableViewer.refresh();
 		setStackTopControl(tableViewer.getControl());
 	}
 

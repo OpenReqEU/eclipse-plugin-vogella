@@ -46,15 +46,13 @@ public abstract class AbstractSuggestBoxEntry<T> implements SuggestBoxEntry<T> {
 		SuggestBoxEntryDelegatingListener suggestBoxEntryDelegatingListener = new SuggestBoxEntryDelegatingListener(
 				listener);
 		listenerList.put(listener, suggestBoxEntryDelegatingListener);
-		getCreatedControl().addListener(eventType,
-				suggestBoxEntryDelegatingListener);
+		getCreatedControl().addListener(eventType, suggestBoxEntryDelegatingListener);
 	}
 
 	@Override
 	public void removeListener(int eventType, final SuggestBoxListener<T> listener) {
-		Listener suggestBoxEntryDelegatingListener = listenerList.get(listener);
-		getCreatedControl().removeListener(eventType,
-				suggestBoxEntryDelegatingListener);
+		Listener suggestBoxEntryDelegatingListener = listenerList.remove(listener);
+		getCreatedControl().removeListener(eventType, suggestBoxEntryDelegatingListener);
 	}
 
 	protected ILabelProvider getLabelProvider() {

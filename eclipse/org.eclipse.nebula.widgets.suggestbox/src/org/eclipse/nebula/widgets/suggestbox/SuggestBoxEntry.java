@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
  * Implementations of a {@link SuggestBoxEntry} can be added to the
  * {@link SuggestBox} widget.
  * 
- * @see ClosableSuggestBoxEntry
+ * @see ClosableSuggestBoxEntryImpl
  * @see SuggestBox
  * 
  * @author Simon Scholz

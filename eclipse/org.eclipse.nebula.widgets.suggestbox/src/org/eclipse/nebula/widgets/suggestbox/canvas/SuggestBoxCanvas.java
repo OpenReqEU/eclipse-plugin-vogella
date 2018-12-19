@@ -15,8 +15,6 @@ package org.eclipse.nebula.widgets.suggestbox.canvas;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -66,39 +64,38 @@ public abstract class SuggestBoxCanvas extends Canvas {
 	}
 
 	private void addListener() {
-		addPaintListener(new PaintListener() {
-
-			@Override
-			public void paintControl(PaintEvent e) {
-				GC gc = e.gc;
-				int avatarWidth = 0;
-				Image avatar = getLabelProvider().getImage(getInput());
-				if (avatar != null) {
-					avatarWidth = avatar.getBounds().width + 4;
-				}
-				Point afterTextSize = getAfterTextSize(gc);
-
-				textExtent = gc.textExtent(getLabelProvider().getText(
-						getInput()));
-				gc.setBackground(getDisplay().getSystemColor(
-						SWT.COLOR_WIDGET_LIGHT_SHADOW));
-				setRectangle(new Rectangle(0, 0, avatarWidth + textExtent.x
-						+ afterTextSize.x + 4, textExtent.y + 2));
-				gc.fillRectangle(getRectangle());
-				gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
-				gc.drawRectangle(getRectangle());
-				if (avatar != null) {
-					gc.drawImage(avatar, 2, 2);
-				}
-				gc.drawText(getLabelProvider().getText(getInput()),
-						avatarWidth + 2, 2, true);
-
-				relativePosition = new Point(avatarWidth + textExtent.x + 4, 2);
-				drawAfterText(gc, getRelativePosition());
-				getParent().getParent().layout();
-				gc.dispose();
+		addPaintListener(e -> {
+			GC gc = e.gc;
+			int imageWidth = 0;
+			Image image = getLabelProvider().getImage(getInput());
+			if (image != null) {
+				imageWidth = image.getBounds().width + 4;
 			}
+			Point afterTextSize = getAfterTextSize(gc);
 
+			textExtent = gc.textExtent(getLabelProvider().getText(
+					getInput()));
+			gc.setBackground(getDisplay().getSystemColor(
+					SWT.COLOR_WIDGET_LIGHT_SHADOW));
+			setRectangle(new Rectangle(0, 0, imageWidth + textExtent.x
+					+ afterTextSize.x + 4, textExtent.y + 2));
+			gc.fillRectangle(getRectangle());
+			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
+			gc.drawRectangle(getRectangle());
+			if (image != null) {
+				gc.drawImage(image, 2, 2);
+			}
+			gc.drawText(getLabelProvider().getText(getInput()),
+					imageWidth + 2, 2, true);
+
+			relativePosition = new Point(imageWidth + textExtent.x + 4, 2);
+			drawAfterText(gc, getRelativePosition());
+			getParent().getParent().layout();
+			gc.dispose();
+		});
+		
+		addDisposeListener(e -> {
+			getLabelProvider().dispose();
 		});
 	}
 
@@ -119,12 +116,6 @@ public abstract class SuggestBoxCanvas extends Canvas {
 		} else {
 			return new Point(64, 22);
 		}
-	}
-
-	@Override
-	public void dispose() {
-		getLabelProvider().dispose();
-		super.dispose();
 	}
 
 	public Object getInput() {
