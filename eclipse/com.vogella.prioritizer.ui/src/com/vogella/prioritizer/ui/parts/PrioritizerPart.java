@@ -525,6 +525,7 @@ public class PrioritizerPart {
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.elastic())
 				.publishOn(SwtScheduler.from(settingsComposite.getDisplay()))
+				.doOnSubscribe(s -> browser.setText("<html><body><h3>Loading...</h3></body></html>"))
 				.subscribe(url -> browser.setUrl(url), err -> LOG.error(err.getMessage(), err)));
 	}
 
