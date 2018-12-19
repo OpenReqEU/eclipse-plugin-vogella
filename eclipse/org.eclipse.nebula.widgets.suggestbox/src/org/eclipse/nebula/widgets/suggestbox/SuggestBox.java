@@ -201,7 +201,9 @@ public class SuggestBox<T> extends Composite {
 				SuggestBox.this.layout();
 			});
 			if (newSuggestBoxEntry instanceof ClosableSuggestBoxEntry) {
-				((ClosableSuggestBoxEntry) newSuggestBoxEntry).addCloseClickListener((suggestBoxEntry, event) -> {
+				@SuppressWarnings("unchecked")
+				ClosableSuggestBoxEntry<T> closableBoxEntry = (ClosableSuggestBoxEntry<T>) newSuggestBoxEntry;
+				closableBoxEntry.addCloseClickListener((suggestBoxEntry, event) -> {
 					removeBox(suggestBoxEntry);
 					removedBoxesListener.forEach(c -> c.accept(suggestBoxEntry));
 				});

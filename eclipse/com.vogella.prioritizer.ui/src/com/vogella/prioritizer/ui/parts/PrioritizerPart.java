@@ -75,8 +75,6 @@ import org.eclipse.nebula.widgets.suggestbox.SuggestBox;
 import org.eclipse.nebula.widgets.suggestbox.SuggestBoxEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.ProgressAdapter;
-import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
