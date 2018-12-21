@@ -88,6 +88,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vogella.common.core.AgentIDGenerator;
 import com.vogella.common.core.service.BrowserService;
 import com.vogella.common.core.service.BugzillaService;
 import com.vogella.prioritizer.core.events.Events;
@@ -315,7 +316,19 @@ public class PrioritizerPart {
 
 			int originRowPosition = cell.getOriginRowPosition();
 
-			eventList.remove(originRowPosition - 1);
+			RankedBug removed = eventList.remove(originRowPosition - 1);
+
+			switch (col) {
+			case 5:
+				prioritizerService.dislikeBug(AgentIDGenerator.getAgentID(), removed.getId()).subscribe();
+				break;
+			case 6:
+				int days = preferences.getInt(Preferences.PRIORITIZER_DEFER_DELAY, 30);
+				prioritizerService.deferBug(AgentIDGenerator.getAgentID(), removed.getId(), days).subscribe();
+				break;
+			default:
+				break;
+			}
 		});
 
 		// Set the color of the cell. This is picked up by the button painter to
@@ -361,8 +374,9 @@ public class PrioritizerPart {
 				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
 		List<String> queryComponent = Arrays
 				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
-		Mono<List<RankedBug>> suitableBugs = prioritizerService.getSuitableBugs(userEmail, queryProduct,
-				queryComponent);
+
+		Mono<List<RankedBug>> suitableBugs = prioritizerService.getSuitableBugs(AgentIDGenerator.getAgentID(),
+				userEmail, queryProduct, queryComponent);
 
 		eventList.clear();
 		eventList.add(RankedBug.LOADING_DATA_FAKE_BUG);
@@ -452,6 +466,7 @@ public class PrioritizerPart {
 
 		suggestBoxProduct.addSuggestBoxEntryAddedListener(productChangeListener);
 		suggestBoxProduct.addSuggestBoxEntryRemovedListener(productChangeListener);
+		GridDataFactory.fillDefaults().hint(300, 60).grab(true, true).applyTo(suggestBoxProduct);
 
 		Label componentLabel = new Label(settingsPanel, SWT.FLAT);
 		componentLabel.setText("Component");
@@ -493,6 +508,7 @@ public class PrioritizerPart {
 
 		suggestBoxComponent.addSuggestBoxEntryAddedListener(componentChangeListener);
 		suggestBoxComponent.addSuggestBoxEntryRemovedListener(componentChangeListener);
+		GridDataFactory.fillDefaults().hint(300, 60).grab(true, true).applyTo(suggestBoxComponent);
 
 		new Label(settingsPanel, SWT.FLAT).setText("Snooze Bug for (days)");
 
@@ -500,12 +516,22 @@ public class PrioritizerPart {
 		snoozeText.setText("30");
 		snoozeText.setMessage("Days to snooze bug");
 		snoozeText.setToolTipText("Days to snooze bug");
+		snoozeText.addModifyListener(event -> {
+			Text source = (Text) event.getSource();
+			preferences.put(Preferences.PRIORITIZER_DEFER_DELAY, source.getText());
+			try {
+				preferences.flush();
+			} catch (BackingStoreException e) {
+				LOG.error(e.getMessage(), e);
+				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
+			}
+		});
 
 		Button newComerBugs = new Button(settingsPanel, SWT.CHECK);
 		newComerBugs.setText("Show me newcomer bugs");
 
 		GridLayoutFactory.swtDefaults().extendedMargins(5, 0, 0, 0).generateLayout(settingsPanel);
-		GridDataFactory.fillDefaults().hint(300, SWT.DEFAULT).applyTo(settingsPanel);
+		GridDataFactory.fillDefaults().grab(true, true).hint(300, SWT.DEFAULT).applyTo(settingsPanel);
 
 		browser = new Browser(settingsComposite, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(browser);
@@ -519,7 +545,8 @@ public class PrioritizerPart {
 				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
 		List<String> queryComponent = Arrays
 				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
-		Mono<String> keywordImage = prioritizerService.getKeyWordUrl(userEmail, queryProduct, queryComponent);
+		Mono<String> keywordImage = prioritizerService.getKeyWordUrl(AgentIDGenerator.getAgentID(), userEmail,
+				queryProduct, queryComponent);
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.elastic())
 				.publishOn(SwtScheduler.from(settingsComposite.getDisplay()))

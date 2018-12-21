@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
+import org.eclipse.jface.layout.RowDataFactory;
+import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -158,7 +158,7 @@ public class SuggestBox<T> extends Composite {
 	}
 
 	private void createWidgets() {
-		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(this);
+//		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(this);
 		boxComposite = new Composite(this, SWT.NONE);
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginTop = 2;
@@ -168,11 +168,14 @@ public class SuggestBox<T> extends Composite {
 		rowLayout.spacing = LayoutConstants.getSpacing().x;
 		boxComposite.setLayout(rowLayout);
 		boxComposite.setVisible(false);
-		GridDataFactory.fillDefaults().exclude(true).applyTo(boxComposite);
+//		GridDataFactory.fillDefaults().exclude(true).applyTo(boxComposite);
+		RowDataFactory.swtDefaults().exclude(true).applyTo(boxComposite);
 		text = new Text(this, SWT.SINGLE);
 		text.setFont(resourceManager.createFont(getFontDescriptor()));
 		text.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(text);
+		RowDataFactory.swtDefaults().hint(150, SWT.DEFAULT).applyTo(text);
+//		GridDataFactory.fillDefaults().grab(true, false).applyTo(text);
+		RowLayoutFactory.fillDefaults().spacing(LayoutConstants.getSpacing().x).applyTo(this);
 	}
 
 	private FontDescriptor getFontDescriptor() {
@@ -211,6 +214,7 @@ public class SuggestBox<T> extends Composite {
 			changeVisible(boxComposite, true);
 			boxComposite.pack();
 			addedBoxesListener.forEach(consumer -> consumer.accept(newSuggestBoxEntry));
+			getParent().layout();
 		}
 	}
 
