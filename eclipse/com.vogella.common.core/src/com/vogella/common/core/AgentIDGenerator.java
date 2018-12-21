@@ -8,24 +8,37 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Version;
 
 public class AgentIDGenerator {
-	
-	public static String getAgentID() throws SocketException {
-		Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-		StringBuilder sb = new StringBuilder();
-		while (networkInterfaces.hasMoreElements()) {
-			NetworkInterface s = networkInterfaces.nextElement();
-			byte[] mac = s.getHardwareAddress();
-			for (int i = 0; i < mac.length; i++) {
-				sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));		
-			}
+
+	private static String agendId;
+
+	public static String getAgentID() {
+		if (agendId != null) {
+			return agendId;
 		}
-		
+		Enumeration<NetworkInterface> networkInterfaces;
+		StringBuilder sb = new StringBuilder();
+		try {
+			networkInterfaces = NetworkInterface.getNetworkInterfaces();
+			while (networkInterfaces.hasMoreElements()) {
+				NetworkInterface s = networkInterfaces.nextElement();
+				byte[] mac = s.getHardwareAddress();
+				if (mac != null) {
+					for (int i = 0; i < mac.length; i++) {
+						sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+					}
+				}
+			}
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
 		Version version = Platform.getBundle("org.eclipse.platform").getVersion();
 		sb.append(version.toString());
 
-		return sb.toString();
+		agendId = sb.toString();
+
+		return agendId;
 	}
-	
+
 	private AgentIDGenerator() {
 	}
 }
