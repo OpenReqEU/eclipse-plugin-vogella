@@ -7,7 +7,7 @@ public class RankedBug implements Comparable<RankedBug> {
 
 	public static final RankedBug LOADING_DATA_FAKE_BUG = new RankedBug("Loading data...");
 
-	private int id;
+	private long id;
 	private String summary;
 	private String product;
 	private String component;
@@ -20,11 +20,11 @@ public class RankedBug implements Comparable<RankedBug> {
 		this.summary = summary;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
