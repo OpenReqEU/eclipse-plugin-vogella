@@ -15,11 +15,23 @@ public interface PrioritizerApi {
 
 	@POST("/prioritizer/chart")
 	@Headers("Content-Type: application/json")
-	Mono<KeyWordUrlResponse> getKeyWordUrl(@Body BugzillaRequest bugzillaRequest);
+	Mono<KeyWordUrlResponse> getKeyWordUrl(@Body PrioritizerRequest bugzillaRequest);
 
 	@POST("/prioritizer/compute")
 	@Headers("Content-Type: application/json")
-	Mono<BugzillaPriorityResponse> getSuitableBugs(@Body BugzillaRequest bugzillaRequest);
+	Mono<BugzillaPriorityResponse> getSuitableBugs(@Body PrioritizerRequest bugzillaRequest);
+
+	@POST("/prioritizer/dislike")
+	@Headers("Content-Type: application/json")
+	Mono<BugzillaPriorityResponse> dislikeBug(@Body PrioritizerIdRequest bugzillaRequest);
+	
+	@POST("/prioritizer/like")
+	@Headers("Content-Type: application/json")
+	Mono<BugzillaPriorityResponse> likeBug(@Body PrioritizerIdRequest bugzillaRequest);
+
+	@POST("/prioritizer/defer")
+	@Headers("Content-Type: application/json")
+	Mono<BugzillaPriorityResponse> deferBug(@Body PrioritizerIdIntervalRequest bugzillaRequest);
 
 	@GET("http://217.172.12.199:9801/bugzilla/mostDiscussedBugsOfTheMonth")
 	Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(@Query("product") List<String> product,

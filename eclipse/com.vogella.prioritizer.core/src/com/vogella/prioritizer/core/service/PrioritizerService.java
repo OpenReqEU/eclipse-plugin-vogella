@@ -8,9 +8,16 @@ import com.vogella.prioritizer.core.model.RankedBug;
 import reactor.core.publisher.Mono;
 
 public interface PrioritizerService {
-	Mono<String> getKeyWordUrl(String assignee, List<String> product, List<String> component);
+	Mono<String> getKeyWordUrl(String agentID, String assignee, List<String> product, List<String> component);
 
-	Mono<List<RankedBug>> getSuitableBugs(String assignee, List<String> product, List<String> component);
+	Mono<List<RankedBug>> getSuitableBugs(String agentID, String assignee, List<String> product,
+			List<String> component);
+
+	Mono<Void> dislikeBug(String agentID, long bugId);
+
+	Mono<Void> likeBug(String agentID, long bugId);
+
+	Mono<Void> deferBug(String agentID, long bugId, int interval);
 
 	Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(List<String> product, List<String> component);
 }

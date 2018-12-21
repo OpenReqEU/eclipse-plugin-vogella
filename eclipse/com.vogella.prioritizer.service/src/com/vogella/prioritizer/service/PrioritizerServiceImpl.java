@@ -16,6 +16,8 @@ import com.vogella.prioritizer.core.model.RankedBug;
 import com.vogella.prioritizer.core.service.PrioritizerService;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.logging.HttpLoggingInterceptor.Level;
 import reactor.core.publisher.Mono;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -53,9 +55,8 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 		ServerSettings serverSettings = new ServerSettings();
 		JCommander.newBuilder().acceptUnknownOptions(true).addObject(serverSettings).build().parse(args);
 
-		final OkHttpClient httpClient = new OkHttpClient.Builder().readTimeout(3, TimeUnit.MINUTES)
-				.connectTimeout(3, TimeUnit.MINUTES)
-				.build();
+		final OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(Level.BODY))
+				.readTimeout(3, TimeUnit.MINUTES).connectTimeout(3, TimeUnit.MINUTES).build();
 
 		String serverUrl = serverSettings.getServerUrl();
 
@@ -66,8 +67,10 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
-	public Mono<List<RankedBug>> getSuitableBugs(String assignee, List<String> product, List<String> component) {
-		BugzillaRequest bugzillaRequest = new BugzillaRequest();
+	public Mono<List<RankedBug>> getSuitableBugs(String agentID, String assignee, List<String> product,
+			List<String> component) {
+		PrioritizerRequest bugzillaRequest = new PrioritizerRequest();
+		bugzillaRequest.setAgentID(agentID);
 		bugzillaRequest.setAssignee(assignee);
 		bugzillaRequest.setProducts(product);
 		bugzillaRequest.setComponents(component);
@@ -81,12 +84,38 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
-	public Mono<String> getKeyWordUrl(String assignee, List<String> product, List<String> component) {
-		BugzillaRequest bugzillaRequest = new BugzillaRequest();
+	public Mono<String> getKeyWordUrl(String agentID, String assignee, List<String> product, List<String> component) {
+		PrioritizerRequest bugzillaRequest = new PrioritizerRequest();
+		bugzillaRequest.setAgentID(agentID);
 		bugzillaRequest.setAssignee(assignee);
 		bugzillaRequest.setProducts(product);
 		bugzillaRequest.setComponents(component);
 		// TODO replace is a current workaround for port problems
 		return prioritizerApi.getKeyWordUrl(bugzillaRequest).map(kwur -> kwur.getUrl());
+	}
+
+	@Override
+	public Mono<Void> dislikeBug(String agentID, long bugId) {
+		PrioritizerIdRequest idRequest = new PrioritizerIdRequest();
+		idRequest.setAgentID(agentID);
+		idRequest.setId(bugId);
+		return prioritizerApi.dislikeBug(idRequest).then();
+	}
+
+	@Override
+	public Mono<Void> likeBug(String agentID, long bugId) {
+		PrioritizerIdRequest idRequest = new PrioritizerIdRequest();
+		idRequest.setAgentID(agentID);
+		idRequest.setId(bugId);
+		return prioritizerApi.likeBug(idRequest).then();
+	}
+
+	@Override
+	public Mono<Void> deferBug(String agentID, long bugId, int interval) {
+		PrioritizerIdIntervalRequest idRequest = new PrioritizerIdIntervalRequest();
+		idRequest.setAgentID(agentID);
+		idRequest.setId(bugId);
+		idRequest.setInterval(interval);
+		return prioritizerApi.deferBug(idRequest).then();
 	}
 }
