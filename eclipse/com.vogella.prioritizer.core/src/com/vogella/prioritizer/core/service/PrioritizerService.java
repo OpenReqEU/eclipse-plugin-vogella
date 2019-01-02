@@ -19,5 +19,5 @@ public interface PrioritizerService {
 
 	Mono<Void> deferBug(String agentID, long bugId, int interval);
 
-	Mono<List<Bug>> getMostDiscussedBugsOfTheMonth(List<String> product, List<String> component);
+	Mono<List<Bug>> getMostDiscussedBugs(List<String> product, List<String> component, long daysBack);
 }

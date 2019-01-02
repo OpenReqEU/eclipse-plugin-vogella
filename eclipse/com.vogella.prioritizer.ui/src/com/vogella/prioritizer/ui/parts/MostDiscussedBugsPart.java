@@ -219,8 +219,11 @@ public class MostDiscussedBugsPart {
 		if (!queryComponent.isEmpty()) {
 			queryComponents = Arrays.asList(queryComponent.split(","));
 		}
-		Mono<List<Bug>> suitableBugs = prioritizerService.getMostDiscussedBugsOfTheMonth(queryProducts,
-				queryComponents);
+		
+		long daysBack = preferences.getLong(Preferences.MDB_DAYS_BACK, 30);
+		
+		Mono<List<Bug>> suitableBugs = prioritizerService.getMostDiscussedBugs(queryProducts,
+				queryComponents, daysBack);
 
 		eventList.clear();
 		eventList.add(Bug.LOADING_DATA_FAKE_BUG);
@@ -288,14 +291,14 @@ public class MostDiscussedBugsPart {
 		});
 
 		Label daysBackLabel = new Label(settingsPanel, SWT.FLAT);
-		daysBackLabel.setText("From days in the past");
+		daysBackLabel.setText("Days back");
 		
-		int daysBack = preferences.getInt(Preferences.MDB_DAYS_BACK, 30);
+		long daysBack = preferences.getLong(Preferences.MDB_DAYS_BACK, 30);
 		
 		Text daysBackText = new Text(settingsPanel, SWT.BORDER);
 		daysBackText.setText(String.valueOf(daysBack));
-		daysBackText.setToolTipText("Days in the past");
-		daysBackText.setMessage("Days in the past");
+		daysBackText.setToolTipText("Days back");
+		daysBackText.setMessage("Days back");
 		daysBackText.addModifyListener(event -> {
 			preferences.put(Preferences.MDB_DAYS_BACK, daysBackText.getText());
 			try {
