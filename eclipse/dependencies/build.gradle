@@ -18,9 +18,9 @@ platform {
 	useFeatureHashQualifiers = false
 	defaultQualifierMap.prefix = ''
 
-	feature(id: 'Project-Reactor', name: 'Project Reactor', version: '3.2.0') {
+	feature(id: 'Project-Reactor', name: 'Project Reactor', version: '3.2.1') {
 
-		plugin('io.projectreactor:reactor-core:3.2.0.RELEASE') {
+		plugin('io.projectreactor:reactor-core:3.2.1.RELEASE') {
 			bnd {
 				optionalImport 'javax.swing'
 				optionalImport 'kotlin'
@@ -46,6 +46,11 @@ platform {
 				optionalImport 'kotlin.jvm.internal'
 			}
 		}
+	}
+	
+	feature(id: 'RSocket', name: 'RSocket', version: '0.11.15') {
+	   plugin('io.rsocket:rsocket-core:0.11.15')
+	   plugin('io.rsocket:rsocket-transport-netty:0.11.15')
 	}
 	
 	feature(id: 'Retrofit', name: 'Retrofit', version: '2.5.0') {
