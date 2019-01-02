@@ -22,9 +22,9 @@ class BugzillaController {
 		this.prioritizerService = prioritizerService;
 	}
 
-	@GetMapping("/mostDiscussedBugsOfTheMonth")
-	public Flux<Bug> getMostDiscussedBugsOfTheMonth(@RequestParam(name = "product", required = false, defaultValue="Platform") List<String> product,
-			@RequestParam(name = "component", required = false, defaultValue="UI") List<String> component) {
-		return prioritizerService.getMostDiscussedBugsOfTheMonth(product, component);
+	@GetMapping("/mostDiscussedBugs")
+	public Flux<Bug> getMostDiscussedBugs(@RequestParam(name = "product", required = false, defaultValue="Platform") List<String> product,
+			@RequestParam(name = "component", required = false, defaultValue="UI") List<String> component, @RequestParam(name= "daysBack", required=false, defaultValue="30") long daysBack) {
+		return prioritizerService.getMostDiscussedBugs(product, component, daysBack);
 	}
 }
