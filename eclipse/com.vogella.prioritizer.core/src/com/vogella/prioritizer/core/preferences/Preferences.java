@@ -8,4 +8,5 @@ public interface Preferences {
 
 	static final String MDB_QUERY_PRODUCT = "vogella.mdb.query.product";
 	static final String MDB_QUERY_COMPONENT = "vogella.mdb.query.component";
+	static final String MDB_DAYS_BACK = "vogella.mdb.days.back";
 }

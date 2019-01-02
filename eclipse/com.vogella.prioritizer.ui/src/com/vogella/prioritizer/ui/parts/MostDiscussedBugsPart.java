@@ -72,9 +72,9 @@ import reactor.core.scheduler.Schedulers;
 import reactor.swing.SwtScheduler;
 
 @SuppressWarnings("restriction")
-public class MostDiscussedBugsOfTheMonthPart {
+public class MostDiscussedBugsPart {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MostDiscussedBugsOfTheMonthPart.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MostDiscussedBugsPart.class);
 
 	@Inject
 	@Preference
@@ -286,10 +286,29 @@ public class MostDiscussedBugsOfTheMonthPart {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
+
+		Label daysBackLabel = new Label(settingsPanel, SWT.FLAT);
+		daysBackLabel.setText("From days in the past");
+		
+		int daysBack = preferences.getInt(Preferences.MDB_DAYS_BACK, 30);
+		
+		Text daysBackText = new Text(settingsPanel, SWT.BORDER);
+		daysBackText.setText(String.valueOf(daysBack));
+		daysBackText.setToolTipText("Days in the past");
+		daysBackText.setMessage("Days in the past");
+		daysBackText.addModifyListener(event -> {
+			preferences.put(Preferences.MDB_DAYS_BACK, daysBackText.getText());
+			try {
+				preferences.flush();
+			} catch (BackingStoreException e) {
+				LOG.error(e.getMessage(), e);
+				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
+			}
+		});
 		
 		Mono<List<String>> components = bugzillaService.getComponents();
 		components.subscribeOn(Schedulers.elastic()).publishOn(SwtScheduler.from(parent.getDisplay())).subscribe(l -> {
-			WidgetUtils.createContentAssist(componentText, resourceManager, l.toArray(new String[l.size()]));
+			WidgetUtils.createContentAssist(daysBackText, resourceManager, l.toArray(new String[l.size()]));
 		});
 
 		GridLayoutFactory.swtDefaults().extendedMargins(5, 0, 0, 0).generateLayout(settingsPanel);

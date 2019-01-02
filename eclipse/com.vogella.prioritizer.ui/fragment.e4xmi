@@ -14,7 +14,7 @@
         </children>
       </toolbar>
     </elements>
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_eP-9oBiVEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.partdescriptor.mostdiscussedbugs" label="Most discussed bugs" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/discuss.png" category="Prioritizer" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.parts.MostDiscussedBugsOfTheMonthPart">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_eP-9oBiVEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.partdescriptor.mostdiscussedbugs" label="Most discussed bugs" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/discuss.png" category="Prioritizer" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.parts.MostDiscussedBugsPart">
       <tags>View</tags>
       <toolbar xmi:id="_e5JLMBicEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.toolbar.1">
         <children xsi:type="menu:HandledToolItem" xmi:id="_UTWw4BifEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.handledtoolitem.settings" label="" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/settings.png" command="_QzjlUA1_EeijCoQO9b84Zg">
