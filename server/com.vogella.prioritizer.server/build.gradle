@@ -1,9 +1,9 @@
 buildscript {
 	ext {
-		springBootVersion = '2.1.0.RELEASE'
+		springBootVersion = '2.1.1.RELEASE'
 	}
 	repositories {
-		mavenCentral()
+	    jcenter()
 		maven { url "https://repo.spring.io/snapshot" }
 		maven { url "https://repo.spring.io/milestone" }
 	}
@@ -25,6 +25,10 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-actuator')
 	implementation('org.springframework.boot:spring-boot-starter-security')
 	implementation('org.springframework.boot:spring-boot-starter-webflux')
+	implementation('io.springfox:springfox-swagger2:3.0.0-SNAPSHOT')
+    implementation('io.springfox:springfox-spring-webflux:3.0.0-SNAPSHOT')
+    implementation('io.springfox:springfox-spring-integration-webflux:3.0.0-SNAPSHOT')
+    implementation('io.springfox:springfox-swagger-ui:3.0.0-SNAPSHOT')
 	compileOnly('org.projectlombok:lombok')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('org.springframework.security:spring-security-test')
