@@ -12,6 +12,14 @@ The following technologies are used:
 * Eclipse RCP (-> http://www.vogella.com/tutorials/EclipseRCP/article.html)
 * Maven Tycho (-> http://www.vogella.com/tutorials/EclipseTycho/article.html)
 
+=== Public APIs
+
+The server implementation currently gathers the most discussed bugs of a certain period of time (defaults to 30 days back).
+
+The API is documented by using Swagger2:
+
+http://217.172.12.199:9801/swagger-ui.html#/bugzilla-controller/getMostDiscussedBugsUsingGET
+
 === Functionalities of the Eclipse Plug-in
 
 The Eclipse Plug-in offers the following features:
