@@ -14,7 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebFlux;
 
 @Configuration
 @EnableSwagger2WebFlux
-public class SwaggerConfig {
+class SwaggerConfig {
 
 	@Bean
 	public Docket taskApi() {

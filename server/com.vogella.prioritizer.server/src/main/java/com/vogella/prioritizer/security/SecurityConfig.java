@@ -10,7 +10,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
-public class SecurityConfig {
+class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories
@@ -31,21 +31,5 @@ public class SecurityConfig {
             .permitAll()
             .and()
             .build();
-//        return http
-//        		.csrf()
-//        		.disable()
-//        		.formLogin()
-//        		.disable()
-//        		.httpBasic()
-//        		.disable()
-//        		.authorizeExchange()
-//        		.pathMatchers(HttpMethod.OPTIONS)
-//        		.permitAll()
-//        		.pathMatchers("/bugzilla/mostDiscussedBugsOfTheMonth")
-//        		.permitAll()
-//        		.anyExchange()
-//        		.authenticated()
-//        		.and()
-//        		.build();
     }
 }

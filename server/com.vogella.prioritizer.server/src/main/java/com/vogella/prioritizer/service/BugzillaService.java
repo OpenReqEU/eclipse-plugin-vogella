@@ -5,7 +5,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.vogella.prioritizer.server.issue.api.IssueService;
@@ -16,8 +15,11 @@ import reactor.core.publisher.Flux;
 @Service
 public class BugzillaService {
 
-	@Autowired
 	private IssueService issueApi;
+	
+	public BugzillaService(IssueService issueApi) {
+		this.issueApi = issueApi;
+	}
 
 	public Flux<Bug> getMostDiscussedBugs(List<String> product, List<String> component, long daysback) {
 
