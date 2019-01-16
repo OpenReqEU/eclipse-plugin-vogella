@@ -407,6 +407,27 @@ public class PrioritizerPart {
 		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(settingsComposite);
 
 		Composite settingsPanel = new Composite(settingsComposite, SWT.NONE);
+		
+		Label agentLabel = new Label(settingsPanel, SWT.FLAT);
+		agentLabel.setText("Agent-Id");
+		
+		String generatedAgentId = AgentIDGenerator.getAgentID();
+
+		String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
+
+		Text agentText = new Text(settingsPanel, SWT.BORDER);
+		agentText.setText(agentId);
+		agentText.setToolTipText("Agent-Id");
+		agentText.setMessage("Agent-Id");
+		agentText.addModifyListener(event -> {
+			preferences.put(Preferences.PRIORITIZER_AGENT_ID, ((Text) event.getSource()).getText());
+			try {
+				preferences.flush();
+			} catch (BackingStoreException e) {
+				LOG.error(e.getMessage(), e);
+				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
+			}
+		});
 
 		Label emailLabel = new Label(settingsPanel, SWT.FLAT);
 		emailLabel.setText("Email");
