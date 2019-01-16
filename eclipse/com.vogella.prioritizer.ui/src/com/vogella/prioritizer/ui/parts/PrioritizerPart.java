@@ -318,13 +318,17 @@ public class PrioritizerPart {
 
 			RankedBug removed = eventList.remove(originRowPosition - 1);
 
+			String generatedAgentId = AgentIDGenerator.getAgentID();
+
+			String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
+
 			switch (col) {
 			case 5:
-				prioritizerService.dislikeBug(AgentIDGenerator.getAgentID(), removed.getId()).subscribe();
+				prioritizerService.dislikeBug(agentId, removed.getId()).subscribe();
 				break;
 			case 6:
 				int days = preferences.getInt(Preferences.PRIORITIZER_DEFER_DELAY, 30);
-				prioritizerService.deferBug(AgentIDGenerator.getAgentID(), removed.getId(), days).subscribe();
+				prioritizerService.deferBug(agentId, removed.getId(), days).subscribe();
 				break;
 			default:
 				break;
@@ -375,8 +379,11 @@ public class PrioritizerPart {
 		List<String> queryComponent = Arrays
 				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
 
-		Mono<List<RankedBug>> suitableBugs = prioritizerService.getSuitableBugs(AgentIDGenerator.getAgentID(),
-				userEmail, queryProduct, queryComponent);
+		String generatedAgentId = AgentIDGenerator.getAgentID();
+
+		String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
+		Mono<List<RankedBug>> suitableBugs = prioritizerService.getSuitableBugs(agentId, userEmail, queryProduct,
+				queryComponent);
 
 		eventList.clear();
 		eventList.add(RankedBug.LOADING_DATA_FAKE_BUG);
@@ -407,10 +414,10 @@ public class PrioritizerPart {
 		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(settingsComposite);
 
 		Composite settingsPanel = new Composite(settingsComposite, SWT.NONE);
-		
+
 		Label agentLabel = new Label(settingsPanel, SWT.FLAT);
 		agentLabel.setText("Agent-Id");
-		
+
 		String generatedAgentId = AgentIDGenerator.getAgentID();
 
 		String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
@@ -566,8 +573,11 @@ public class PrioritizerPart {
 				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
 		List<String> queryComponent = Arrays
 				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
-		Mono<String> keywordImage = prioritizerService.getKeyWordUrl(AgentIDGenerator.getAgentID(), userEmail,
-				queryProduct, queryComponent);
+		String generatedAgentId = AgentIDGenerator.getAgentID();
+
+		String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
+
+		Mono<String> keywordImage = prioritizerService.getKeyWordUrl(agentId, userEmail, queryProduct, queryComponent);
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.elastic())
 				.publishOn(SwtScheduler.from(settingsComposite.getDisplay()))
