@@ -319,16 +319,22 @@ public class PrioritizerPart {
 			RankedBug removed = eventList.remove(originRowPosition - 1);
 
 			String generatedAgentId = AgentIDGenerator.getAgentID();
-
 			String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
+			String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "simon.scholz@vogella.com");
+			List<String> queryProduct = Arrays
+					.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
+			List<String> queryComponent = Arrays
+					.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
 
 			switch (col) {
 			case 5:
-				prioritizerService.dislikeBug(agentId, removed.getId()).subscribe();
+				prioritizerService.dislikeBug(agentId, removed.getId(), userEmail, queryProduct, queryComponent)
+						.subscribe();
 				break;
 			case 6:
 				int days = preferences.getInt(Preferences.PRIORITIZER_DEFER_DELAY, 30);
-				prioritizerService.deferBug(agentId, removed.getId(), days).subscribe();
+				prioritizerService.deferBug(agentId, removed.getId(), days, userEmail, queryProduct, queryComponent)
+						.subscribe();
 				break;
 			default:
 				break;

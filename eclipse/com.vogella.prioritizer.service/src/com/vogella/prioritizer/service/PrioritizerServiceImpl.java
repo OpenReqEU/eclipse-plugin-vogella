@@ -95,27 +95,39 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
-	public Mono<Void> dislikeBug(String agentID, long bugId) {
+	public Mono<Void> dislikeBug(String agentID, long bugId, String assignee, List<String> product,
+			List<String> component) {
 		PrioritizerIdRequest idRequest = new PrioritizerIdRequest();
 		idRequest.setAgentID(agentID);
 		idRequest.setId(bugId);
+		idRequest.setAssignee(assignee);
+		idRequest.setProducts(product);
+		idRequest.setComponents(component);
 		return prioritizerApi.dislikeBug(idRequest).then();
 	}
 
 	@Override
-	public Mono<Void> likeBug(String agentID, long bugId) {
+	public Mono<Void> likeBug(String agentID, long bugId, String assignee, List<String> product,
+			List<String> component) {
 		PrioritizerIdRequest idRequest = new PrioritizerIdRequest();
 		idRequest.setAgentID(agentID);
 		idRequest.setId(bugId);
+		idRequest.setAssignee(assignee);
+		idRequest.setProducts(product);
+		idRequest.setComponents(component);
 		return prioritizerApi.likeBug(idRequest).then();
 	}
 
 	@Override
-	public Mono<Void> deferBug(String agentID, long bugId, int interval) {
+	public Mono<Void> deferBug(String agentID, long bugId, int interval, String assignee, List<String> product,
+			List<String> component) {
 		PrioritizerIdIntervalRequest idRequest = new PrioritizerIdIntervalRequest();
 		idRequest.setAgentID(agentID);
 		idRequest.setId(bugId);
 		idRequest.setInterval(interval);
+		idRequest.setAssignee(assignee);
+		idRequest.setProducts(product);
+		idRequest.setComponents(component);
 		return prioritizerApi.deferBug(idRequest).then();
 	}
 }

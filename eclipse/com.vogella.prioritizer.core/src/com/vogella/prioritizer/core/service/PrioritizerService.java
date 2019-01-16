@@ -13,11 +13,12 @@ public interface PrioritizerService {
 	Mono<List<RankedBug>> getSuitableBugs(String agentID, String assignee, List<String> product,
 			List<String> component);
 
-	Mono<Void> dislikeBug(String agentID, long bugId);
+	Mono<Void> dislikeBug(String agentID, long bugId, String assignee, List<String> product, List<String> component);
 
-	Mono<Void> likeBug(String agentID, long bugId);
+	Mono<Void> likeBug(String agentID, long bugId, String assignee, List<String> product, List<String> component);
 
-	Mono<Void> deferBug(String agentID, long bugId, int interval);
+	Mono<Void> deferBug(String agentID, long bugId, int interval, String assignee, List<String> product,
+			List<String> component);
 
 	Mono<List<Bug>> getMostDiscussedBugs(List<String> product, List<String> component, long daysBack);
 }
