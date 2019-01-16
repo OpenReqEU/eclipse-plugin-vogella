@@ -38,6 +38,7 @@
 
 		<module>com.vogella.prioritizer.feature</module>
 		<module>com.vogella.tracing.feature</module>
+		<module>com.vogella.nebula.feature</module>
 		<module>logging.feature</module>
 
 		<module>org.eclipse.nebula.widgets.proposal</module>
