@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.OptionalDouble;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -313,43 +314,57 @@ public class PrioritizerPart {
 
 		// Add your listener to the button
 		buttonPainter.addClickListener((natTable, event) -> {
-			int col = this.natTable.getColumnPositionByX(event.x);
 			int row = this.natTable.getRowPositionByY(event.y);
 
-			ILayerCell cell = this.natTable.getCellByPosition(col, row);
+			// Get the bug if from the first row
+			Object dataValueByPosition = natTable.getDataValueByPosition(0, row);
+			if (dataValueByPosition instanceof Number) {
+				Number bugId = (Number) dataValueByPosition;
 
-			int originRowPosition = cell.getOriginRowPosition();
+				java.util.Optional<RankedBug> findAny = eventList.stream().filter(rb -> Objects.equals(bugId, rb.getId()))
+						.findAny();
 
-			RankedBug removed = eventList.remove(originRowPosition - 1);
+				findAny.ifPresent(rankedBug -> {
+					
+					eventList.remove(rankedBug);
 
-			String generatedAgentId = AgentIDGenerator.getAgentID();
-			String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
-			String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "simon.scholz@vogella.com");
-			List<String> queryProduct = Arrays
-					.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
-			List<String> queryComponent = Arrays
-					.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
+					String generatedAgentId = AgentIDGenerator.getAgentID();
+					String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
+					String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "simon.scholz@vogella.com");
+					List<String> queryProduct = Arrays
+							.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
+					List<String> queryComponent = Arrays
+							.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
 
-			switch (col) {
-			case 5:
-				prioritizerService.dislikeBug(agentId, removed.getId(), userEmail, queryProduct, queryComponent)
-						.subscribe(v -> {}, err-> {
-							Bundle bundle = FrameworkUtil.getBundle(getClass());
-							Status status = new Status(IStatus.ERROR, bundle.getSymbolicName() , err.getMessage(), err);
-							ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
-						});
-				break;
-			case 6:
-				int days = preferences.getInt(Preferences.PRIORITIZER_DEFER_DELAY, 30);
-				prioritizerService.deferBug(agentId, removed.getId(), days, userEmail, queryProduct, queryComponent)
-						.subscribe(v -> {}, err-> {
-							Bundle bundle = FrameworkUtil.getBundle(getClass());
-							Status status = new Status(IStatus.ERROR, bundle.getSymbolicName() , err.getMessage(), err);
-							ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
-						});
-				break;
-			default:
-				break;
+					int col = this.natTable.getColumnPositionByX(event.x);
+					switch (col) {
+					case 5:
+						prioritizerService
+								.dislikeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
+								.subscribe(v -> {
+								}, err -> {
+									Bundle bundle = FrameworkUtil.getBundle(getClass());
+									Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(),
+											err.getMessage(), err);
+									ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
+								});
+						break;
+					case 6:
+						int days = preferences.getInt(Preferences.PRIORITIZER_DEFER_DELAY, 30);
+						prioritizerService
+								.deferBug(agentId, rankedBug.getId(), days, userEmail, queryProduct, queryComponent)
+								.subscribe(v -> {
+								}, err -> {
+									Bundle bundle = FrameworkUtil.getBundle(getClass());
+									Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(),
+											err.getMessage(), err);
+									ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
+								});
+						break;
+					default:
+						break;
+					}
+				});
 			}
 		});
 
