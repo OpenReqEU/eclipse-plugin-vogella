@@ -16,11 +16,14 @@ import javax.inject.Inject;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -61,6 +64,7 @@ import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.TextDecorationEnum;
 import org.eclipse.nebula.widgets.nattable.style.VerticalAlignmentEnum;
+import org.eclipse.nebula.widgets.nattable.ui.ExceptionDialog;
 import org.eclipse.nebula.widgets.nattable.ui.NatEventData;
 import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
 import org.eclipse.nebula.widgets.nattable.ui.matcher.CellLabelMouseEventMatcher;
@@ -329,12 +333,20 @@ public class PrioritizerPart {
 			switch (col) {
 			case 5:
 				prioritizerService.dislikeBug(agentId, removed.getId(), userEmail, queryProduct, queryComponent)
-						.subscribe();
+						.subscribe(v -> {}, err-> {
+							Bundle bundle = FrameworkUtil.getBundle(getClass());
+							Status status = new Status(IStatus.ERROR, bundle.getSymbolicName() , err.getMessage(), err);
+							ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
+						});
 				break;
 			case 6:
 				int days = preferences.getInt(Preferences.PRIORITIZER_DEFER_DELAY, 30);
 				prioritizerService.deferBug(agentId, removed.getId(), days, userEmail, queryProduct, queryComponent)
-						.subscribe();
+						.subscribe(v -> {}, err-> {
+							Bundle bundle = FrameworkUtil.getBundle(getClass());
+							Status status = new Status(IStatus.ERROR, bundle.getSymbolicName() , err.getMessage(), err);
+							ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
+						});
 				break;
 			default:
 				break;
