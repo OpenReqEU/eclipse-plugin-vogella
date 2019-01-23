@@ -67,4 +67,12 @@ public class RankedBug implements Comparable<RankedBug> {
 		}
 		return Double.compare(o.getPriority(), priority);
 	}
+
+	@Override
+	public String toString() {
+		return "RankedBug [id=" + id + ", summary=" + summary + ", product=" + product + ", component=" + component
+				+ ", priority=" + priority + "]";
+	}
+	
+	
 }

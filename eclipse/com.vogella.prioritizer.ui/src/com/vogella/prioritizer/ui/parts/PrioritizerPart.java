@@ -186,8 +186,9 @@ public class PrioritizerPart {
 		dataLayer.setColumnWidthPercentageByPosition(2, 11);
 		dataLayer.setColumnWidthPercentageByPosition(3, 11);
 		dataLayer.setColumnWidthPercentageByPosition(4, 11);
-		dataLayer.setColumnWidthPercentageByPosition(5, 6);
-		dataLayer.setColumnWidthPercentageByPosition(6, 6);
+		dataLayer.setColumnWidthPercentageByPosition(5, 4);
+		dataLayer.setColumnWidthPercentageByPosition(6, 4);
+		dataLayer.setColumnWidthPercentageByPosition(7, 4);
 		GlazedListsEventLayer<RankedBug> eventLayer = new GlazedListsEventLayer<RankedBug>(dataLayer, sortedList);
 		ColumnReorderLayer columnReorderLayer = new ColumnReorderLayer(eventLayer);
 		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
@@ -284,6 +285,10 @@ public class PrioritizerPart {
 		URL alarmSnooze = FileLocator.find(bundle, new Path("/icons/alarm-snooze.png"));
 		ButtonCellPainter notNowButton = createButtonToColumn(configRegistry,
 				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6, ImageDescriptor.createFromURL(alarmSnooze));
+		
+		URL like = FileLocator.find(bundle, new Path("/icons/thumb_up.png"));
+		ButtonCellPainter likeButton = createButtonToColumn(configRegistry,
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7, ImageDescriptor.createFromURL(like));
 
 		natTable = new NatTable(mainComposite, compositeLayer, false);
 		natTable.setConfigRegistry(configRegistry);
@@ -294,6 +299,8 @@ public class PrioritizerPart {
 				new ButtonClickConfiguration(notSuitableButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 5));
 		natTable.addConfiguration(
 				new ButtonClickConfiguration(notNowButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6));
+		natTable.addConfiguration(
+				new ButtonClickConfiguration(likeButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7));
 
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(natTable);
 
@@ -326,7 +333,6 @@ public class PrioritizerPart {
 
 				findAny.ifPresent(rankedBug -> {
 					
-					eventList.remove(rankedBug);
 
 					String generatedAgentId = AgentIDGenerator.getAgentID();
 					String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
@@ -339,6 +345,7 @@ public class PrioritizerPart {
 					int col = this.natTable.getColumnPositionByX(event.x);
 					switch (col) {
 					case 5:
+						eventList.remove(rankedBug);
 						prioritizerService
 								.dislikeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
 								.subscribe(v -> {
@@ -350,9 +357,21 @@ public class PrioritizerPart {
 								});
 						break;
 					case 6:
+						eventList.remove(rankedBug);
 						int days = preferences.getInt(Preferences.PRIORITIZER_DEFER_DELAY, 30);
 						prioritizerService
 								.deferBug(agentId, rankedBug.getId(), days, userEmail, queryProduct, queryComponent)
+								.subscribe(v -> {
+								}, err -> {
+									Bundle bundle = FrameworkUtil.getBundle(getClass());
+									Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(),
+											err.getMessage(), err);
+									ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
+								});
+						break;
+					case 7:
+						prioritizerService
+								.likeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
 								.subscribe(v -> {
 								}, err -> {
 									Bundle bundle = FrameworkUtil.getBundle(getClass());
