@@ -448,12 +448,6 @@ public class PrioritizerPart {
 					Collections.sort(bugsFromServer);
 					eventList.addAll(bugsFromServer);
 
-					OptionalDouble min = eventList.stream().mapToDouble(RankedBug::getPriority).min();
-					OptionalDouble max = eventList.stream().mapToDouble(RankedBug::getPriority).max();
-
-					if (min.isPresent() && max.isPresent()) {
-						bugColumnPropertyAccessor.setMinAndMax(min.getAsDouble(), max.getAsDouble());
-					}
 					natTable.refresh(true);
 				}, err -> {
 					LOG.error(err.getMessage(), err);

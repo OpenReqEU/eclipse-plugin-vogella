@@ -11,8 +11,6 @@ public class RankedBugColumnPropertyAccessor implements IColumnPropertyAccessor<
 
 	private static final List<String> propertyNames = Arrays.asList("id", "summary", "userpriority", "platform",
 			"component", "Not suitable", "Not now", "I like it");
-	private double max;
-	private double min;
 
 	@Override
 	public int getColumnCount() {
@@ -27,7 +25,7 @@ public class RankedBugColumnPropertyAccessor implements IColumnPropertyAccessor<
 		case 1:
 			return bug.getSummary();
 		case 2:
-			return normalize(min, max, bug.getPriority());
+			return bug.getPriority()/100;
 		case 3:
 			return bug.getProduct();
 		case 4:
@@ -43,9 +41,6 @@ public class RankedBugColumnPropertyAccessor implements IColumnPropertyAccessor<
 		return bug;
 	}
 
-	private static double normalize(double min, double max, double sum) {
-		return (sum - min) / (max - min);
-	}
 
 	@Override
 	public void setDataValue(RankedBug rowObject, int columnIndex, Object newValue) {
@@ -62,8 +57,4 @@ public class RankedBugColumnPropertyAccessor implements IColumnPropertyAccessor<
 		return propertyNames.indexOf(propertyName);
 	}
 
-	public void setMinAndMax(double min, double max) {
-		this.min = min;
-		this.max = max;
-	}
 }
