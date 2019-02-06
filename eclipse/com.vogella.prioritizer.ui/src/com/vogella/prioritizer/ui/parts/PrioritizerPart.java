@@ -601,8 +601,8 @@ public class PrioritizerPart {
 			}
 		});
 
-		Button newComerBugs = new Button(settingsPanel, SWT.CHECK);
-		newComerBugs.setText("Show me newcomer bugs");
+//		Button newComerBugs = new Button(settingsPanel, SWT.CHECK);
+//		newComerBugs.setText("Show me newcomer bugs");
 
 		GridLayoutFactory.swtDefaults().extendedMargins(5, 0, 0, 0).generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().grab(true, true).hint(300, SWT.DEFAULT).applyTo(settingsPanel);
