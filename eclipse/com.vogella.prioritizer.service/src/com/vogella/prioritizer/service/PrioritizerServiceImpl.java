@@ -70,7 +70,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	public Mono<List<RankedBug>> getSuitableBugs(String agentID, String assignee, List<String> product,
 			List<String> component) {
 		PrioritizerRequest bugzillaRequest = new PrioritizerRequest();
-		bugzillaRequest.setAgentID(agentID);
+		bugzillaRequest.setAgent_id(agentID);
 		bugzillaRequest.setAssignee(assignee);
 		bugzillaRequest.setProducts(product);
 		bugzillaRequest.setComponents(component);
@@ -86,7 +86,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	@Override
 	public Mono<String> getKeyWordUrl(String agentID, String assignee, List<String> product, List<String> component) {
 		PrioritizerRequest bugzillaRequest = new PrioritizerRequest();
-		bugzillaRequest.setAgentID(agentID);
+		bugzillaRequest.setAgent_id(agentID);
 		bugzillaRequest.setAssignee(assignee);
 		bugzillaRequest.setProducts(product);
 		bugzillaRequest.setComponents(component);
@@ -98,7 +98,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	public Mono<Void> dislikeBug(String agentID, long bugId, String assignee, List<String> product,
 			List<String> component) {
 		PrioritizerIdRequest idRequest = new PrioritizerIdRequest();
-		idRequest.setAgentID(agentID);
+		idRequest.setAgent_id(agentID);
 		idRequest.setId(bugId);
 		idRequest.setAssignee(assignee);
 		idRequest.setProducts(product);
@@ -110,7 +110,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	public Mono<Void> likeBug(String agentID, long bugId, String assignee, List<String> product,
 			List<String> component) {
 		PrioritizerIdRequest idRequest = new PrioritizerIdRequest();
-		idRequest.setAgentID(agentID);
+		idRequest.setAgent_id(agentID);
 		idRequest.setId(bugId);
 		idRequest.setAssignee(assignee);
 		idRequest.setProducts(product);
@@ -122,7 +122,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	public Mono<Void> deferBug(String agentID, long bugId, int interval, String assignee, List<String> product,
 			List<String> component) {
 		PrioritizerIdIntervalRequest idRequest = new PrioritizerIdIntervalRequest();
-		idRequest.setAgentID(agentID);
+		idRequest.setAgent_id(agentID);
 		idRequest.setId(bugId);
 		idRequest.setInterval(interval);
 		idRequest.setAssignee(assignee);

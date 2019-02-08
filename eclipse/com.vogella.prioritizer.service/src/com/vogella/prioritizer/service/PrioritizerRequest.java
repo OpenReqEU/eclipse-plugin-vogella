@@ -14,11 +14,11 @@ public class PrioritizerRequest {
 	private List<String> components;
 	private List<String> keywords;
 
-	public String getAgentID() {
+	public String getAgent_id() {
 		return agentID;
 	}
 
-	public void setAgentID(String agentID) {
+	public void setAgent_id(String agentID) {
 		this.agentID = agentID;
 	}
 
