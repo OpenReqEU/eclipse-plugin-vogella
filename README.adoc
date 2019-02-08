@@ -15,6 +15,8 @@ in the 'Prioritizer' View, which requirements would fit not only to his/her own 
 interest for the community and good for the Eclipse project. 
 After the user enters his Email Address, Eclipse Project, and Components of interest, the user gets a personalized and prioritized list of bugs. 
 
+image::img/Prioritizer_settings.png[]
+
 image::img/Prioritizer-View.png[]
 
 As for the most discussed bugs: Users will see the bugs with the largest amount of comments in the last 30 days for a specified Product - Component 
@@ -103,8 +105,15 @@ This will list the required features, which have to be installed.
 
 Import all projects from the openreq git repository into your Eclipse IDE.
 
-Then open the _target-platform.target_ file inside the _target-platform_ project.
+Then open the _target-platform.target_ file inside the _target-platform_ project with the target editor.
 This will load all necessary dependencies for the project.
+If you dont see the option to open the file with the target editor, 
+install the Eclipse plug-in development environment feature first. 
+Help -> Install New Software select your update site and filter with 'Eclipse plug-in development environment'.
+
+image::img/Install_Plug-in_Dev_Env.png[]
+
+Now open the _target-platform.target_ file with the target editor:
 
 image::img/set_target_platform.png[]
 
