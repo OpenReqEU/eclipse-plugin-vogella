@@ -15,7 +15,7 @@ in the 'Prioritizer' View, which requirements would fit not only to his/her own 
 interest for the community and good for the Eclipse project. 
 After the user enters his Email Address, Eclipse Project, and Components of interest, the user gets a personalized and prioritized list of bugs. 
 
-image::img/Prioritizer_settings.png[]
+image::img/prioritizer_settings.png[]
 
 image::img/Prioritizer-View.png[]
 
