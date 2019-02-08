@@ -4,6 +4,11 @@
     <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="com.vogella.prioritizer.ui.partdescriptor.prioritizerpart" label="Prioritizer" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/priority.png" tooltip="" category="Prioritizer" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.parts.PrioritizerPart">
       <tags>View</tags>
       <tags>categoryTag:Prioritizer</tags>
+      <menus xmi:id="_5vQWECuNEem96JH9MGWxlQ" elementId="com.vogella.prioritizer.ui.menu.0">
+        <tags>ViewMenu</tags>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_6I16wCuNEem96JH9MGWxlQ" elementId="com.vogella.prioritizer.ui.handledmenuitem." label="" command="_QzjlUA1_EeijCoQO9b84Zg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_AzwTkCuOEem96JH9MGWxlQ" elementId="com.vogella.prioritizer.ui.handledmenuitem.0" command="_OMx2sA2HEeijCoQO9b84Zg"/>
+      </menus>
       <toolbar xmi:id="_H0KocA1_EeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.toolbar.0">
         <children xsi:type="menu:HandledToolItem" xmi:id="_I-cqQA1_EeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.handledtoolitem.settings" label="" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/settings.png" command="_QzjlUA1_EeijCoQO9b84Zg">
           <parameters xmi:id="_VOLhwBicEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.parameter.prioritizer.pagetype" name="PAGE_TYPE" value="SETTINGS"/>
