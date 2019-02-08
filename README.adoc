@@ -2,15 +2,34 @@
 
 This plugin was created as a result of the OpenReq project funded by the European Union Horizon 2020 Research and Innovation programme under grant agreement No 732463.
 
-The following technologies are used:
+=== Functionalities of the Eclipse Plug-in and how to use it
 
-* Spring Boot (-> http://www.vogella.com/tutorials/SpringBoot2/article.html)
-* Lombok (-> http://www.vogella.com/tutorials/Lombok/article.html)
-* Project Reactor IO (-> https://projectreactor.io/)
-* Retrofit (-> http://www.vogella.com/tutorials/Retrofit/article.html)
-* Gradle (-> http://www.vogella.com/tutorials/Gradle/article.html)
-* Eclipse RCP (-> http://www.vogella.com/tutorials/EclipseRCP/article.html)
-* Maven Tycho (-> http://www.vogella.com/tutorials/EclipseTycho/article.html)
+The Eclipse Plug-in offers the following features:
+
+* Personalized prioritisation of requirements
+* Most discussed bugs 
+* Tip of the day with personalized tips for a better usage of the Eclipse IDE
+
+As for the personalized prioritisation of requirements: The user can see directly in the Eclipse IDE, 
+in the 'Prioritizer' View, which requirements would fit not only to his/her own interests but would also be of 
+interest for the community and good for the Eclipse project. 
+After the user enters his Email Address, Eclipse Project, and Components of interest, the user gets a personalized and prioritized list of bugs. 
+
+image::img/Prioritizer-View.png[]
+
+As for the most discussed bugs: Users will see the bugs with the largest amount of comments in the last 30 days for a specified Product - Component 
+combination in the 'Most discussed bugs' view.
+
+As for the Tip of the day with personalized tips: A service for the standard Eclipse Tip of the Day provides the user with 
+personalized tips on how to improve his/her own usage of the Eclipse IDE.
+
+For a single command within the standard Eclipse Tip of the Day:
+
+image::img/tip-of-the-day-refresh-sample.png[] 
+
+Or as table for several commands in the 'Tip of the Day' View:
+
+image::img/tip-of-the-day-stats.png[] 
 
 === Public APIs
 
@@ -19,30 +38,6 @@ The server implementation currently gathers the most discussed bugs of a certain
 The API is documented by using Swagger2:
 
 http://217.172.12.199:9801/swagger-ui.html#/bugzilla-controller/getMostDiscussedBugsUsingGET
-
-=== Functionalities of the Eclipse Plug-in
-
-The Eclipse Plug-in offers the following features:
-
-* Personalized prioritisation of requirements
-* Newcomer bugs (work in progress)
-* Most discussed bugs 
-* Tip of the day with personalized tips for a better usage of the Eclipse IDE
-
-As for the personalized prioritisation of requirements: The user can see directly in the Eclipse IDE, in the 'Prioritizer' View, which requirements would fit not only to his/her own interests but would also be of 
-interest for the community and good for the Eclipse project. 
-After the user enters his Email Address, Eclipse Project, and Components of interest, the user gets a personalized and prioritized list of bugs. 
-
-As for the newcomer bugs: The user will see all bugs which are suitable for newcomers within the 'Prioritizer' view.
-
-As for the most discussed bugs: Users will see the bugs with the largest amount of comments in the last 30 days for a specified Product - Component combination in the 'Most discussed bugs' view.
-
-As for the Tip of the day with personalized tips: A service for the standard Eclipse Tip of the Day provides the user with personalized tips on how to improve his/her own usage of the Eclipse IDE.
-
-=== Work in progress
-
-* In the 'Prioritizer' view, the user can already remove bugs from his list by deleting or snoozing them. This functionality is not yet implemented on the server side. It will be available shortly.
-* The newcomer bugs are not yet integrated to the 'Prioritizer' view.
 
 
 === Installing the Eclipse Plugin
@@ -68,35 +63,6 @@ Make sure to uncheck the _Group items by category_ entry.
 
 image::img/tip-of-the-day-stats.png[] 
 
-=== What does the application currently do?
-
-In the Eclipse IDE you can install the Prioritzer plug-in and visualize the bugs, which might be interesting for you.
-
-image::img/Prioritizer-View.png[]
-
-The tracing plug-ins can also trace the usage of shortcuts in the IDE and give feedback about that by providing it as tip of the day.
-
-For a single command:
-
-image::img/tip-of-the-day-refresh-sample.png[] 
-
-Or as table for several commands:
-
-image::img/tip-of-the-day-stats.png[] 
-
-=== What's next?
-
-Further statistics will be provided.
-
-=== Issues
-
-Getting statistics from bugzillas rest api is quite hard and takes some time. Therefore I suggested some enhancements to bugzillas rest api:
-
-* https://bugzilla.mozilla.org/show_bug.cgi?id=1440227
-
-=== Technical structure
-
-image::img/client-server-communication.png[] 
 
 === Notes for developer
 
@@ -167,19 +133,28 @@ The IP of the service running on ENG is: http://217.172.12.199:9002
 The IP of the service running on TU Graz is: http://129.27.202.66:9002
 ====
 
-=== Sources
+=== Technologies
 
-http://bugzilla.readthedocs.io/en/latest/api/index.html
+The following technologies are used:
 
-http://blog.florian-hopf.de/2016/04/learning-lucene.html
+* Spring Boot (-> http://www.vogella.com/tutorials/SpringBoot2/article.html)
+* Lombok (-> http://www.vogella.com/tutorials/Lombok/article.html)
+* Project Reactor IO (-> https://projectreactor.io/)
+* Retrofit (-> http://www.vogella.com/tutorials/Retrofit/article.html)
+* Gradle (-> http://www.vogella.com/tutorials/Gradle/article.html)
+* Eclipse RCP (-> http://www.vogella.com/tutorials/EclipseRCP/article.html)
+* Maven Tycho (-> http://www.vogella.com/tutorials/EclipseTycho/article.html)
 
-http://projectreactor.io/docs/core/release/reference/
+=== Issues
 
-https://sanaulla.info/2017/09/15/using-gmail-as-smtp-server-from-java-spring-boot-apps/
+Getting statistics from bugzillas rest api is quite hard and takes some time. Therefore I suggested some enhancements to bugzillas rest api:
+
+* https://bugzilla.mozilla.org/show_bug.cgi?id=1440227
+
 
 == How to contribute
 
-See OpenReq project contribution link:[guidelines]
+See OpenReq project contribution link:https://github.com/OpenReqEU/OpenReq/blob/master/CONTRIBUTING.md[Guidlines]
 
 == License
 
