@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.OptionalDouble;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -24,6 +23,10 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -50,7 +53,6 @@ import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnLabelAccumulator;
-import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ButtonCellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ImagePainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.PercentageBarCellPainter;
@@ -65,7 +67,6 @@ import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.TextDecorationEnum;
 import org.eclipse.nebula.widgets.nattable.style.VerticalAlignmentEnum;
-import org.eclipse.nebula.widgets.nattable.ui.ExceptionDialog;
 import org.eclipse.nebula.widgets.nattable.ui.NatEventData;
 import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
 import org.eclipse.nebula.widgets.nattable.ui.matcher.CellLabelMouseEventMatcher;
@@ -83,8 +84,9 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.Bundle;
@@ -153,6 +155,9 @@ public class PrioritizerPart {
 	private Browser browser;
 
 	private ResourceManager resourceManager;
+
+	@Inject
+	MPart part;
 
 	@PostConstruct
 	public void createPartControl(Composite parent) {
@@ -285,7 +290,7 @@ public class PrioritizerPart {
 		URL alarmSnooze = FileLocator.find(bundle, new Path("/icons/alarm-snooze.png"));
 		ButtonCellPainter notNowButton = createButtonToColumn(configRegistry,
 				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6, ImageDescriptor.createFromURL(alarmSnooze));
-		
+
 		URL like = FileLocator.find(bundle, new Path("/icons/thumb_up.png"));
 		ButtonCellPainter likeButton = createButtonToColumn(configRegistry,
 				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7, ImageDescriptor.createFromURL(like));
@@ -328,15 +333,14 @@ public class PrioritizerPart {
 			if (dataValueByPosition instanceof Number) {
 				Number bugId = (Number) dataValueByPosition;
 
-				java.util.Optional<RankedBug> findAny = eventList.stream().filter(rb -> Objects.equals(bugId, rb.getId()))
-						.findAny();
+				java.util.Optional<RankedBug> findAny = eventList.stream()
+						.filter(rb -> Objects.equals(bugId, rb.getId())).findAny();
 
 				findAny.ifPresent(rankedBug -> {
-					
 
 					String generatedAgentId = AgentIDGenerator.getAgentID();
 					String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
-					String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "simon.scholz@vogella.com");
+					String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "example@vogella.com");
 					List<String> queryProduct = Arrays
 							.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
 					List<String> queryComponent = Arrays
@@ -370,8 +374,7 @@ public class PrioritizerPart {
 								});
 						break;
 					case 7:
-						prioritizerService
-								.likeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
+						prioritizerService.likeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
 								.subscribe(v -> {
 								}, err -> {
 									Bundle bundle = FrameworkUtil.getBundle(getClass());
@@ -425,7 +428,7 @@ public class PrioritizerPart {
 	}
 
 	private void subscribeBugTable() {
-		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "simon.scholz@vogella.com");
+		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "example@vogella.com");
 		List<String> queryProduct = Arrays
 				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
 		List<String> queryComponent = Arrays
@@ -462,7 +465,7 @@ public class PrioritizerPart {
 		Composite settingsPanel = new Composite(settingsComposite, SWT.NONE);
 
 		Label agentLabel = new Label(settingsPanel, SWT.FLAT);
-		agentLabel.setText("Agent-Id");
+		agentLabel.setText("Agent-Id (alphanumeric and length 9)");
 
 		String generatedAgentId = AgentIDGenerator.getAgentID();
 
@@ -470,10 +473,42 @@ public class PrioritizerPart {
 
 		Text agentText = new Text(settingsPanel, SWT.BORDER);
 		agentText.setText(agentId);
-		agentText.setToolTipText("Agent-Id");
+		agentText.setToolTipText(
+				"The Agent-Id must have the length of 9 and include only alphanumeric characters (a-z, A-Z, and 0-9). If the Plug-in is called from different computers for the same Email always use the same Agent-Id");
 		agentText.setMessage("Agent-Id");
 		agentText.addModifyListener(event -> {
-			preferences.put(Preferences.PRIORITIZER_AGENT_ID, ((Text) event.getSource()).getText());
+			String strPattern = "^[a-zA-Z0-9]*$";
+			if (((Text) event.getSource()).getText().matches(strPattern)
+					&& ((Text) event.getSource()).getText().length() == 9) {
+				preferences.put(Preferences.PRIORITIZER_AGENT_ID, ((Text) event.getSource()).getText());
+				agentText.setForeground(null);
+				MToolBar toolbar = part.getToolbar();
+				toolbar.setVisible(true);
+				List<MToolBarElement> children = toolbar.getChildren();
+				for (MToolBarElement mToolBarElement : children) {
+					if (mToolBarElement instanceof MToolItem) {
+						MToolItem item = (MToolItem) mToolBarElement;
+						if (item.getElementId().equals("com.vogella.prioritizer.ui.handledtoolitem.refresh")) {
+							item.setEnabled(true);
+						}
+					}
+				}
+
+			} else {
+				agentText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+
+				MToolBar toolbar = part.getToolbar();
+				List<MToolBarElement> children = toolbar.getChildren();
+				for (MToolBarElement mToolBarElement : children) {
+					if (mToolBarElement instanceof MToolItem) {
+						MToolItem item = (MToolItem) mToolBarElement;
+						if (item.getElementId().equals("com.vogella.prioritizer.ui.handledtoolitem.refresh")) {
+							item.setEnabled(false);
+						}
+					}
+				}
+			}
+
 			try {
 				preferences.flush();
 			} catch (BackingStoreException e) {
@@ -483,13 +518,13 @@ public class PrioritizerPart {
 		});
 
 		Label emailLabel = new Label(settingsPanel, SWT.FLAT);
-		emailLabel.setText("Email");
+		emailLabel.setText("Email used in Bugzilla");
 
-		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "simon.scholz@vogella.com");
+		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "example@vogella.com");
 
 		Text emailText = new Text(settingsPanel, SWT.BORDER);
 		emailText.setText(userEmail);
-		emailText.setToolTipText("Email");
+		emailText.setToolTipText("Enter your Email used in Bugzilla");
 		emailText.setMessage("Email");
 		emailText.addModifyListener(event -> {
 			preferences.put(Preferences.PRIORITIZER_USER_EMAIL, ((Text) event.getSource()).getText());
@@ -614,7 +649,7 @@ public class PrioritizerPart {
 	}
 
 	private void subscribeChart() {
-		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "simon.scholz@vogella.com");
+		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "example@vogella.com");
 		List<String> queryProduct = Arrays
 				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
 		List<String> queryComponent = Arrays

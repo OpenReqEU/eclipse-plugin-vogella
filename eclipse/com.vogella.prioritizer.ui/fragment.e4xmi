@@ -10,11 +10,11 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_AzwTkCuOEem96JH9MGWxlQ" elementId="com.vogella.prioritizer.ui.handledmenuitem.0" command="_OMx2sA2HEeijCoQO9b84Zg"/>
       </menus>
       <toolbar xmi:id="_H0KocA1_EeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.toolbar.0">
-        <children xsi:type="menu:HandledToolItem" xmi:id="_I-cqQA1_EeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.handledtoolitem.settings" label="" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/settings.png" command="_QzjlUA1_EeijCoQO9b84Zg">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_I-cqQA1_EeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.handledtoolitem.settings" label="" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/settings.png" tooltip="Settings" command="_QzjlUA1_EeijCoQO9b84Zg">
           <parameters xmi:id="_VOLhwBicEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.parameter.prioritizer.pagetype" name="PAGE_TYPE" value="SETTINGS"/>
           <parameters xmi:id="_5jHTcBicEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.parameter.partid" name="PART_ID" value="PrioritizerPart"/>
         </children>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_SYNVUA2HEeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.handledtoolitem.0" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/refresh.png" command="_OMx2sA2HEeijCoQO9b84Zg">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_SYNVUA2HEeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.handledtoolitem.refresh" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/refresh.png" tooltip="Refresh" command="_OMx2sA2HEeijCoQO9b84Zg">
           <parameters xmi:id="_dxgloAK4EemPDenh-8TLDg" elementId="com.vogella.prioritizer.ui.parameter.viewId" name="com.vogella.prioritizer.ui.commandparameter.viewId" value="com.vogella.prioritizer.ui.partdescriptor.prioritizerpart"/>
         </children>
       </toolbar>
