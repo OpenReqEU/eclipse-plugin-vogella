@@ -63,9 +63,6 @@ image::img/install-tip-of-the-day.png[]
 Make sure to uncheck the _Group items by category_ entry.
 ====
 
-image::img/tip-of-the-day-stats.png[] 
-
-
 === Notes for developer
 
 [[running-with-gradle]]
