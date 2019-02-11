@@ -61,7 +61,7 @@ http://217.172.12.199:9801/swagger-ui.html#/bugzilla-controller/getMostDiscussed
 
 === Installing the Eclipse Plugin
 
-A p2 update site can be found here: http://217.172.12.199/eclipse
+A p2 update site can be found here: http://api.openreq.eu/eclipse/
 
 This p2 update site can be entered in the following dialog by clicking menu:Help[Install New Software...].
 
