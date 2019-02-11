@@ -51,7 +51,7 @@ public class AgentIDGenerator {
 	private static String hash(String input) {
 		try {
 			MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
-			String salt = "PLEASE_CHANGE_SOME_RANDOM_SALT";
+			String salt = "GkHwnFmstcpAgKB8Wyx4";
 			String inputWithSalt = input + salt;
 			byte[] inpBytes = inputWithSalt.getBytes();
 			byte[] inpHash = sha256.digest(inpBytes);
