@@ -50,15 +50,6 @@ Or as table for several commands in the 'Tip of the Day' View:
 
 image::img/tip-of-the-day-stats.png[] 
 
-=== Public APIs
-
-The server implementation currently gathers the most discussed bugs of a certain period of time (defaults to 30 days back).
-
-The API is documented by using Swagger2:
-
-http://217.172.12.199:9801/swagger-ui.html#/bugzilla-controller/getMostDiscussedBugsUsingGET
-
-
 === Installing the Eclipse Plugin
 
 A p2 update site can be found here: http://api.openreq.eu/eclipse/
@@ -81,6 +72,14 @@ Make sure to uncheck the _Group items by category_ entry.
 ====
 
 === Notes for developer
+
+=== Public APIs
+
+The server implementation currently gathers the most discussed bugs of a certain period of time (defaults to 30 days back).
+
+The API is documented by using Swagger2:
+
+http://217.172.12.199:9801/swagger-ui.html#/bugzilla-controller/getMostDiscussedBugsUsingGET
 
 [[running-with-gradle]]
 ==== Running the Spring Boot server application
