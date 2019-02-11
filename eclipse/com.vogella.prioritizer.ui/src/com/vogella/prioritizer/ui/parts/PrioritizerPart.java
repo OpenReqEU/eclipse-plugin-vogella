@@ -249,10 +249,13 @@ public class PrioritizerPart {
 			int columnIndex = natTable.getColumnIndexByPosition(eventData.getColumnPosition());
 
 			Object cellData = dataProvider.getDataValue(columnIndex, rowIndex);
-
+			
+			RankedBug rowObject = dataProvider.getRowObject(rowIndex);
 			if (cellData instanceof Number) {
 				try {
-					URL url = new URL("https://bugs.eclipse.org/bugs/show_bug.cgi?id=" + String.valueOf(cellData));
+					
+					URL url = new URL("http://openreq.ist.tugraz.at:9002" + rowObject.getUrl());
+//					URL url = new URL("https://bugs.eclipse.org/bugs/show_bug.cgi?id=" + String.valueOf(cellData));
 					browserService.openExternalBrowser(url);
 				} catch (MalformedURLException | CoreException e) {
 					LOG.error(e.getMessage(), e);

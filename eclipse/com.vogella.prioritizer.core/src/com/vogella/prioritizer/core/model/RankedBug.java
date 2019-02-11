@@ -9,6 +9,7 @@ public class RankedBug implements Comparable<RankedBug> {
 
 	private long id;
 	private String summary;
+	private String url;
 	private String product;
 	private String component;
 	private double priority;
@@ -59,6 +60,13 @@ public class RankedBug implements Comparable<RankedBug> {
 	public void setComponent(String component) {
 		this.component = component;
 	}
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
 	@Override
 	public int compareTo(RankedBug o) {
@@ -70,7 +78,7 @@ public class RankedBug implements Comparable<RankedBug> {
 
 	@Override
 	public String toString() {
-		return "RankedBug [id=" + id + ", summary=" + summary + ", product=" + product + ", component=" + component
+		return "RankedBug [id=" + id + ", url= " + url +", summary=" + summary + ", product=" + product + ", component=" + component
 				+ ", priority=" + priority + "]";
 	}
 	
