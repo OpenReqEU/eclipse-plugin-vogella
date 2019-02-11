@@ -13,19 +13,28 @@ The Eclipse Plug-in offers the following features:
 As for the personalized prioritisation of requirements: The user can see directly in the Eclipse IDE, 
 in the 'Prioritizer' View, which requirements would fit not only to his/her own interests but would also be of 
 interest for the community and good for the Eclipse project. 
-After the user enters his Email Address, Eclipse Project, and Components of interest, the user gets a personalized and prioritized list of bugs. 
+After the user enters his Email Address, Eclipse Project, and Components of interest in the settings page, the user gets a personalized and prioritized list of bugs. 
 
 image::img/prioritizer_settings.png[]
 
 image::img/prioritizer_view.png[]
 
-The user can dislike, like and snooze bugs. 
+The user can dislike, like and snooze bugs.
 If a bug is disliked it will be deleted from his list and the algorithm will learn that this was not a good choice for the user.
 If a bug is liked, this will help the algorithm to learn out of it and try to find similar bugs.
 If a bug is snoozed, this would mean, that it was actually a good choice from the algorithm, but for the time being the user doesnt want to work on this bug and it will be shown again in x days.
 The snooze period can be defined in the settings page.
 
 The more the user likes and dislikes bugs, the better will become the results of the algorithm for the user.
+
+If the user wants to reset his/her likes and dislikes, he/she would just need to change his/her Agent-ID.
+The Agent-ID  in the settings page will initially be assigned to the user after installing the Plug-in, but it can be changed, as long as it is an alphanumeric value a-z, A-Z, 0-9 and has the length of 9.
+If the user wants to use the Eclipse Plug-in from different computers he/she should make sure to only use one Agent-ID on every computer.
+
+In the settings page the user can also see his keywords. 
+This are words which where often found in bugs solved by the user in the past and will serve as one of the metrics to find suitable bugs for the user.
+
+image::img/keywords.png[]
 
 As for the most discussed bugs: Users will see the bugs with the largest amount of comments in the last 30 days for a specified Product - Component 
 combination in the 'Most discussed bugs' view.
