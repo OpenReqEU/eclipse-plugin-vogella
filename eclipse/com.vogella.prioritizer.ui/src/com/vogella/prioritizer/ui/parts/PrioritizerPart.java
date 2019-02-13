@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -54,6 +55,7 @@ import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ButtonCellPainter;
+import org.eclipse.nebula.widgets.nattable.painter.cell.ICellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ImagePainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.PercentageBarCellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.PercentageBarDecorator;
@@ -107,6 +109,7 @@ import com.vogella.prioritizer.ui.nattable.LinkClickConfiguration;
 import com.vogella.prioritizer.ui.nattable.NatTableButtonTooltip;
 import com.vogella.prioritizer.ui.nattable.RankedBugColumnPropertyAccessor;
 import com.vogella.prioritizer.ui.nattable.RankedBugHeaderDataProvider;
+import com.vogella.prioritizer.ui.nattable.SwitchImagePainter;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -249,11 +252,11 @@ public class PrioritizerPart {
 			int columnIndex = natTable.getColumnIndexByPosition(eventData.getColumnPosition());
 
 			Object cellData = dataProvider.getDataValue(columnIndex, rowIndex);
-			
+
 			RankedBug rowObject = dataProvider.getRowObject(rowIndex);
 			if (cellData instanceof Number) {
 				try {
-					
+
 					URL url = new URL("http://openreq.ist.tugraz.at:9002" + rowObject.getUrl());
 //					URL url = new URL("https://bugs.eclipse.org/bugs/show_bug.cgi?id=" + String.valueOf(cellData));
 					browserService.openExternalBrowser(url);
@@ -287,16 +290,30 @@ public class PrioritizerPart {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
 
 		URL delete = FileLocator.find(bundle, new Path("/icons/delete.png"));
+		Image deleteImg = resourceManager.createImage(ImageDescriptor.createFromURL(delete));
 		ButtonCellPainter notSuitableButton = createButtonToColumn(configRegistry,
-				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 5, ImageDescriptor.createFromURL(delete));
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 5, new ImagePainter(deleteImg));
 
 		URL alarmSnooze = FileLocator.find(bundle, new Path("/icons/alarm-snooze.png"));
+		Image alarmSnoozeImg = resourceManager.createImage(ImageDescriptor.createFromURL(alarmSnooze));
 		ButtonCellPainter notNowButton = createButtonToColumn(configRegistry,
-				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6, ImageDescriptor.createFromURL(alarmSnooze));
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6, new ImagePainter(alarmSnoozeImg));
 
-		URL like = FileLocator.find(bundle, new Path("/icons/thumb_up.png"));
+		URL like = FileLocator.find(bundle, new Path("/icons/like.png"));
+		URL dislike = FileLocator.find(bundle, new Path("/icons/unlike.png"));
+		Image likeImg = resourceManager.createImage(ImageDescriptor.createFromURL(like));
+		Image dislikeImg = resourceManager.createImage(ImageDescriptor.createFromURL(dislike));
+		SwitchImagePainter switchImagePainter = new SwitchImagePainter(likeImg, dislikeImg, cell -> {
+			int rowIndex = cell.getRowPosition();
+			java.util.Optional<RankedBug> rankedBugByRow = getRankedBugByRow(rowIndex);
+			if (rankedBugByRow.isPresent()) {
+				RankedBug rankedBug = rankedBugByRow.get();
+				return rankedBug.isLiked();
+			}
+			return false;
+		});
 		ButtonCellPainter likeButton = createButtonToColumn(configRegistry,
-				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7, ImageDescriptor.createFromURL(like));
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7, switchImagePainter);
 
 		natTable = new NatTable(mainComposite, compositeLayer, false);
 		natTable.setConfigRegistry(configRegistry);
@@ -314,15 +331,15 @@ public class PrioritizerPart {
 
 		natTable.configure();
 
-		new NatTableButtonTooltip(natTable, GridRegion.BODY);
+		new NatTableButtonTooltip(natTable, x -> getRankedBugByRow(x).map(RankedBug::isLiked).orElse(Boolean.FALSE),
+				GridRegion.BODY);
 
 		subscribeBugTable();
 	}
 
 	private ButtonCellPainter createButtonToColumn(IConfigRegistry configRegistry, String configLabel,
-			ImageDescriptor imageDescriptor) {
-		Image image = resourceManager.createImage(imageDescriptor);
-		ButtonCellPainter buttonPainter = new ButtonCellPainter(new ImagePainter(image));
+			ICellPainter cellPainter) {
+		ButtonCellPainter buttonPainter = new ButtonCellPainter(cellPainter);
 
 		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, buttonPainter, DisplayMode.NORMAL,
 				configLabel);
@@ -331,66 +348,66 @@ public class PrioritizerPart {
 		buttonPainter.addClickListener((natTable, event) -> {
 			int row = this.natTable.getRowPositionByY(event.y);
 
+			java.util.Optional<RankedBug> rankedBugByRow = getRankedBugByRow(row);
+
 			// Get the bug if from the first row
-			Object dataValueByPosition = natTable.getDataValueByPosition(0, row);
-			if (dataValueByPosition instanceof Number) {
-				Number bugId = (Number) dataValueByPosition;
+			rankedBugByRow.ifPresent(rankedBug -> {
 
-				java.util.Optional<RankedBug> findAny = eventList.stream()
-						.filter(rb -> Objects.equals(bugId, rb.getId())).findAny();
+				String generatedAgentId = AgentIDGenerator.getAgentID();
+				String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
+				String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "example@vogella.com");
+				List<String> queryProduct = Arrays
+						.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
+				List<String> queryComponent = Arrays
+						.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
 
-				findAny.ifPresent(rankedBug -> {
-
-					String generatedAgentId = AgentIDGenerator.getAgentID();
-					String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
-					String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "example@vogella.com");
-					List<String> queryProduct = Arrays
-							.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
-					List<String> queryComponent = Arrays
-							.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
-
-					int col = this.natTable.getColumnPositionByX(event.x);
-					switch (col) {
-					case 5:
-						eventList.remove(rankedBug);
-						prioritizerService
-								.dislikeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
-								.subscribe(v -> {
-								}, err -> {
-									Bundle bundle = FrameworkUtil.getBundle(getClass());
-									Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(),
-											err.getMessage(), err);
-									ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
-								});
-						break;
-					case 6:
-						eventList.remove(rankedBug);
-						int days = preferences.getInt(Preferences.PRIORITIZER_DEFER_DELAY, 30);
-						prioritizerService
-								.deferBug(agentId, rankedBug.getId(), days, userEmail, queryProduct, queryComponent)
-								.subscribe(v -> {
-								}, err -> {
-									Bundle bundle = FrameworkUtil.getBundle(getClass());
-									Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(),
-											err.getMessage(), err);
-									ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
-								});
-						break;
-					case 7:
-						prioritizerService.likeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
-								.subscribe(v -> {
-								}, err -> {
-									Bundle bundle = FrameworkUtil.getBundle(getClass());
-									Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(),
-											err.getMessage(), err);
-									ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
-								});
-						break;
-					default:
-						break;
-					}
-				});
-			}
+				int col = this.natTable.getColumnPositionByX(event.x);
+				switch (col) {
+				case 5:
+					eventList.remove(rankedBug);
+					prioritizerService.dislikeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
+							.subscribe(v -> {
+							}, err -> {
+								Bundle bundle = FrameworkUtil.getBundle(getClass());
+								Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(), err.getMessage(),
+										err);
+								ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
+							});
+					break;
+				case 6:
+					eventList.remove(rankedBug);
+					int days = preferences.getInt(Preferences.PRIORITIZER_DEFER_DELAY, 30);
+					prioritizerService
+							.deferBug(agentId, rankedBug.getId(), days, userEmail, queryProduct, queryComponent)
+							.subscribe(v -> {
+							}, err -> {
+								Bundle bundle = FrameworkUtil.getBundle(getClass());
+								Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(), err.getMessage(),
+										err);
+								ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
+							});
+					break;
+				case 7:
+					prioritizerService.likeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
+							.subscribe(rb -> {
+								if (rb.isError()) {
+									// reset like button on error
+									rankedBug.setLiked(!rankedBug.isLiked());
+									natTable.refresh(false);
+								}
+							}, err -> {
+								Bundle bundle = FrameworkUtil.getBundle(getClass());
+								Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(), err.getMessage(),
+										err);
+								ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
+							});
+					rankedBug.setLiked(!rankedBug.isLiked());
+					natTable.refresh(false);
+					break;
+				default:
+					break;
+				}
+			});
 		});
 
 		// Set the color of the cell. This is picked up by the button painter to
@@ -402,6 +419,16 @@ public class PrioritizerPart {
 		configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, style, DisplayMode.SELECT, configLabel);
 
 		return buttonPainter;
+	}
+
+	private java.util.Optional<RankedBug> getRankedBugByRow(int row) {
+		Object dataValueByPosition = natTable.getDataValueByPosition(0, row);
+		if (dataValueByPosition instanceof Number) {
+			Number bugId = (Number) dataValueByPosition;
+
+			return eventList.stream().filter(rb -> Objects.equals(bugId, rb.getId())).findAny();
+		}
+		return java.util.Optional.empty();
 	}
 
 	class ButtonClickConfiguration extends AbstractUiBindingConfiguration {

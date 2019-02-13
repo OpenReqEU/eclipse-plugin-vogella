@@ -1,9 +1,8 @@
-package com.vogella.prioritizer.service;
+package com.vogella.prioritizer.core.model;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.vogella.prioritizer.core.model.RankedBug;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BugzillaPriorityResponse {

@@ -1,13 +1,19 @@
 package com.vogella.prioritizer.ui.nattable;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.tooltip.NatTableContentTooltip;
 import org.eclipse.swt.widgets.Event;
 
 public class NatTableButtonTooltip extends NatTableContentTooltip {
 
-	public NatTableButtonTooltip(NatTable natTable, String... tooltipRegions) {
+	private Function<Integer, Boolean> isBugLikedFunction;
+
+	public NatTableButtonTooltip(NatTable natTable, Function<Integer, Boolean> isBugLikedFunction,String... tooltipRegions) {
 		super(natTable, tooltipRegions);
+		this.isBugLikedFunction = isBugLikedFunction;
 		setPopupDelay(300);
 	}
 
@@ -20,7 +26,12 @@ public class NatTableButtonTooltip extends NatTableContentTooltip {
 		case 6:
 			return "Snooze bug and show again later\n(See settings panel)";
 		case 7:
-			return "I like the bug";
+			int rowPositionByY = natTable.getRowPositionByY(event.y);
+			if(isBugLikedFunction.apply(Integer.valueOf(rowPositionByY))) {
+				return "Unlike the bug";
+			} else {
+				return "Like the bug";
+			}
 		default:
 			return super.getText(event); 
 		}

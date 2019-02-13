@@ -12,6 +12,7 @@ public class RankedBug implements Comparable<RankedBug> {
 	private String url;
 	private String product;
 	private String component;
+	private boolean liked;
 	private double priority;
 
 	public RankedBug() {
@@ -76,11 +77,17 @@ public class RankedBug implements Comparable<RankedBug> {
 		return Double.compare(o.getPriority(), priority);
 	}
 
+	public boolean isLiked() {
+		return liked;
+	}
+
+	public void setLiked(boolean liked) {
+		this.liked = liked;
+	}
+
 	@Override
 	public String toString() {
-		return "RankedBug [id=" + id + ", url= " + url +", summary=" + summary + ", product=" + product + ", component=" + component
-				+ ", priority=" + priority + "]";
+		return "RankedBug [id=" + id + ", summary=" + summary + ", url=" + url + ", product=" + product + ", component="
+				+ component + ", liked=" + liked + ", priority=" + priority + "]";
 	}
-	
-	
 }

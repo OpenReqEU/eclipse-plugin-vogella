@@ -3,6 +3,7 @@ package com.vogella.prioritizer.service;
 import java.util.List;
 
 import com.vogella.prioritizer.core.model.Bug;
+import com.vogella.prioritizer.core.model.BugzillaPriorityResponse;
 
 import reactor.core.publisher.Mono;
 import retrofit2.http.Body;

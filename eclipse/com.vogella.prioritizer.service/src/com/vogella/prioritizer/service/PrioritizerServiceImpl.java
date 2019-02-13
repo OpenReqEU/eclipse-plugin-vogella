@@ -12,6 +12,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.jakewharton.retrofit2.adapter.reactor.ReactorCallAdapterFactory;
 import com.vogella.prioritizer.core.model.Bug;
+import com.vogella.prioritizer.core.model.BugzillaPriorityResponse;
 import com.vogella.prioritizer.core.model.RankedBug;
 import com.vogella.prioritizer.core.service.PrioritizerService;
 
@@ -95,7 +96,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
-	public Mono<Void> dislikeBug(String agentID, long bugId, String assignee, List<String> product,
+	public Mono<BugzillaPriorityResponse> dislikeBug(String agentID, long bugId, String assignee, List<String> product,
 			List<String> component) {
 		PrioritizerIdRequest idRequest = new PrioritizerIdRequest();
 		idRequest.setAgent_id(agentID);
@@ -103,11 +104,11 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 		idRequest.setAssignee(assignee);
 		idRequest.setProducts(product);
 		idRequest.setComponents(component);
-		return prioritizerApi.dislikeBug(idRequest).then();
+		return prioritizerApi.dislikeBug(idRequest);
 	}
 
 	@Override
-	public Mono<Void> likeBug(String agentID, long bugId, String assignee, List<String> product,
+	public Mono<BugzillaPriorityResponse> likeBug(String agentID, long bugId, String assignee, List<String> product,
 			List<String> component) {
 		PrioritizerIdRequest idRequest = new PrioritizerIdRequest();
 		idRequest.setAgent_id(agentID);
@@ -115,11 +116,11 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 		idRequest.setAssignee(assignee);
 		idRequest.setProducts(product);
 		idRequest.setComponents(component);
-		return prioritizerApi.likeBug(idRequest).then();
+		return prioritizerApi.likeBug(idRequest);
 	}
 
 	@Override
-	public Mono<Void> deferBug(String agentID, long bugId, int interval, String assignee, List<String> product,
+	public Mono<BugzillaPriorityResponse> deferBug(String agentID, long bugId, int interval, String assignee, List<String> product,
 			List<String> component) {
 		PrioritizerIdIntervalRequest idRequest = new PrioritizerIdIntervalRequest();
 		idRequest.setAgent_id(agentID);
@@ -128,6 +129,6 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 		idRequest.setAssignee(assignee);
 		idRequest.setProducts(product);
 		idRequest.setComponents(component);
-		return prioritizerApi.deferBug(idRequest).then();
+		return prioritizerApi.deferBug(idRequest);
 	}
 }
