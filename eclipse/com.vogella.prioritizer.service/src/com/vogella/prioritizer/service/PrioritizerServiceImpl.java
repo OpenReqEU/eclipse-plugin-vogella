@@ -120,6 +120,18 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
+	public Mono<BugzillaPriorityResponse> unlikeBug(String agentID, long bugId, String assignee, List<String> product,
+			List<String> component) {
+		PrioritizerIdRequest idRequest = new PrioritizerIdRequest();
+		idRequest.setAgent_id(agentID);
+		idRequest.setId(bugId);
+		idRequest.setAssignee(assignee);
+		idRequest.setProducts(product);
+		idRequest.setComponents(component);
+		return prioritizerApi.unlikeBug(idRequest);
+	}
+
+	@Override
 	public Mono<BugzillaPriorityResponse> deferBug(String agentID, long bugId, int interval, String assignee, List<String> product,
 			List<String> component) {
 		PrioritizerIdIntervalRequest idRequest = new PrioritizerIdIntervalRequest();

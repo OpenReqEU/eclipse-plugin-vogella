@@ -30,6 +30,10 @@ public interface PrioritizerApi {
 	@Headers("Content-Type: application/json")
 	Mono<BugzillaPriorityResponse> likeBug(@Body PrioritizerIdRequest bugzillaRequest);
 
+	@POST("/prioritizer/unlike")
+	@Headers("Content-Type: application/json")
+	Mono<BugzillaPriorityResponse> unlikeBug(@Body PrioritizerIdRequest bugzillaRequest);
+
 	@POST("/prioritizer/defer")
 	@Headers("Content-Type: application/json")
 	Mono<BugzillaPriorityResponse> deferBug(@Body PrioritizerIdIntervalRequest bugzillaRequest);

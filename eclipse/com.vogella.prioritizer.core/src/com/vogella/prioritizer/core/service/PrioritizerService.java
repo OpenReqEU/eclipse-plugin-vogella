@@ -18,8 +18,12 @@ public interface PrioritizerService {
 
 	Mono<BugzillaPriorityResponse> likeBug(String agentID, long bugId, String assignee, List<String> product, List<String> component);
 
+	Mono<BugzillaPriorityResponse> unlikeBug(String agentID, long bugId, String assignee, List<String> product,
+			List<String> component);
+
 	Mono<BugzillaPriorityResponse> deferBug(String agentID, long bugId, int interval, String assignee, List<String> product,
 			List<String> component);
 
 	Mono<List<Bug>> getMostDiscussedBugs(List<String> product, List<String> component, long daysBack);
+
 }

@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -87,7 +86,6 @@ import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -388,21 +386,39 @@ public class PrioritizerPart {
 							});
 					break;
 				case 7:
-					prioritizerService.likeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
-							.subscribe(rb -> {
-								if (rb.isError()) {
-									// reset like button on error
-									rankedBug.setLiked(!rankedBug.isLiked());
-									natTable.refresh(false);
-								}
-							}, err -> {
-								Bundle bundle = FrameworkUtil.getBundle(getClass());
-								Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(), err.getMessage(),
-										err);
-								ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
-							});
-					rankedBug.setLiked(!rankedBug.isLiked());
-					natTable.refresh(false);
+					if (rankedBug.isLiked()) {
+						prioritizerService.unlikeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
+								.subscribe(rb -> {
+									if (rb.isError()) {
+										// reset like button on error
+										rankedBug.setLiked(!rankedBug.isLiked());
+										natTable.refresh(false);
+									}
+								}, err -> {
+									Bundle bundle = FrameworkUtil.getBundle(getClass());
+									Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(),
+											err.getMessage(), err);
+									ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
+								});
+						rankedBug.setLiked(!rankedBug.isLiked());
+						natTable.refresh(false);
+					} else {
+						prioritizerService.likeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
+								.subscribe(rb -> {
+									if (rb.isError()) {
+										// reset like button on error
+										rankedBug.setLiked(!rankedBug.isLiked());
+										natTable.refresh(false);
+									}
+								}, err -> {
+									Bundle bundle = FrameworkUtil.getBundle(getClass());
+									Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(),
+											err.getMessage(), err);
+									ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
+								});
+						rankedBug.setLiked(!rankedBug.isLiked());
+						natTable.refresh(false);
+					}
 					break;
 				default:
 					break;
