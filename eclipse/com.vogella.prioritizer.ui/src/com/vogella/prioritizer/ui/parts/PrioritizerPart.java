@@ -160,6 +160,8 @@ public class PrioritizerPart {
 	@Inject
 	MPart part;
 
+	private Disposable likeSubscription;
+
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 		resourceManager = new LocalResourceManager(JFaceResources.getResources(), parent);
@@ -386,8 +388,11 @@ public class PrioritizerPart {
 							});
 					break;
 				case 7:
+					if(likeSubscription != null) {
+						likeSubscription.dispose();
+					}
 					if (rankedBug.isLiked()) {
-						prioritizerService.unlikeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
+						likeSubscription = prioritizerService.unlikeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
 								.subscribe(rb -> {
 									if (rb.isError()) {
 										// reset like button on error
@@ -403,7 +408,7 @@ public class PrioritizerPart {
 						rankedBug.setLiked(!rankedBug.isLiked());
 						natTable.refresh(false);
 					} else {
-						prioritizerService.likeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
+						likeSubscription = prioritizerService.likeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
 								.subscribe(rb -> {
 									if (rb.isError()) {
 										// reset like button on error
