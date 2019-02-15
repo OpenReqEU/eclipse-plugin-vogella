@@ -40,7 +40,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 
 	public class ServerSettings {
 		@Parameter(names = "-serverUrl", description = "Specify a custom server url for the prioritizer")
-		private String serverUrl = "http://openreq.ist.tugraz.at:9002";
+		private String serverUrl = "http://www.tigerpirates.com:10002";
 
 		public String getServerUrl() {
 			return serverUrl;
