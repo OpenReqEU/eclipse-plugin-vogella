@@ -145,14 +145,11 @@ The IP of the prioritizer service is hard coded in the class:
 eclipse/com.vogella.prioritizer.service/src/com/vogella/prioritizer/service/PrioritizerServiceImpl.java 
 
 You can change the IP of the Prioritizer API in the Run Configurations ... . 
-Go to Arguments and enter the new IP Address here like this -serverUrl=http://217.172.12.199:9002. 
+Go to Arguments and enter the new IP Address here like this -serverUrl=http://217.172.12.111:9002. 
 The arguments should now look like this:
 
--os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -serverUrl=http://217.172.12.199:9002
+-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -serverUrl=http://217.172.12.111:9002
 
-The IP of the service running on ENG is: http://217.172.12.199:9002
-
-The IP of the service running on TU Graz is: http://129.27.202.66:9002
 ====
 
 === Technologies
