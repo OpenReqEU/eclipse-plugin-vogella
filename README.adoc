@@ -52,7 +52,7 @@ image::img/tip-of-the-day-stats.png[]
 
 === Installing the Eclipse Plugin
 
-A p2 update site can be found here: http://api.openreq.eu/eclipse/
+A p2 update site can be found here: https://api.openreq.eu/eclipse/
 
 This p2 update site can be entered in the following dialog by clicking menu:Help[Install New Software...].
 
