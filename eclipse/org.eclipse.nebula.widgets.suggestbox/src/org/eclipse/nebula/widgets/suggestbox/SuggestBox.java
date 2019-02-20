@@ -66,7 +66,6 @@ public class SuggestBox<T> extends Composite {
 	public SuggestBox(Composite parent, int style) {
 		super(parent, style | SWT.BORDER);
 		resourceManager = new LocalResourceManager(JFaceResources.getResources(), this);
-		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		suggestBoxEntries = new ArrayList<SuggestBoxEntry<T>>();
 		createWidgets();
 		initListener();
