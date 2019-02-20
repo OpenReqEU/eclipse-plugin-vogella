@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_EI7oACerEeWxCPrV0pAZQQ" featurename="descriptors" parentElementId="xpath:/">
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="com.vogella.prioritizer.ui.partdescriptor.prioritizerpart" label="Prioritizer" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/priority.png" tooltip="" category="Prioritizer" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.parts.PrioritizerPart">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="com.vogella.prioritizer.ui.partdescriptor.prioritizerpart" label="Bug Prioritizer" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/priority.png" tooltip="" category="Prioritizer" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.parts.PrioritizerPart">
       <tags>View</tags>
       <tags>categoryTag:Prioritizer</tags>
       <menus xmi:id="_5vQWECuNEem96JH9MGWxlQ" elementId="com.vogella.prioritizer.ui.menu.0">
