@@ -83,8 +83,10 @@ import org.eclipse.nebula.widgets.suggestbox.SuggestBoxEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -687,8 +689,16 @@ public class PrioritizerPart {
 			}
 		});
 
-//		Button newComerBugs = new Button(settingsPanel, SWT.CHECK);
-//		newComerBugs.setText("Show me newcomer bugs");
+		Button applyAndSaveButton = new Button(settingsPanel, SWT.PUSH);
+		applyAndSaveButton.setText("Apply and Save");
+		applyAndSaveButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> 
+		
+		{
+			currentViewType = ViewType.MAIN;
+			stackLayout.topControl = mainComposite;
+			mainComposite.getParent().layout();
+		}
+		));
 
 		GridLayoutFactory.swtDefaults().extendedMargins(5, 0, 0, 0).generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().grab(true, true).hint(300, SWT.DEFAULT).applyTo(settingsPanel);
