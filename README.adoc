@@ -11,7 +11,7 @@ The Eclipse Plug-in offers the following features:
 * Tip of the day with personalized tips for a better usage of the Eclipse IDE
 
 As for the personalized prioritisation of requirements: The user can see directly in the Eclipse IDE, 
-in the 'Prioritizer' View, which requirements would fit not only to his/her own interests but would also be of 
+in the 'Bug Prioritizer' View, which requirements would fit not only to his/her own interests but would also be of 
 interest for the community and good for the Eclipse project. 
 After the user enters his Email Address, Eclipse Project, and Components of interest in the settings page, the user gets a personalized and prioritized list of bugs. 
 
