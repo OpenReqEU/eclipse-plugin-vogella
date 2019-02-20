@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.vogella.tracing.feature"
-      label="Tracing"
+      label="Tip of the day extension for frequently used keybindings"
       version="1.0.0.qualifier"
-      provider-name="VOGELLA">
+      provider-name="vogella GmbH">
 
    <description url="http://www.example.com/description">
       Traces command usage behavior and gives tips to improve it
