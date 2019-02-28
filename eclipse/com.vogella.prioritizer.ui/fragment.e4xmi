@@ -20,6 +20,7 @@
       </toolbar>
     </elements>
     <elements xsi:type="basic:PartDescriptor" xmi:id="_eP-9oBiVEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.partdescriptor.mostdiscussedbugs" label="Most discussed bugs" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/discuss.png" category="Prioritizer" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.parts.MostDiscussedBugsPart">
+      <persistedState key="persisteState" value="false"/>
       <tags>View</tags>
       <toolbar xmi:id="_e5JLMBicEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.toolbar.1">
         <children xsi:type="menu:HandledToolItem" xmi:id="_UTWw4BifEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.handledtoolitem.settings" label="" iconURI="platform:/plugin/com.vogella.prioritizer.ui/icons/settings.png" command="_QzjlUA1_EeijCoQO9b84Zg">
@@ -34,15 +35,21 @@
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_MFDO0A1_EeijCoQO9b84Zg" featurename="commands" parentElementId="xpath:/">
     <elements xsi:type="commands:Command" xmi:id="_QzjlUA1_EeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.command.settings" commandName="Show Settings">
+      <persistedState key="persisteState" value="false"/>
       <parameters xmi:id="_9hHPgBibEei0erOA8_EOUg" elementId="PAGE_TYPE" name="PAGE_TYPE" optional="false"/>
       <parameters xmi:id="_w_fFgBicEei0erOA8_EOUg" elementId="PART_ID" name="PART_ID" optional="false"/>
     </elements>
     <elements xsi:type="commands:Command" xmi:id="_OMx2sA2HEeijCoQO9b84Zg" elementId="com.vogella.prioritizer.ui.command.refresh" commandName="Refresh">
+      <persistedState key="persisteState" value="false"/>
       <parameters xmi:id="_VCoJ8AK4EemPDenh-8TLDg" elementId="com.vogella.prioritizer.ui.commandparameter.viewId" name="viewId" optional="false"/>
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_GqfZYBidEei0erOA8_EOUg" featurename="handlers" parentElementId="xpath:/">
-    <elements xsi:type="commands:Handler" xmi:id="_LQmo4BidEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.handler.refresh" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.handler.RefreshHandler" command="_OMx2sA2HEeijCoQO9b84Zg"/>
-    <elements xsi:type="commands:Handler" xmi:id="_L4hkgBidEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.handler.toggleSettings" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.handler.ShowSettingsHandler" command="_QzjlUA1_EeijCoQO9b84Zg"/>
+    <elements xsi:type="commands:Handler" xmi:id="_LQmo4BidEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.handler.refresh" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.handler.RefreshHandler" command="_OMx2sA2HEeijCoQO9b84Zg">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Handler" xmi:id="_L4hkgBidEei0erOA8_EOUg" elementId="com.vogella.prioritizer.ui.handler.toggleSettings" contributionURI="bundleclass://com.vogella.prioritizer.ui/com.vogella.prioritizer.ui.handler.ShowSettingsHandler" command="_QzjlUA1_EeijCoQO9b84Zg">
+      <persistedState key="persisteState" value="false"/>
+    </elements>
   </fragments>
 </fragment:ModelFragments>
