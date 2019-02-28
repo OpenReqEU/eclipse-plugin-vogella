@@ -200,7 +200,7 @@ public class SuggestBox<T> extends Composite {
 				if (suggestBoxEntries.isEmpty()) {
 					changeVisible(boxComposite, false);
 				}
-				SuggestBox.this.layout();
+				
 			});
 			if (newSuggestBoxEntry instanceof ClosableSuggestBoxEntry) {
 				@SuppressWarnings("unchecked")
@@ -211,8 +211,9 @@ public class SuggestBox<T> extends Composite {
 				});
 			}
 			changeVisible(boxComposite, true);
-			boxComposite.pack();
 			addedBoxesListener.forEach(consumer -> consumer.accept(newSuggestBoxEntry));
+			boxComposite.layout();
+			SuggestBox.this.layout();
 			getParent().layout();
 		}
 	}

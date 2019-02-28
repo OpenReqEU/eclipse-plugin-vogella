@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -82,10 +83,14 @@ import org.eclipse.nebula.widgets.suggestbox.SuggestBox;
 import org.eclipse.nebula.widgets.suggestbox.SuggestBoxEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -143,9 +148,9 @@ public class PrioritizerPart {
 
 	private StackLayout stackLayout;
 
-	private Composite settingsComposite;
 
 	private Composite mainComposite;
+	private ScrolledComposite scrolledComposite;
 
 	private ViewType currentViewType = ViewType.MAIN;
 
@@ -158,11 +163,17 @@ public class PrioritizerPart {
 	private Browser browser;
 
 	private ResourceManager resourceManager;
+	
+	private String PRODUCT_DEFAULT ="Platform,JDT,PDE,EGit";
+	private String COMPONENTS_DEFAULT ="UI,Core,Runtime,SWT,Text,Resources,Releng,Debug,IDE,Search";
 
 	@Inject
 	MPart part;
 
 	private Disposable likeSubscription;
+
+	private Button applyAndSaveButton;
+
 
 	@PostConstruct
 	public void createPartControl(Composite parent) {
@@ -357,11 +368,11 @@ public class PrioritizerPart {
 
 				String generatedAgentId = AgentIDGenerator.getAgentID();
 				String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
-				String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "example@vogella.com");
+				String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "");
 				List<String> queryProduct = Arrays
-						.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
+						.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, PRODUCT_DEFAULT).split(","));
 				List<String> queryComponent = Arrays
-						.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
+						.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, COMPONENTS_DEFAULT).split(","));
 
 				int col = this.natTable.getColumnPositionByX(event.x);
 				switch (col) {
@@ -390,11 +401,12 @@ public class PrioritizerPart {
 							});
 					break;
 				case 7:
-					if(likeSubscription != null) {
+					if (likeSubscription != null) {
 						likeSubscription.dispose();
 					}
 					if (rankedBug.isLiked()) {
-						likeSubscription = prioritizerService.unlikeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
+						likeSubscription = prioritizerService
+								.unlikeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
 								.subscribe(rb -> {
 									if (rb.isError()) {
 										// reset like button on error
@@ -410,7 +422,8 @@ public class PrioritizerPart {
 						rankedBug.setLiked(!rankedBug.isLiked());
 						natTable.refresh(false);
 					} else {
-						likeSubscription = prioritizerService.likeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
+						likeSubscription = prioritizerService
+								.likeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
 								.subscribe(rb -> {
 									if (rb.isError()) {
 										// reset like button on error
@@ -481,11 +494,14 @@ public class PrioritizerPart {
 	}
 
 	private void subscribeBugTable() {
-		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "example@vogella.com");
+		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "");
+		if (userEmail.isEmpty()) {
+			return;
+		}
 		List<String> queryProduct = Arrays
-				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
+				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, PRODUCT_DEFAULT).split(","));
 		List<String> queryComponent = Arrays
-				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
+				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, COMPONENTS_DEFAULT).split(","));
 
 		String generatedAgentId = AgentIDGenerator.getAgentID();
 
@@ -512,71 +528,24 @@ public class PrioritizerPart {
 	}
 
 	private void createSettings(Composite parent) {
-		settingsComposite = new Composite(parent, SWT.NONE);
+		
+		scrolledComposite = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		scrolledComposite.setExpandHorizontal(true);
+		scrolledComposite.setExpandVertical(true);
+		
+		Composite settingsComposite = new Composite(scrolledComposite, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(settingsComposite);
+		scrolledComposite.setContent(settingsComposite);
 
 		Composite settingsPanel = new Composite(settingsComposite, SWT.NONE);
 
-		Label agentLabel = new Label(settingsPanel, SWT.FLAT);
-		agentLabel.setText("Agent-Id (alphanumeric and length 9)");
-
-		String generatedAgentId = AgentIDGenerator.getAgentID();
-
-		String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
-
-		Text agentText = new Text(settingsPanel, SWT.BORDER);
-		agentText.setText(agentId);
-		agentText.setToolTipText(
-				"The Agent-Id must have the length of 9 and include only alphanumeric characters (a-z, A-Z, and 0-9). If the Plug-in is called from different computers for the same Email always use the same Agent-Id");
-		agentText.setMessage("Agent-Id");
-		agentText.addModifyListener(event -> {
-			String strPattern = "^[a-zA-Z0-9]*$";
-			if (((Text) event.getSource()).getText().matches(strPattern)
-					&& ((Text) event.getSource()).getText().length() == 9) {
-				preferences.put(Preferences.PRIORITIZER_AGENT_ID, ((Text) event.getSource()).getText());
-				agentText.setForeground(null);
-				MToolBar toolbar = part.getToolbar();
-				toolbar.setVisible(true);
-				List<MToolBarElement> children = toolbar.getChildren();
-				for (MToolBarElement mToolBarElement : children) {
-					if (mToolBarElement instanceof MToolItem) {
-						MToolItem item = (MToolItem) mToolBarElement;
-						if (item.getElementId().equals("com.vogella.prioritizer.ui.handledtoolitem.refresh")) {
-							item.setEnabled(true);
-						}
-					}
-				}
-
-			} else {
-				agentText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-
-				MToolBar toolbar = part.getToolbar();
-				List<MToolBarElement> children = toolbar.getChildren();
-				for (MToolBarElement mToolBarElement : children) {
-					if (mToolBarElement instanceof MToolItem) {
-						MToolItem item = (MToolItem) mToolBarElement;
-						if (item.getElementId().equals("com.vogella.prioritizer.ui.handledtoolitem.refresh")) {
-							item.setEnabled(false);
-						}
-					}
-				}
-			}
-
-			try {
-				preferences.flush();
-			} catch (BackingStoreException e) {
-				LOG.error(e.getMessage(), e);
-				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
-			}
-		});
-
 		Label emailLabel = new Label(settingsPanel, SWT.FLAT);
-		emailLabel.setText("Email used in Bugzilla");
+		emailLabel.setText("Enter your Email used in Bugzilla");
 
-		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "example@vogella.com");
+		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "");
 
 		Text emailText = new Text(settingsPanel, SWT.BORDER);
-		emailText.setText(userEmail);
+		
 		emailText.setToolTipText("Enter your Email used in Bugzilla");
 		emailText.setMessage("Email");
 		emailText.addModifyListener(event -> {
@@ -588,6 +557,16 @@ public class PrioritizerPart {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
+		emailText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (emailText.getText().isEmpty()) {
+					applyAndSaveButton.setEnabled(false);
+				} else {
+					applyAndSaveButton.setEnabled(true);
+				}
+			}
+		});
 
 		Label productLabel = new Label(settingsPanel, SWT.FLAT);
 		productLabel.setText("Product");
@@ -595,7 +574,7 @@ public class PrioritizerPart {
 		SuggestBox<String> suggestBoxProduct = new SuggestBox<>(settingsPanel, SWT.NONE);
 		suggestBoxProduct.getTextControl().setMessage("Product");
 		suggestBoxProduct.getTextControl().setToolTipText("Product");
-		String queryProduct = preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform");
+		String queryProduct = preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, PRODUCT_DEFAULT);
 		String[] savedProducts = queryProduct.split(",");
 		for (String string : savedProducts) {
 			suggestBoxProduct.addBox(new ClosableSuggestBoxEntryImpl<String>(string));
@@ -636,7 +615,7 @@ public class PrioritizerPart {
 		SuggestBox<String> suggestBoxComponent = new SuggestBox<>(settingsPanel, SWT.NONE);
 		suggestBoxComponent.getTextControl().setMessage("Component");
 		suggestBoxComponent.getTextControl().setToolTipText("Component");
-		String queryComponent = preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI");
+		String queryComponent = preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, COMPONENTS_DEFAULT);
 		String[] savedComponents = queryComponent.split(",");
 		for (String string : savedComponents) {
 			suggestBoxComponent.addBox(new ClosableSuggestBoxEntryImpl<String>(string));
@@ -688,17 +667,72 @@ public class PrioritizerPart {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
-
-		Button applyAndSaveButton = new Button(settingsPanel, SWT.PUSH);
-		applyAndSaveButton.setText("Apply and Save");
-		applyAndSaveButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> 
 		
+
+		Label agentLabel = new Label(settingsPanel, SWT.FLAT);
+		agentLabel.setText("Unique identifier (alphanumeric and length 9)");
+
+		String generatedAgentId = AgentIDGenerator.getAgentID();
+
+		String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
+
+		Text agentText = new Text(settingsPanel, SWT.BORDER);
+		agentText.setText(agentId);
+		agentText.setToolTipText(
+				"Unique identifier (must have the length of 9 and include only alphanumeric characters (a-z, A-Z, and 0-9). If the Plug-in is called from different computers for the same Email always use the same identfier");
+		agentText.setMessage("Agent-Id");
+		agentText.addModifyListener(event -> {
+			String strPattern = "^[a-zA-Z0-9]*$";
+			if (((Text) event.getSource()).getText().matches(strPattern)
+					&& ((Text) event.getSource()).getText().length() == 9) {
+				preferences.put(Preferences.PRIORITIZER_AGENT_ID, ((Text) event.getSource()).getText());
+				agentText.setForeground(null);
+				MToolBar toolbar = part.getToolbar();
+				toolbar.setVisible(true);
+				List<MToolBarElement> children = toolbar.getChildren();
+				for (MToolBarElement mToolBarElement : children) {
+					if (mToolBarElement instanceof MToolItem) {
+						MToolItem item = (MToolItem) mToolBarElement;
+						if (item.getElementId().equals("com.vogella.prioritizer.ui.handledtoolitem.refresh")) {
+							item.setEnabled(true);
+						}
+					}
+				}
+
+			} else {
+				agentText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+				MToolBar toolbar = part.getToolbar();
+				List<MToolBarElement> children = toolbar.getChildren();
+				for (MToolBarElement mToolBarElement : children) {
+					if (mToolBarElement instanceof MToolItem) {
+						MToolItem item = (MToolItem) mToolBarElement;
+						if (item.getElementId().equals("com.vogella.prioritizer.ui.handledtoolitem.refresh")) {
+							item.setEnabled(false);
+						}
+					}
+				}
+			}
+
+			try {
+				preferences.flush();
+			} catch (BackingStoreException e) {
+				LOG.error(e.getMessage(), e);
+				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
+			}
+		});
+
+		new Label(settingsPanel, SWT.NONE);
+		applyAndSaveButton = new Button(settingsPanel, SWT.PUSH);
+		applyAndSaveButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		applyAndSaveButton.setText("Apply and Save");
+		applyAndSaveButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e ->
+
 		{
 			currentViewType = ViewType.MAIN;
 			stackLayout.topControl = mainComposite;
 			mainComposite.getParent().layout();
-		}
-		));
+			refresh(true);
+		}));
 
 		GridLayoutFactory.swtDefaults().extendedMargins(5, 0, 0, 0).generateLayout(settingsPanel);
 		GridDataFactory.fillDefaults().grab(true, true).hint(300, SWT.DEFAULT).applyTo(settingsPanel);
@@ -707,14 +741,27 @@ public class PrioritizerPart {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(browser);
 
 		subscribeChart();
+		if (userEmail.isEmpty()) {
+			toggleView(ViewType.SETTINGS);
+		}
+		scrolledComposite.setMinSize(settingsComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		
+		Composite p = scrolledComposite.getParent();
+		while (p.getParent()!=null) {
+			p = p.getParent();
+		}
+		p.layout();
 	}
 
+	
 	private void subscribeChart() {
-		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "example@vogella.com");
+		String userEmail = preferences.get(Preferences.PRIORITIZER_USER_EMAIL, "");
+		if (userEmail.isEmpty()) {
+			return;
+		}
 		List<String> queryProduct = Arrays
-				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, "Platform").split(","));
-		List<String> queryComponent = Arrays
-				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, "UI").split(","));
+				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, PRODUCT_DEFAULT).split(","));
+		List<String> queryComponent = Arrays.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT,COMPONENTS_DEFAULT).split(","));
 		String generatedAgentId = AgentIDGenerator.getAgentID();
 
 		String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
@@ -722,7 +769,7 @@ public class PrioritizerPart {
 		Mono<String> keywordImage = prioritizerService.getKeyWordUrl(agentId, userEmail, queryProduct, queryComponent);
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.elastic())
-				.publishOn(SwtScheduler.from(settingsComposite.getDisplay()))
+				.publishOn(SwtScheduler.from(scrolledComposite.getDisplay()))
 				.doOnSubscribe(s -> browser.setText("<html><body><h3>Loading...</h3></body></html>"))
 				.subscribe(url -> browser.setUrl(url), err -> LOG.error(err.getMessage(), err)));
 	}
@@ -738,12 +785,13 @@ public class PrioritizerPart {
 		// always switch to main, if another type is selected twice
 		if ((currentViewType.equals(viewType)) || (ViewType.MAIN.equals(viewType))) {
 			currentViewType = ViewType.MAIN;
+			refresh(true);
 			stackLayout.topControl = mainComposite;
 			mainComposite.getParent().layout();
 		} else if (ViewType.SETTINGS.equals(viewType)) {
 			currentViewType = ViewType.SETTINGS;
-			stackLayout.topControl = settingsComposite;
-			settingsComposite.getParent().layout();
+			stackLayout.topControl = scrolledComposite;
+			scrolledComposite.getParent().layout();
 		}
 	}
 
@@ -753,4 +801,11 @@ public class PrioritizerPart {
 		subscribeBugTable();
 		subscribeChart();
 	}
+	
+	@Focus
+	public void focus() {
+		stackLayout.topControl.setFocus();
+	}
+	
+	
 }
