@@ -25,7 +25,7 @@
       <category name="Prioritizer"/>
    </feature>
    <feature id="com.vogella.tracing.feature">
-      <category name="Tracing"/>
+      <category name="tipoftheday_keybindings"/>
    </feature>
    <feature id="Project-Reactor" version="3.2.0">
       <category name="dependencies"/>
@@ -33,7 +33,7 @@
    <feature url="features/com.vogella.nebula.feature_1.0.0.qualifier.jar" id="com.vogella.nebula.feature" version="1.0.0.qualifier">
       <category name="dependencies"/>
    </feature>
-   <category-def name="Prioritizer" label="Prioritizer"/>
-   <category-def name="Tracing" label="Tracing"/>
+   <category-def name="Prioritizer" label="Eclipse Bug Prioritizer"/>
+   <category-def name="tipoftheday_keybindings" label="Personalized Keybindings Tip Of the Day"/>
    <category-def name="dependencies" label="Dependencies"/>
 </site>
