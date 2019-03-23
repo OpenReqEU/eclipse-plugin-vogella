@@ -1,0 +1,170 @@
+swagger: '2.0'
+info:
+  description: API for bugzilla issues
+  version: '1.0'
+  title: Vogella bugzilla API
+host: '217.172.12.199:9801'
+basePath: /
+tags:
+  - name: bugzilla-controller
+    description: Bugzilla Controller
+paths:
+  /bugzilla/mostDiscussedBugs:
+    get:
+      tags:
+        - bugzilla-controller
+      summary: Find most discussed bugs
+      description: >-
+        Find most discussed bugs for a certain product and component. By default
+        of the last 30 days.
+      operationId: getMostDiscussedBugsUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: component
+          in: query
+          description: component
+          required: false
+          type: array
+          items:
+            type: string
+          collectionFormat: multi
+          default: UI
+        - name: daysBack
+          in: query
+          description: daysBack
+          required: false
+          type: integer
+          default: 30
+          format: int64
+        - name: product
+          in: query
+          description: product
+          required: false
+          type: array
+          items:
+            type: string
+          collectionFormat: multi
+          default: Platform
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Bug'
+      deprecated: false
+definitions:
+  Attachment:
+    type: object
+    properties:
+      attachmentId:
+        type: integer
+        format: int64
+      bugId:
+        type: integer
+        format: int64
+    title: Attachment
+  Bug:
+    type: object
+    properties:
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/Attachment'
+      blocks:
+        type: array
+        items:
+          type: integer
+          format: int32
+      cc:
+        type: array
+        items:
+          type: string
+      comments:
+        type: array
+        items:
+          $ref: '#/definitions/Comment'
+      component:
+        type: string
+      creationTime:
+        type: string
+        format: date-time
+      creator:
+        type: string
+      id:
+        type: integer
+        format: int32
+      keywords:
+        type: array
+        items:
+          type: string
+      open:
+        type: boolean
+      platform:
+        type: string
+      priority:
+        type: string
+      product:
+        type: string
+      resolution:
+        type: string
+      seeAlso:
+        type: array
+        items:
+          type: string
+      severity:
+        type: string
+      status:
+        type: string
+      summary:
+        type: string
+      version:
+        type: string
+    title: Bug
+  Comment:
+    type: object
+    properties:
+      attachmentId:
+        type: integer
+        format: int64
+      bugId:
+        type: integer
+        format: int64
+      count:
+        type: integer
+        format: int64
+      creationTime:
+        type: string
+        format: date-time
+      creator:
+        type: string
+      id:
+        type: integer
+        format: int64
+      markdown:
+        type: boolean
+      private:
+        type: boolean
+      tags:
+        type: array
+        items:
+          type: string
+      text:
+        type: string
+      time:
+        type: string
+        format: date-time
+    title: Comment
+  Flux:
+    type: object
+    properties:
+      prefetch:
+        type: integer
+        format: int32
+    title: Flux
+  Flux«Bug»:
+    type: object
+    properties:
+      prefetch:
+        type: integer
+        format: int32
+    title: Flux«Bug»
