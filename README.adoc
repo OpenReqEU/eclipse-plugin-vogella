@@ -71,3 +71,11 @@ image::img/tip-of-the-day-stats.png[]
 == Notes for developers
 
 See the DEVELOPER.adoc for information about how to build the plug-in.
+
+== How to contribute
+
+See OpenReq project contribution link:https://github.com/OpenReqEU/OpenReq/blob/master/CONTRIBUTING.md[Guidlines]
+
+== License
+
+Free use of this software is granted under the terms of the EPL version 2 (EPL2.0).
