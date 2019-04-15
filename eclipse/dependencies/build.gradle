@@ -1,5 +1,6 @@
 plugins {
   id "org.standardout.bnd-platform" version "1.7.0"
+  id 'com.github.ben-manes.versions' version '0.21.0'
 }
 
 repositories {
@@ -18,9 +19,8 @@ platform {
 	useFeatureHashQualifiers = false
 	defaultQualifierMap.prefix = ''
 
-	feature(id: 'Project-Reactor', name: 'Project Reactor', version: '3.2.1') {
-
-		plugin('io.projectreactor:reactor-core:3.2.1.RELEASE') {
+	feature(id: 'Project-Reactor', name: 'Project Reactor', version: '3.2.8') {
+		plugin('io.projectreactor:reactor-core:3.2.8.RELEASE') {
 			bnd {
 				optionalImport 'javax.swing'
 				optionalImport 'kotlin'
@@ -37,8 +37,9 @@ platform {
 				optionalImport 'javax.swing'
 			}
 		}
+		
 
-		plugin('io.projectreactor.addons:reactor-extra:3.2.0.RELEASE') {
+		plugin('io.projectreactor.addons:reactor-extra:3.2.2.RELEASE') {
 			bnd {
 				optionalImport 'javax.swing'
 				optionalImport 'kotlin'
@@ -47,10 +48,15 @@ platform {
 			}
 		}
 	}
-	
-	feature(id: 'RSocket', name: 'RSocket', version: '0.11.15') {
-	   plugin('io.rsocket:rsocket-core:0.11.15')
-	   plugin('io.rsocket:rsocket-transport-netty:0.11.15')
+
+	feature(id: 'reactor-netty', name: 'Reactor Netty', version: '0.8.6') {
+			plugin('io.projectreactor.netty:reactor-netty:0.8.6.RELEASE') {
+			}
+	}
+
+	feature(id: 'RSocket', name: 'RSocket', version: '0.12.1') {
+	   plugin('io.rsocket:rsocket-core:0.12.1')
+	   plugin('io.rsocket:rsocket-transport-netty:0.12.1')
 	}
 	
 	feature(id: 'Retrofit', name: 'Retrofit', version: '2.5.0') {
@@ -72,7 +78,7 @@ platform {
 		plugin('com.jakewharton.retrofit:retrofit2-reactor-adapter:2.1.0')
 	
 		// Convert okhttp3 artifact to OSGi without android
-		plugin('com.squareup.okhttp3:okhttp:3.12.0') {
+		plugin('com.squareup.okhttp3:okhttp:3.14.1') {
 			bnd{
 				optionalImport 'android.os'
 				optionalImport 'android.util'
@@ -81,7 +87,7 @@ platform {
 			}
 		}
 
-		plugin('com.squareup.okhttp3:logging-interceptor:3.12.0')
+		plugin('com.squareup.okhttp3:logging-interceptor:3.14.1')
 	}
 
 /*
