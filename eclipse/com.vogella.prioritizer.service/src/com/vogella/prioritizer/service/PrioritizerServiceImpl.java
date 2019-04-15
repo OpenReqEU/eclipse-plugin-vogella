@@ -69,7 +69,10 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 
 	@Activate
 	public void activate() {
-		URI uri = URI.create("http://openreq.ist.tugraz.at:9001");
+		ServerSettings serverSettings = new ServerSettings();
+		JCommander.newBuilder().acceptUnknownOptions(true).addObject(serverSettings).build().parse(args);
+		String serverUrl = serverSettings.getServerUrl();
+		URI uri = URI.create(serverUrl);
 		IProxyData[] proxyDataForHost = proxyService.select(uri);
 		Proxy proxy = null;
 		for (IProxyData data : proxyDataForHost) {
@@ -91,14 +94,11 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 		if (proxy == null) {
 			proxy = Proxy.NO_PROXY;
 		}
-		ServerSettings serverSettings = new ServerSettings();
-		JCommander.newBuilder().acceptUnknownOptions(true).addObject(serverSettings).build().parse(args);
 
 		final OkHttpClient httpClient = new OkHttpClient.Builder().proxy(proxy)
 				.addInterceptor(new HttpLoggingInterceptor().setLevel(Level.BODY)).readTimeout(3, TimeUnit.MINUTES)
 				.connectTimeout(3, TimeUnit.MINUTES).build();
 
-		String serverUrl = serverSettings.getServerUrl();
 
 		Retrofit retrofit = new Retrofit.Builder().baseUrl(serverUrl).client(httpClient)
 				.addConverterFactory(JacksonConverterFactory.create())
