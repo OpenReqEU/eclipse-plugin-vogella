@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="createPrioritizerApi" name="com.vogella.prioritizer.service.PrioritizerServiceImpl">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" name="com.vogella.prioritizer.service.PrioritizerServiceImpl">
    <service>
       <provide interface="com.vogella.prioritizer.core.service.PrioritizerService"/>
    </service>
+   <reference bind="bindProxyService" interface="org.eclipse.core.net.proxy.IProxyService" name="ProxyService" unbind="unbindProxyService"/>
    <reference bind="args" cardinality="1..1" interface="org.eclipse.equinox.app.IApplicationContext" name="args" policy="static" unbind="unargs"/>
    <implementation class="com.vogella.prioritizer.service.PrioritizerServiceImpl"/>
 </scr:component>

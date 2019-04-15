@@ -1,8 +1,14 @@
 package com.vogella.prioritizer.service;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URI;
+import java.net.Proxy.Type;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.core.net.proxy.IProxyData;
+import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -27,16 +33,8 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class PrioritizerServiceImpl implements PrioritizerService {
 
 	private PrioritizerApi prioritizerApi;
+	private IProxyService proxyService;
 	private String[] args;
-
-	@Reference
-	void args(IApplicationContext context) {
-		args = (String[]) context.getArguments().get("application.args");
-	}
-
-	void unargs(IApplicationContext context) {
-		args = null;
-	}
 
 	public class ServerSettings {
 		@Parameter(names = "-serverUrl", description = "Specify a custom server url for the prioritizer")
@@ -51,13 +49,54 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 		}
 	}
 
+	@Reference
+	void args(IApplicationContext context) {
+		args = (String[]) context.getArguments().get("application.args");
+	}
+
+	void unargs(IApplicationContext context) {
+		args = null;
+	}
+
+	@Reference
+	public void bindProxyService(IProxyService proxyService) {
+		this.proxyService = proxyService;
+	}
+
+	public void unbindProxyService(IProxyService proxyService) {
+		this.proxyService = null;
+	}
+
 	@Activate
-	public void createPrioritizerApi() {
+	public void activate() {
+		URI uri = URI.create("http://openreq.ist.tugraz.at:9001");
+		IProxyData[] proxyDataForHost = proxyService.select(uri);
+		Proxy proxy = null;
+		for (IProxyData data : proxyDataForHost) {
+			if (data.getHost() != null) {
+				System.setProperty("http.proxySet", "true");
+				System.setProperty("http.proxyHost", data.getHost());
+			}
+			if (data.getHost() != null) {
+				System.setProperty("http.proxyPort", String.valueOf(data.getPort()));
+			}
+
+			String type = data.getType();
+
+			InetSocketAddress inetSocketAddress = new InetSocketAddress(data.getHost(), data.getPort());
+
+			proxy = new Proxy(Type.valueOf(type), inetSocketAddress);
+		}
+
+		if (proxy == null) {
+			proxy = Proxy.NO_PROXY;
+		}
 		ServerSettings serverSettings = new ServerSettings();
 		JCommander.newBuilder().acceptUnknownOptions(true).addObject(serverSettings).build().parse(args);
 
-		final OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(Level.BODY))
-				.readTimeout(3, TimeUnit.MINUTES).connectTimeout(3, TimeUnit.MINUTES).build();
+		final OkHttpClient httpClient = new OkHttpClient.Builder().proxy(proxy)
+				.addInterceptor(new HttpLoggingInterceptor().setLevel(Level.BODY)).readTimeout(3, TimeUnit.MINUTES)
+				.connectTimeout(3, TimeUnit.MINUTES).build();
 
 		String serverUrl = serverSettings.getServerUrl();
 
@@ -132,8 +171,8 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
-	public Mono<BugzillaPriorityResponse> deferBug(String agentID, long bugId, int interval, String assignee, List<String> product,
-			List<String> component) {
+	public Mono<BugzillaPriorityResponse> deferBug(String agentID, long bugId, int interval, String assignee,
+			List<String> product, List<String> component) {
 		PrioritizerIdIntervalRequest idRequest = new PrioritizerIdIntervalRequest();
 		idRequest.setAgent_id(agentID);
 		idRequest.setId(bugId);
