@@ -27,10 +27,10 @@
    <feature id="com.vogella.tracing.feature">
       <category name="tipoftheday_keybindings"/>
    </feature>
-   <feature id="Project-Reactor" version="3.2.0">
+   <feature url="features/com.vogella.nebula.feature_1.0.0.qualifier.jar" id="com.vogella.nebula.feature" version="1.0.0.qualifier">
       <category name="dependencies"/>
    </feature>
-   <feature url="features/com.vogella.nebula.feature_1.0.0.qualifier.jar" id="com.vogella.nebula.feature" version="1.0.0.qualifier">
+   <feature url="features/Project-Reactor_3.2.8.jar" id="Project-Reactor" version="3.2.8">
       <category name="dependencies"/>
    </feature>
    <category-def name="Prioritizer" label="Eclipse Bug Prioritizer"/>
