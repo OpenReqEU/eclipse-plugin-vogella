@@ -37,6 +37,7 @@ import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.nebula.widgets.nattable.NatTable;
+import org.eclipse.nebula.widgets.nattable.config.AbstractRegistryConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.AbstractUiBindingConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.ConfigRegistry;
@@ -49,6 +50,8 @@ import org.eclipse.nebula.widgets.nattable.extension.glazedlists.GlazedListsEven
 import org.eclipse.nebula.widgets.nattable.extension.glazedlists.GlazedListsSortModel;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
+import org.eclipse.nebula.widgets.nattable.hover.HoverLayer;
+import org.eclipse.nebula.widgets.nattable.hover.config.SimpleHoverStylingBindings;
 import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
@@ -107,6 +110,7 @@ import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.model.RankedBug;
 import com.vogella.prioritizer.core.preferences.Preferences;
 import com.vogella.prioritizer.core.service.PrioritizerService;
+import com.vogella.prioritizer.ui.nattable.AlternateRowStyleConfiguration;
 import com.vogella.prioritizer.ui.nattable.LinkClickConfiguration;
 import com.vogella.prioritizer.ui.nattable.NatTableButtonTooltip;
 import com.vogella.prioritizer.ui.nattable.RankedBugColumnPropertyAccessor;
@@ -212,11 +216,13 @@ public class PrioritizerPart {
 		dataLayer.setColumnWidthPercentageByPosition(5, 4);
 		dataLayer.setColumnWidthPercentageByPosition(6, 4);
 		dataLayer.setColumnWidthPercentageByPosition(7, 4);
-		GlazedListsEventLayer<RankedBug> eventLayer = new GlazedListsEventLayer<RankedBug>(dataLayer, sortedList);
+		HoverLayer hoverLayer = new HoverLayer(dataLayer, false);
+		hoverLayer.addConfiguration(new SimpleHoverStylingBindings(hoverLayer));
+		GlazedListsEventLayer<RankedBug> eventLayer = new GlazedListsEventLayer<RankedBug>(hoverLayer, sortedList);
 		ColumnReorderLayer columnReorderLayer = new ColumnReorderLayer(eventLayer);
 		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
 		eventLayer.setConfigLabelAccumulator(columnLabelAccumulator);
-
+		
 //		SelectionLayer selectionLayer = new SelectionLayer(columnReorderLayer, false);
 //		selectionLayer.setSelectionModel(
 //				new RowSelectionModel<>(selectionLayer, dataProvider, new IRowIdAccessor<RankedBug>() {
@@ -340,7 +346,24 @@ public class PrioritizerPart {
 		natTable.addConfiguration(
 				new ButtonClickConfiguration(notNowButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6));
 		natTable.addConfiguration(
-				new ButtonClickConfiguration(likeButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7));
+				new ButtonClickConfiguration(likeButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7));		
+		// add the style configuration for hover
+        natTable.addConfiguration(new AbstractRegistryConfiguration() {
+
+            @Override
+            public void configureRegistry(IConfigRegistry configRegistry) {
+                // style that is applied when cells are hovered
+                Style style = new Style();
+                style.setAttributeValue(
+                        CellStyleAttributes.BACKGROUND_COLOR,
+                        GUIHelper.COLOR_GRAY);
+
+                configRegistry.registerConfigAttribute(
+                        CellConfigAttributes.CELL_STYLE,
+                        style,
+                        DisplayMode.HOVER);
+            }
+        });
 
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(natTable);
 
