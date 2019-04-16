@@ -49,7 +49,9 @@ import org.eclipse.nebula.widgets.nattable.data.convert.PercentageDisplayConvert
 import org.eclipse.nebula.widgets.nattable.extension.glazedlists.GlazedListsEventLayer;
 import org.eclipse.nebula.widgets.nattable.extension.glazedlists.GlazedListsSortModel;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
+import org.eclipse.nebula.widgets.nattable.grid.cell.AlternatingRowConfigLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
+import org.eclipse.nebula.widgets.nattable.grid.layer.config.DefaultRowStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.hover.HoverLayer;
 import org.eclipse.nebula.widgets.nattable.hover.config.SimpleHoverStylingBindings;
 import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
@@ -110,7 +112,6 @@ import com.vogella.prioritizer.core.model.Bug;
 import com.vogella.prioritizer.core.model.RankedBug;
 import com.vogella.prioritizer.core.preferences.Preferences;
 import com.vogella.prioritizer.core.service.PrioritizerService;
-import com.vogella.prioritizer.ui.nattable.AlternateRowStyleConfiguration;
 import com.vogella.prioritizer.ui.nattable.LinkClickConfiguration;
 import com.vogella.prioritizer.ui.nattable.NatTableButtonTooltip;
 import com.vogella.prioritizer.ui.nattable.RankedBugColumnPropertyAccessor;
@@ -248,6 +249,12 @@ public class PrioritizerPart {
 		CompositeLayer compositeLayer = new CompositeLayer(1, 2);
 		compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, sortHeaderLayer, 0, 0);
 		compositeLayer.setChildLayer(GridRegion.BODY, viewportLayer, 0, 1);
+		
+		compositeLayer.addConfiguration(new DefaultRowStyleConfiguration());
+        compositeLayer.setConfigLabelAccumulatorForRegion(
+                GridRegion.BODY,
+                new AlternatingRowConfigLabelAccumulator(compositeLayer
+                        .getChildLayerByRegionName(GridRegion.BODY)));
 
 		Style style = new Style();
 		style.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT);
@@ -346,7 +353,8 @@ public class PrioritizerPart {
 		natTable.addConfiguration(
 				new ButtonClickConfiguration(notNowButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6));
 		natTable.addConfiguration(
-				new ButtonClickConfiguration(likeButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7));		
+				new ButtonClickConfiguration(likeButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7));
+		
 		// add the style configuration for hover
         natTable.addConfiguration(new AbstractRegistryConfiguration() {
 
