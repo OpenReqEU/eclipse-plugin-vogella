@@ -26,9 +26,6 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -87,8 +84,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
@@ -146,6 +141,12 @@ public class PrioritizerPart {
 	@Inject
 	private BrowserService browserService;
 
+	@Inject
+	private IEventBroker eventBroker;
+
+	@Inject
+	private MPart part;
+
 	private Disposable.Composite compositeDisposable = Disposables.composite();
 
 	private StackLayout stackLayout;
@@ -164,16 +165,11 @@ public class PrioritizerPart {
 	private Browser browser;
 
 	private ResourceManager resourceManager;
-	
-	@Inject IEventBroker eventBroker;
-	
+
 	public final static String ALL_DATA_SET = "ALL_DATA_SET";
-	
+
 	private String PRODUCT_DEFAULT = "Platform,JDT,PDE,EGit";
 	private String COMPONENTS_DEFAULT = "UI,Core,Runtime,SWT,Text,Resources,Releng,Debug,IDE,Search";
-
-	@Inject
-	MPart part;
 
 	private Disposable likeSubscription;
 
@@ -653,6 +649,24 @@ public class PrioritizerPart {
 		suggestBoxComponent.addSuggestBoxEntryAddedListener(componentChangeListener);
 		suggestBoxComponent.addSuggestBoxEntryRemovedListener(componentChangeListener);
 		GridDataFactory.fillDefaults().hint(300, 60).grab(true, true).applyTo(suggestBoxComponent);
+
+		new Label(settingsPanel, SWT.FLAT).setText("User defined keywords");
+
+		String userKeywords = preferences.get(Preferences.PRIORITIZER_USER_KEYWORDS, "");
+		Text keywordText = new Text(settingsPanel, SWT.BORDER);
+		keywordText.setText(userKeywords);
+		keywordText.setMessage("Your desired keywords for the bug search");
+		keywordText.setToolTipText("Your desired keywords for the bug search");
+		keywordText.addModifyListener(event -> {
+			Text source = (Text) event.getSource();
+			preferences.put(Preferences.PRIORITIZER_USER_KEYWORDS, source.getText());
+			try {
+				preferences.flush();
+			} catch (BackingStoreException e) {
+				LOG.error(e.getMessage(), e);
+				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
+			}
+		});
 
 		new Label(settingsPanel, SWT.FLAT).setText("Snooze Bug for (days)");
 
