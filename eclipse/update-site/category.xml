@@ -33,6 +33,9 @@
    <feature url="features/Project-Reactor_3.2.8.jar" id="Project-Reactor" version="3.2.8">
       <category name="dependencies"/>
    </feature>
+   <feature url="features/reactor-netty_0.8.6.jar" id="reactor-netty" version="0.8.6">
+      <category name="dependencies"/>
+   </feature>
    <category-def name="Prioritizer" label="Eclipse Bug Prioritizer"/>
    <category-def name="tipoftheday_keybindings" label="Personalized Keybindings Tip Of the Day"/>
    <category-def name="dependencies" label="Dependencies"/>
