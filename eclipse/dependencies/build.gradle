@@ -37,7 +37,6 @@ platform {
 				optionalImport 'javax.swing'
 			}
 		}
-		
 
 		plugin('io.projectreactor.addons:reactor-extra:3.2.2.RELEASE') {
 			bnd {
@@ -50,8 +49,7 @@ platform {
 	}
 
 	feature(id: 'reactor-netty', name: 'Reactor Netty', version: '0.8.6') {
-			plugin('io.projectreactor.netty:reactor-netty:0.8.6.RELEASE') {
-			}
+		plugin('io.projectreactor.netty:reactor-netty:0.8.6.RELEASE') 
 	}
 
 	feature(id: 'RSocket', name: 'RSocket', version: '0.12.1') {
@@ -68,7 +66,7 @@ platform {
 					optionalImport 'javax.annotation.meta'
 					optionalImport 'kotlin'
 					optionalImport 'kotlin.jvm.internal'
-		    	}
+		    }
 		}
 	
 		// Convert the retrofit jackson converter artifact to OSGi and handle the split package problems in OSGi
@@ -90,57 +88,9 @@ platform {
 		plugin('com.squareup.okhttp3:logging-interceptor:3.14.1')
 	}
 
-/*
-	feature(id: 'logback-classic', name: 'logback-classic', version: '1.2.3') {
-		plugin('ch.qos.logback:logback-core:1.2.3') {
-			bnd {
-				optionalImport 'javax.mail'
-				optionalImport 'javax.mail.internet'
-				optionalImport 'javax.naming'
-				optionalImport 'javax.net'
-				optionalImport 'javax.net.ssl'
-				optionalImport 'javax.servlet'
-				optionalImport 'javax.servlet.http'
-				optionalImport 'javax.sql'
-				optionalImport 'javax.xml.namespace'
-				optionalImport 'javax.xml.parsers'
-				optionalImport 'javax.xml.stream'
-				optionalImport 'javax.xml.stream.events'
-				optionalImport 'org.xml.sax'
-				optionalImport 'org.xml.sax.helpers'
-				optionalImport 'org.codehaus.janino'
-				optionalImport 'org.codehaus.commons.compiler'
-				optionalImport 'org.fusesource.jansi'
-			}
-		}
-
-		plugin('ch.qos.logback:logback-classic:1.2.3') {
-			bnd {
-				optionalImport 'sun.reflect'
-				optionalImport 'javax.management'
-				optionalImport 'javax.naming'
-				optionalImport 'javax.net'
-				optionalImport 'javax.net.ssl'
-				optionalImport 'javax.servlet'
-				optionalImport 'javax.servlet.http'
-				optionalImport 'org.xml.sax'
-				optionalImport 'org.codehaus.groovy.control'
-				optionalImport 'org.codehaus.groovy.control.customizers'
-				optionalImport 'org.codehaus.groovy.reflection'
-				optionalImport 'org.codehaus.groovy.runtime'
-				optionalImport 'org.codehaus.groovy.runtime.callsite'
-				optionalImport 'org.codehaus.groovy.runtime.typehandling'
-				optionalImport 'org.codehaus.groovy.runtime.wrappers'
-				optionalImport 'org.codehaus.groovy.transform'
-				optionalImport 'groovy.lang'		
-			}
-		}
-	}
-*/
 	feature(id: 'jcommander', name: 'jcommander', version: '1.72.0') {
 			plugin('com.beust:jcommander:1.72')
 	 }
-
 }
 
 wrapper {
