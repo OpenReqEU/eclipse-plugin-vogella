@@ -2,8 +2,8 @@ package com.vogella.prioritizer.service;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.URI;
 import java.net.Proxy.Type;
+import java.net.URI;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -99,7 +99,6 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 				.addInterceptor(new HttpLoggingInterceptor().setLevel(Level.BODY)).readTimeout(3, TimeUnit.MINUTES)
 				.connectTimeout(3, TimeUnit.MINUTES).build();
 
-
 		Retrofit retrofit = new Retrofit.Builder().baseUrl(serverUrl).client(httpClient)
 				.addConverterFactory(JacksonConverterFactory.create())
 				.addCallAdapterFactory(ReactorCallAdapterFactory.create()).build();
@@ -181,5 +180,10 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 		idRequest.setProducts(product);
 		idRequest.setComponents(component);
 		return prioritizerApi.deferBug(idRequest);
+	}
+
+	@Override
+	public Mono<BugzillaPriorityResponse> deleteProfile(String agentId) {
+		return prioritizerApi.deleteProfile(new DeleteProfile(agentId));
 	}
 }

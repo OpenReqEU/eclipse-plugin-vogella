@@ -38,7 +38,11 @@ public interface PrioritizerApi {
 	@Headers("Content-Type: application/json")
 	Mono<BugzillaPriorityResponse> deferBug(@Body PrioritizerIdIntervalRequest bugzillaRequest);
 
-	@GET("http://217.172.12.199:9801/bugzilla/mostDiscussedBugs")
+	@POST("/prioritizer/profile/delete")
+	@Headers("Content-Type: application/json")
+	Mono<BugzillaPriorityResponse> deleteProfile(@Body DeleteProfile bugzillaRequest);
+
+	@GET("http://localhost:9801/bugzilla/mostDiscussedBugs")
 	Mono<List<Bug>> getMostDiscussedBugs(@Query("product") List<String> product,
 			@Query("component") List<String> component, @Query("daysBack") long daysBack);
 }
