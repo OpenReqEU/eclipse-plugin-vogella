@@ -24,6 +24,7 @@
 
 		<module>com.vogella.common.core</module>
 		<module>com.vogella.common.ui</module>
+		<module>com.vogella.common.ui.tests</module>
 		
 		<module>com.vogella.localpersistence</module>
 

@@ -29,6 +29,10 @@
 		    <unit id="org.slf4j.api" version="1.7.10.v20170428-1633"/>
 		    <unit id="org.slf4j.api.source" version="1.7.10.v20170428-1633"/>
 		    <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20181128170323/repository"/>
+		    <unit id="org.hamcrest.library" version="1.3.0.v20180524-2246"/>
+		    <unit id="org.hamcrest.library.source" version="1.3.0.v20180524-2246"/>
+		    <unit id="org.mockito" version="2.23.0.v20181106-1534"/>
+		    <unit id="org.mockito.source" version="2.23.0.v20181106-1534"/>
 	    </location>
 	    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 		    <unit id="Project-Reactor.feature.group" version="3.2.8"/>
