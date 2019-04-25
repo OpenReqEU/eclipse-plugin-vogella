@@ -285,8 +285,7 @@ public class PrioritizerPart {
 			if (cellData instanceof Number) {
 				try {
 
-					URL url = new URL("http://www.tigerpirates.com:10002" + rowObject.getUrl());
-//					URL url = new URL("https://bugs.eclipse.org/bugs/show_bug.cgi?id=" + String.valueOf(cellData));
+					URL url = new URL("https://bugs.eclipse.org/bugs/show_bug.cgi?id=" + String.valueOf(cellData));
 					browserService.openExternalBrowser(url);
 				} catch (MalformedURLException | CoreException e) {
 					LOG.error(e.getMessage(), e);
