@@ -409,7 +409,7 @@ public class PrioritizerPart {
 
 				int col = this.natTable.getColumnPositionByX(event.x);
 				switch (col) {
-				case 5:
+				case 6:
 					eventList.remove(rankedBug);
 					prioritizerService.dislikeBug(agentId, rankedBug.getId(), userEmail, queryProduct, queryComponent)
 							.subscribe(v -> {
@@ -420,7 +420,7 @@ public class PrioritizerPart {
 								ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
 							});
 					break;
-				case 6:
+				case 7:
 					eventList.remove(rankedBug);
 					int days = preferences.getInt(Preferences.PRIORITIZER_DEFER_DELAY, 30);
 					prioritizerService
@@ -433,7 +433,7 @@ public class PrioritizerPart {
 								ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
 							});
 					break;
-				case 7:
+				case 8:
 					if (likeSubscription != null) {
 						likeSubscription.dispose();
 					}
