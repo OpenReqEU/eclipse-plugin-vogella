@@ -179,6 +179,8 @@ public class PrioritizerPart {
 	private Disposable likeSubscription;
 
 	private Button applyAndSaveButton;
+	
+	private Button deleteProfile;
 
 	private Text emailText;
 
@@ -748,6 +750,16 @@ public class PrioritizerPart {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
+
+		new Label(settingsPanel, SWT.NONE);
+		deleteProfile = new Button(settingsPanel, SWT.PUSH);
+		deleteProfile.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		deleteProfile.setText("Delete Profile");
+		deleteProfile.addSelectionListener(SelectionListener.widgetSelectedAdapter(e ->
+
+		{
+			prioritizerService.deleteProfile(agentId);
+		}));
 
 		new Label(settingsPanel, SWT.NONE);
 		applyAndSaveButton = new Button(settingsPanel, SWT.PUSH);
