@@ -179,6 +179,8 @@ public class PrioritizerPart {
 	private Disposable likeSubscription;
 
 	private Button applyAndSaveButton;
+	
+	private Button deleteProfile;
 
 	private Text emailText;
 
@@ -748,6 +750,26 @@ public class PrioritizerPart {
 				MessageDialog.openError(settingsPanel.getShell(), "Error", e.getMessage());
 			}
 		});
+
+		new Label(settingsPanel, SWT.NONE);
+		deleteProfile = new Button(settingsPanel, SWT.PUSH);
+		deleteProfile.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		deleteProfile.setText("Reset Likes, Dislikes and Snoozes");
+		deleteProfile.setToolTipText("This will reset all likes, dislikes and snoozes for the unique identifier");
+		deleteProfile.addSelectionListener(SelectionListener.widgetSelectedAdapter(e ->
+
+		{
+			prioritizerService.deleteProfile(agentId)
+			.subscribe(v -> {
+			}, err -> {
+				Bundle bundle = FrameworkUtil.getBundle(getClass());
+				Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(), err.getMessage(),
+						err);
+				ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
+			});
+			
+			refresh(true);
+		}));
 
 		new Label(settingsPanel, SWT.NONE);
 		applyAndSaveButton = new Button(settingsPanel, SWT.PUSH);

@@ -1,13 +1,13 @@
 package com.vogella.prioritizer.service;
 
 public class DeleteProfile {
-	private final String agentId;
+	private final String agentID;
 
-	public DeleteProfile(String agentId) {
-		this.agentId = agentId;
+	public DeleteProfile(String agentID) {
+		this.agentID = agentID;
 	}
 
-	public String getAgentId() {
-		return agentId;
+	public String getAgentID() {
+		return agentID;
 	}
 }
