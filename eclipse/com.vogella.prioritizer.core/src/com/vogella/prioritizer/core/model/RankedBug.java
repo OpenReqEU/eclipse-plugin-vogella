@@ -1,6 +1,7 @@
 package com.vogella.prioritizer.core.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RankedBug implements Comparable<RankedBug> {
@@ -12,6 +13,8 @@ public class RankedBug implements Comparable<RankedBug> {
 	private String url;
 	private String product;
 	private String component;
+	@JsonProperty("creation_time")
+	private String creationTime;
 	private boolean liked;
 	private double priority;
 
@@ -44,6 +47,13 @@ public class RankedBug implements Comparable<RankedBug> {
 
 	public void setProduct(String product) {
 		this.product = product;
+	}
+	public String getCreationTime() {
+		return creationTime;
+	}
+
+	public void setCreationTime(String creation_time) {
+		this.creationTime = creation_time;
 	}
 
 	public double getPriority() {
@@ -88,6 +98,6 @@ public class RankedBug implements Comparable<RankedBug> {
 	@Override
 	public String toString() {
 		return "RankedBug [id=" + id + ", summary=" + summary + ", url=" + url + ", product=" + product + ", component="
-				+ component + ", liked=" + liked + ", priority=" + priority + "]";
+				+ component + ", created=" + creationTime + ", liked=" + liked + ", priority=" + priority + "]";
 	}
 }

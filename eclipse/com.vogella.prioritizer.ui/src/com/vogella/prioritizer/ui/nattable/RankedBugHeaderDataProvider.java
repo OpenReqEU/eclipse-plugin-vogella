@@ -18,10 +18,12 @@ public class RankedBugHeaderDataProvider implements IDataProvider {
 		case 4:
 			return "Component";
 		case 5:
-			return "Dislike";
+			return "Creation Date";
 		case 6:
-			return "Snooze";
+			return "Dislike";
 		case 7:
+			return "Snooze";
+		case 8:
 			return "Like";
 		default:
 			return "";
@@ -35,7 +37,7 @@ public class RankedBugHeaderDataProvider implements IDataProvider {
 
 	@Override
 	public int getColumnCount() {
-		return 8;
+		return 9;
 	}
 
 	@Override

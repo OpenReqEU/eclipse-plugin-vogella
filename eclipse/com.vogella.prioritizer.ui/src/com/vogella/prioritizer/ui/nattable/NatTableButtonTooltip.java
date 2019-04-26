@@ -21,11 +21,11 @@ public class NatTableButtonTooltip extends NatTableContentTooltip {
 	protected String getText(Event event) {
 		int col = this.natTable.getColumnPositionByX(event.x);
 		switch (col) {
-		case 5:
-			return "Bug is not suitable";
 		case 6:
-			return "Snooze bug and show again later\n(See settings panel)";
+			return "Bug is not suitable";
 		case 7:
+			return "Snooze bug and show again later\n(See settings panel)";
+		case 8:
 			int rowPositionByY = natTable.getRowPositionByY(event.y);
 			if(isBugLikedFunction.apply(Integer.valueOf(rowPositionByY))) {
 				return "Unlike the bug";

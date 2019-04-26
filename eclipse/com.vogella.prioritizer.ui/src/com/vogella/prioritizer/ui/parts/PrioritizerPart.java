@@ -214,9 +214,10 @@ public class PrioritizerPart {
 		dataLayer.setColumnWidthPercentageByPosition(2, 11);
 		dataLayer.setColumnWidthPercentageByPosition(3, 11);
 		dataLayer.setColumnWidthPercentageByPosition(4, 11);
-		dataLayer.setColumnWidthPercentageByPosition(5, 4);
+		dataLayer.setColumnWidthPercentageByPosition(5, 11);
 		dataLayer.setColumnWidthPercentageByPosition(6, 4);
 		dataLayer.setColumnWidthPercentageByPosition(7, 4);
+		dataLayer.setColumnWidthPercentageByPosition(8, 4);
 		HoverLayer hoverLayer = new HoverLayer(dataLayer, false);
 		hoverLayer.addConfiguration(new SimpleHoverStylingBindings(hoverLayer));
 		GlazedListsEventLayer<RankedBug> eventLayer = new GlazedListsEventLayer<RankedBug>(hoverLayer, sortedList);
@@ -319,12 +320,12 @@ public class PrioritizerPart {
 		URL delete = FileLocator.find(bundle, new Path("/icons/delete.png"));
 		Image deleteImg = resourceManager.createImage(ImageDescriptor.createFromURL(delete));
 		ButtonCellPainter notSuitableButton = createButtonToColumn(configRegistry,
-				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 5, new ImagePainter(deleteImg));
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6, new ImagePainter(deleteImg));
 
 		URL alarmSnooze = FileLocator.find(bundle, new Path("/icons/alarm-snooze.png"));
 		Image alarmSnoozeImg = resourceManager.createImage(ImageDescriptor.createFromURL(alarmSnooze));
 		ButtonCellPainter notNowButton = createButtonToColumn(configRegistry,
-				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6, new ImagePainter(alarmSnoozeImg));
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7, new ImagePainter(alarmSnoozeImg));
 
 		URL like = FileLocator.find(bundle, new Path("/icons/like.png"));
 		URL dislike = FileLocator.find(bundle, new Path("/icons/unlike.png"));
@@ -340,7 +341,7 @@ public class PrioritizerPart {
 			return false;
 		});
 		ButtonCellPainter likeButton = createButtonToColumn(configRegistry,
-				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7, switchImagePainter);
+				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 8, switchImagePainter);
 
 		natTable = new NatTable(mainComposite, compositeLayer, false);
 		natTable.setConfigRegistry(configRegistry);
@@ -348,11 +349,11 @@ public class PrioritizerPart {
 		natTable.addConfiguration(new SingleClickSortConfiguration());
 		natTable.addConfiguration(linkClickConfiguration);
 		natTable.addConfiguration(
-				new ButtonClickConfiguration(notSuitableButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 5));
+				new ButtonClickConfiguration(notSuitableButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6));
 		natTable.addConfiguration(
-				new ButtonClickConfiguration(notNowButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 6));
+				new ButtonClickConfiguration(notNowButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7));
 		natTable.addConfiguration(
-				new ButtonClickConfiguration(likeButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7));
+				new ButtonClickConfiguration(likeButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 8));
 		
 		// add the style configuration for hover
         natTable.addConfiguration(new AbstractRegistryConfiguration() {
