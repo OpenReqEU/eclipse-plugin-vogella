@@ -9,7 +9,7 @@ public class DeleteProfile {
 		this.agentId = agentId;
 	}
 
-	@JsonProperty("agentID")
+	@JsonProperty("agent_id")
 	public String getAgentId() {
 		return agentId;
 	}
