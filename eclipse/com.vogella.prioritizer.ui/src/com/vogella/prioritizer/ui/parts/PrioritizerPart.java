@@ -558,7 +558,7 @@ public class PrioritizerPart {
 					natTable.refresh(true);
 				}, err -> {
 					LOG.error(err.getMessage(), err);
-//					MessageDialog.openError(mainComposite.getShell(), "Error", err.getMessage());
+					MessageDialog.openError(mainComposite.getShell(), "Error", err.getMessage());
 				}));
 	}
 
