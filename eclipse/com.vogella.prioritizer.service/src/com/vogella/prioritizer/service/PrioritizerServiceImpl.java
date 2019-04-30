@@ -183,7 +183,7 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
-	public Mono<BugzillaPriorityResponse> deleteProfile(String agentId) {
-		return prioritizerApi.deleteProfile(new DeleteProfile(agentId));
+	public Mono<BugzillaPriorityResponse> deleteProfile(String agentID) {
+		return prioritizerApi.deleteProfile(new DeleteProfile(agentID));
 	}
 }

@@ -753,12 +753,22 @@ public class PrioritizerPart {
 
 		new Label(settingsPanel, SWT.NONE);
 		deleteProfile = new Button(settingsPanel, SWT.PUSH);
-		deleteProfile.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
-		deleteProfile.setText("Delete Profile");
+		deleteProfile.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		deleteProfile.setText("Reset Likes, Dislikes and Snoozes");
+		deleteProfile.setToolTipText("This will reset all likes, dislikes and snoozes for the unique identifier");
 		deleteProfile.addSelectionListener(SelectionListener.widgetSelectedAdapter(e ->
 
 		{
-			prioritizerService.deleteProfile(agentId);
+			prioritizerService.deleteProfile(agentId)
+			.subscribe(v -> {
+			}, err -> {
+				Bundle bundle = FrameworkUtil.getBundle(getClass());
+				Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(), err.getMessage(),
+						err);
+				ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
+			});
+			
+			refresh(true);
 		}));
 
 		new Label(settingsPanel, SWT.NONE);
