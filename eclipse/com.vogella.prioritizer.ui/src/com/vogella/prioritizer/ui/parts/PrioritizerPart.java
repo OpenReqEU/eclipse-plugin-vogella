@@ -179,7 +179,7 @@ public class PrioritizerPart {
 	private Disposable likeSubscription;
 
 	private Button applyAndSaveButton;
-	
+
 	private Button deleteProfile;
 
 	private Text emailText;
@@ -226,7 +226,7 @@ public class PrioritizerPart {
 		ColumnReorderLayer columnReorderLayer = new ColumnReorderLayer(eventLayer);
 		ColumnLabelAccumulator columnLabelAccumulator = new ColumnLabelAccumulator(dataProvider);
 		eventLayer.setConfigLabelAccumulator(columnLabelAccumulator);
-		
+
 //		SelectionLayer selectionLayer = new SelectionLayer(columnReorderLayer, false);
 //		selectionLayer.setSelectionModel(
 //				new RowSelectionModel<>(selectionLayer, dataProvider, new IRowIdAccessor<RankedBug>() {
@@ -252,12 +252,10 @@ public class PrioritizerPart {
 		CompositeLayer compositeLayer = new CompositeLayer(1, 2);
 		compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, sortHeaderLayer, 0, 0);
 		compositeLayer.setChildLayer(GridRegion.BODY, viewportLayer, 0, 1);
-		
+
 		compositeLayer.addConfiguration(new DefaultRowStyleConfiguration());
-        compositeLayer.setConfigLabelAccumulatorForRegion(
-                GridRegion.BODY,
-                new AlternatingRowConfigLabelAccumulator(compositeLayer
-                        .getChildLayerByRegionName(GridRegion.BODY)));
+		compositeLayer.setConfigLabelAccumulatorForRegion(GridRegion.BODY,
+				new AlternatingRowConfigLabelAccumulator(compositeLayer.getChildLayerByRegionName(GridRegion.BODY)));
 
 		Style style = new Style();
 		style.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT);
@@ -284,10 +282,8 @@ public class PrioritizerPart {
 
 			Object cellData = dataProvider.getDataValue(columnIndex, rowIndex);
 
-			RankedBug rowObject = dataProvider.getRowObject(rowIndex);
 			if (cellData instanceof Number) {
 				try {
-
 					URL url = new URL("https://bugs.eclipse.org/bugs/show_bug.cgi?id=" + String.valueOf(cellData));
 					browserService.openExternalBrowser(url);
 				} catch (MalformedURLException | CoreException e) {
@@ -356,24 +352,19 @@ public class PrioritizerPart {
 				new ButtonClickConfiguration(notNowButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 7));
 		natTable.addConfiguration(
 				new ButtonClickConfiguration(likeButton, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 8));
-		
+
 		// add the style configuration for hover
-        natTable.addConfiguration(new AbstractRegistryConfiguration() {
+		natTable.addConfiguration(new AbstractRegistryConfiguration() {
 
-            @Override
-            public void configureRegistry(IConfigRegistry configRegistry) {
-                // style that is applied when cells are hovered
-                Style style = new Style();
-                style.setAttributeValue(
-                        CellStyleAttributes.BACKGROUND_COLOR,
-                        GUIHelper.COLOR_GRAY);
+			@Override
+			public void configureRegistry(IConfigRegistry configRegistry) {
+				// style that is applied when cells are hovered
+				Style style = new Style();
+				style.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, GUIHelper.COLOR_GRAY);
 
-                configRegistry.registerConfigAttribute(
-                        CellConfigAttributes.CELL_STYLE,
-                        style,
-                        DisplayMode.HOVER);
-            }
-        });
+				configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, style, DisplayMode.HOVER);
+			}
+		});
 
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(natTable);
 
@@ -537,12 +528,14 @@ public class PrioritizerPart {
 				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_PRODUCT, PRODUCT_DEFAULT).split(","));
 		List<String> queryComponent = Arrays
 				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, COMPONENTS_DEFAULT).split(","));
+		List<String> queryKeywords = Arrays
+				.asList(preferences.get(Preferences.PRIORITIZER_USER_KEYWORDS, "").split(","));
 
 		String generatedAgentId = AgentIDGenerator.getAgentID();
 
 		String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
 		Mono<List<RankedBug>> suitableBugs = prioritizerService.getSuitableBugs(agentId, userEmail, queryProduct,
-				queryComponent);
+				queryComponent, queryKeywords);
 
 		eventList.clear();
 		eventList.add(RankedBug.LOADING_DATA_FAKE_BUG);
@@ -759,15 +752,13 @@ public class PrioritizerPart {
 		deleteProfile.addSelectionListener(SelectionListener.widgetSelectedAdapter(e ->
 
 		{
-			prioritizerService.deleteProfile(agentId)
-			.subscribe(v -> {
+			prioritizerService.deleteProfile(agentId).subscribe(v -> {
 			}, err -> {
 				Bundle bundle = FrameworkUtil.getBundle(getClass());
-				Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(), err.getMessage(),
-						err);
+				Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(), err.getMessage(), err);
 				ErrorDialog.openError(this.natTable.getShell(), "Error", err.getMessage(), status);
 			});
-			
+
 			refresh(true);
 		}));
 
@@ -823,10 +814,13 @@ public class PrioritizerPart {
 		List<String> queryComponent = Arrays
 				.asList(preferences.get(Preferences.PRIORITIZER_QUERY_COMPONENT, COMPONENTS_DEFAULT).split(","));
 		String generatedAgentId = AgentIDGenerator.getAgentID();
+		List<String> queryKeywords = Arrays
+				.asList(preferences.get(Preferences.PRIORITIZER_USER_KEYWORDS, "").split(","));
 
 		String agentId = preferences.get(Preferences.PRIORITIZER_AGENT_ID, generatedAgentId);
 
-		Mono<String> keywordImage = prioritizerService.getKeyWordUrl(agentId, userEmail, queryProduct, queryComponent);
+		Mono<String> keywordImage = prioritizerService.getKeyWordUrl(agentId, userEmail, queryProduct, queryComponent,
+				queryKeywords);
 
 		compositeDisposable.add(keywordImage.subscribeOn(Schedulers.elastic())
 				.publishOn(SwtScheduler.from(scrolledComposite.getDisplay()))

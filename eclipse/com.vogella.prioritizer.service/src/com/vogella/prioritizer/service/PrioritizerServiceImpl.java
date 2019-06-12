@@ -107,12 +107,13 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 
 	@Override
 	public Mono<List<RankedBug>> getSuitableBugs(String agentID, String assignee, List<String> product,
-			List<String> component) {
+			List<String> component, List<String> keywords) {
 		PrioritizerRequest bugzillaRequest = new PrioritizerRequest();
 		bugzillaRequest.setAgent_id(agentID);
 		bugzillaRequest.setAssignee(assignee);
 		bugzillaRequest.setProducts(product);
 		bugzillaRequest.setComponents(component);
+		bugzillaRequest.setKeywords(keywords);
 		Mono<BugzillaPriorityResponse> suitableBugs = prioritizerApi.getSuitableBugs(bugzillaRequest);
 		return suitableBugs.map(BugzillaPriorityResponse::getRankedBugs);
 	}
@@ -123,12 +124,14 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
-	public Mono<String> getKeyWordUrl(String agentID, String assignee, List<String> product, List<String> component) {
+	public Mono<String> getKeyWordUrl(String agentID, String assignee, List<String> product, List<String> component,
+			List<String> keywords) {
 		PrioritizerRequest bugzillaRequest = new PrioritizerRequest();
 		bugzillaRequest.setAgent_id(agentID);
 		bugzillaRequest.setAssignee(assignee);
 		bugzillaRequest.setProducts(product);
 		bugzillaRequest.setComponents(component);
+		bugzillaRequest.setKeywords(keywords);
 		// TODO replace is a current workaround for port problems
 		return prioritizerApi.getKeyWordUrl(bugzillaRequest).map(kwur -> kwur.getUrl());
 	}
