@@ -10,7 +10,7 @@ tags:
     description: Bugzilla Controller
 paths:
   /bugzilla/mostDiscussedBugs:
-    post:
+    get:
       tags:
         - bugzilla-controller
       summary: Find most discussed bugs
