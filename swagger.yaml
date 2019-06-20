@@ -3,14 +3,14 @@ info:
   description: API for bugzilla issues
   version: '1.0'
   title: Vogella bugzilla API
-host: '217.172.12.199:9801'
+host: 'openreq.vogella.com'
 basePath: /
 tags:
   - name: bugzilla-controller
     description: Bugzilla Controller
 paths:
   /bugzilla/mostDiscussedBugs:
-    get:
+    post:
       tags:
         - bugzilla-controller
       summary: Find most discussed bugs
