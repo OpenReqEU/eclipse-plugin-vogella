@@ -34,6 +34,7 @@ class BugzillaController {
     })
 	public Flux<Bug> getMostDiscussedBugs(@RequestParam(name = "product", required = false, defaultValue="Platform") List<String> product,
 			@RequestParam(name = "component", required = false, defaultValue="UI") List<String> component, @RequestParam(name= "daysBack", required=false, defaultValue="30") long daysBack) {
+		System.out.println("Incomming request");
 		return prioritizerService.getMostDiscussedBugs(product, component, daysBack);
 	}
 }
