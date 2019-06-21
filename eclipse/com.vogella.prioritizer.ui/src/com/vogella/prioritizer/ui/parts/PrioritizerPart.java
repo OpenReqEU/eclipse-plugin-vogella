@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -65,6 +66,7 @@ import org.eclipse.nebula.widgets.nattable.painter.cell.PercentageBarCellPainter
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.PercentageBarDecorator;
 import org.eclipse.nebula.widgets.nattable.reorder.ColumnReorderLayer;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
+import org.eclipse.nebula.widgets.nattable.sort.SortConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.sort.SortHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.sort.config.SingleClickSortConfiguration;
 import org.eclipse.nebula.widgets.nattable.style.CellStyleAttributes;
@@ -340,6 +342,15 @@ public class PrioritizerPart {
 		});
 		ButtonCellPainter likeButton = createButtonToColumn(configRegistry,
 				ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 8, switchImagePainter);
+		
+		// configure sort order for like and dislike
+		configRegistry.registerConfigAttribute(SortConfigAttributes.SORT_COMPARATOR, new Comparator<RankedBug>() {
+
+			@Override
+			public int compare(RankedBug o1, RankedBug o2) {
+				return Boolean.compare(o1.isLiked(), o2.isLiked());
+			}
+		}, DisplayMode.NORMAL, ColumnLabelAccumulator.COLUMN_LABEL_PREFIX + 8);
 
 		natTable = new NatTable(mainComposite, compositeLayer, false);
 		natTable.setConfigRegistry(configRegistry);
