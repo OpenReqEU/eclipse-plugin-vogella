@@ -3,7 +3,7 @@ info:
   description: API for bugzilla issues
   version: '1.0'
   title: Vogella bugzilla API
-host: 'openreq.vogella.com'
+host: '217.172.12.199:9801'
 basePath: /
 tags:
   - name: bugzilla-controller
