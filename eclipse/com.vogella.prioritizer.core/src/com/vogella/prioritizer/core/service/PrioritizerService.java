@@ -27,7 +27,7 @@ public interface PrioritizerService {
 	Mono<BugzillaPriorityResponse> deferBug(String agentID, long bugId, int interval, String assignee,
 			List<String> product, List<String> component);
 
-	Mono<List<Bug>> getMostDiscussedBugs(List<String> product, List<String> component, long daysBack);
+	Mono<List<Bug>> getMostDiscussedBugs(List<String> product, List<String> component, long daysBack, String status);
 
 	Mono<BugzillaPriorityResponse> deleteProfile(String agentID);
 

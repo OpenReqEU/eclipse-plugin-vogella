@@ -21,11 +21,11 @@ public class BugzillaService {
 		this.issueApi = issueApi;
 	}
 
-	public Flux<Bug> getMostDiscussedBugs(List<String> product, List<String> component, long daysback) {
+	public Flux<Bug> getMostDiscussedBugs(List<String> product, List<String> component, long daysback, String status) {
 
 		LocalDate nowMinusDaysBack = LocalDate.now().minusDays(daysback);
 		Date lastModifiedDate = Date.from(nowMinusDaysBack.atStartOfDay(ZoneId.systemDefault()).toInstant());
-		Flux<Bug> bugs = issueApi.getBugs(null, 500, product, component, null, null, lastModifiedDate, true);
+		Flux<Bug> bugs = issueApi.getBugs(null, 500, product, component, status, null, lastModifiedDate, true);
 
 		return bugs.sort((b1, b2) -> Integer.compare(b2.getComments().size(), b1.getComments().size()));
 	}

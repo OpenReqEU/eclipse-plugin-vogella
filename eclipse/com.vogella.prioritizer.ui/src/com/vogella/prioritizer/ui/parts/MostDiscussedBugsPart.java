@@ -221,9 +221,10 @@ public class MostDiscussedBugsPart {
 		}
 		
 		long daysBack = preferences.getLong(Preferences.MDB_DAYS_BACK, 30);
+		String status = "NEW";
 		
 		Mono<List<Bug>> suitableBugs = prioritizerService.getMostDiscussedBugs(queryProducts,
-				queryComponents, daysBack);
+				queryComponents, daysBack, status);
 
 		eventList.clear();
 		eventList.add(Bug.LOADING_DATA_FAKE_BUG);

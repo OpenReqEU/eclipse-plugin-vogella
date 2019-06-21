@@ -119,8 +119,8 @@ public class PrioritizerServiceImpl implements PrioritizerService {
 	}
 
 	@Override
-	public Mono<List<Bug>> getMostDiscussedBugs(List<String> product, List<String> component, long daysBack) {
-		return prioritizerApi.getMostDiscussedBugs(product, component, daysBack);
+	public Mono<List<Bug>> getMostDiscussedBugs(List<String> product, List<String> component, long daysBack, String status) {
+		return prioritizerApi.getMostDiscussedBugs(product, component, daysBack, status);
 	}
 
 	@Override
