@@ -12,6 +12,10 @@ The Eclipse Plug-in offers the following features:
 * A view which show the most discussed bugs in the last 30 days from bugs.eclipse.org
 * Tip of the day extension with personalized tips for a better usage of the Eclipse IDE
 
+== Deployed services
+
+All the services included in this Eclipse Plugin are hosted by the vogella company.
+
 == Installing the Eclipse Plugin
 
 A p2 update site can be found here: http://openreq.vogella.com/repository
@@ -70,7 +74,7 @@ image::img/tip-of-the-day-stats.png[]
 
 == Notes for developers
 
-See the DEVELOPER.adoc for information about how to build the plug-in.
+See the link:https://github.com/OpenReqEU/eclipse-plugin-vogella/blob/master/DEVELOPER.adoc[DEVELOPER documentation] for information about how to build the plug-in.
 
 == How to contribute
 
