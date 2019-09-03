@@ -8,10 +8,11 @@ import com.vogella.prioritizer.bugzilla.model.json.JSONBugResponse;
 import okhttp3.ResponseBody;
 import reactor.core.publisher.Mono;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-@SuppressWarnings("squid:S1214") 
+@SuppressWarnings("squid:S1214")
 public interface BugzillaApi {
 
 	String BASE_URL = "https://bugs.eclipse.org/bugs/";
@@ -19,6 +20,7 @@ public interface BugzillaApi {
 	@GET("rest/bug/{bugId}")
 	Mono<JSONBugResponse> getBugById(@Path("bugId") long bugId);
 
+	@Headers("Cache-Control: public, max-age=86400, s-maxage=86400") // 60 * 60 * 24 = 86400s - cache for one day
 	@GET("rest/bug")
 	Mono<JSONBugResponse> getBugs(@Query("assigned_to") String assignee, @Query("product") List<String> product,
 			@Query("component") List<String> component, @Query("limit") long limit, @Query("status") String status,
