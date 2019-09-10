@@ -6,8 +6,6 @@ import reactor.core.publisher.Mono;
 
 public class ScheduledBugCollector {
 
-	public ScheduledBugCollector() {
-	}
 	@Scheduled(cron="")
 	public Mono<Void> gatherBugs() {
 		return null;
