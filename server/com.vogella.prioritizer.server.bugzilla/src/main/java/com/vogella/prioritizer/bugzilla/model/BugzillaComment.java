@@ -8,8 +8,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.vogella.prioritizer.server.issue.api.model.Comment;
 
-import lombok.Data;
-
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BugzillaComment implements Comment {

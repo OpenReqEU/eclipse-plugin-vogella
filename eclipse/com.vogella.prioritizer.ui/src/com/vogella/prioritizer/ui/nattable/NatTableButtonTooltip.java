@@ -1,7 +1,6 @@
 package com.vogella.prioritizer.ui.nattable;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.tooltip.NatTableContentTooltip;

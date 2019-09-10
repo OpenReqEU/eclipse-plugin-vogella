@@ -10,8 +10,6 @@ import com.vogella.prioritizer.server.issue.api.model.Attachment;
 import com.vogella.prioritizer.server.issue.api.model.Bug;
 import com.vogella.prioritizer.server.issue.api.model.Comment;
 
-import lombok.Data;
-
 public class BugzillaBug implements Bug {
 	private int id;
 	private String resolution;
