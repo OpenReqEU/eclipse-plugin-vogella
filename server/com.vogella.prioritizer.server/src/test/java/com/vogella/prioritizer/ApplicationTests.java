@@ -11,7 +11,7 @@ public class ApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		//TODO add server tests
+		// add server tests
 	}
 
 }
