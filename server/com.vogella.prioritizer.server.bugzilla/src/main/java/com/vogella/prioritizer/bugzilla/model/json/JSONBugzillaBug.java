@@ -2,6 +2,7 @@ package com.vogella.prioritizer.bugzilla.model.json;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -132,10 +133,7 @@ public class JSONBugzillaBug {
 	}
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
+		return Objects.hash(id);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -146,12 +144,7 @@ public class JSONBugzillaBug {
 		if (getClass() != obj.getClass())
 			return false;
 		JSONBugzillaBug other = (JSONBugzillaBug) obj;
-		if (id != other.id)
-			return false;
-		return true;
+		return id == other.id;
 	}
-	
-	
-	
-	
 }
+	
