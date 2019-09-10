@@ -11,6 +11,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+@SuppressWarnings("squid:S1214") 
 public interface BugzillaApi {
 
 	String BASE_URL = "https://bugs.eclipse.org/bugs/";

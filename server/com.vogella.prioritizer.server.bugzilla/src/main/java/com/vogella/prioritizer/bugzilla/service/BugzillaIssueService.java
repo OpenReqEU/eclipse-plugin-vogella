@@ -38,23 +38,6 @@ public class BugzillaIssueService implements IssueService {
 		Mono<JSONBugResponse> bugzillaBugs = bugzillaApi.getBugs(assignee, product, component, limit, status,
 				creationTime, lastChangeTime);
 
-//		return bugzillaBugs.map(JSONBugResponse::getBugs).flatMapIterable(jsonBugs -> {
-//			List<Bug> bugs = new ArrayList<>();
-//			for (JSONBugzillaBug jsonBugzillaBug : jsonBugs) {
-//				Flux<Comment> commentsFlux = getComments(jsonBugzillaBug.getId());
-//				// TODO implement getAttachments
-//				Bug bug = BugzillaBug.of(jsonBugzillaBug);
-//				// FIXME make this non blocking
-//				if (withComments) {
-//					List<Comment> comments = commentsFlux.collectList().block();
-//					bug.setComments(comments);
-//				}
-//				bugs.add(bug);
-//			}
-//
-//			return bugs;
-//		});
-
 		return bugzillaBugs.map(JSONBugResponse::getBugs).flatMapMany(Flux::fromIterable).flatMap(jsonBug -> {
 			Mono<List<Comment>> comments = getComments(jsonBug.getId());
 			return comments.map(c -> {
