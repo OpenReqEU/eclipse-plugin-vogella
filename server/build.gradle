@@ -3,7 +3,7 @@ plugins {
     id 'jacoco'
 }
 
-def allTestCoverageFile = "${rootProject.buildDir}/jacoco/allTestCoverage.exec"
+def allTestCoverageFile = "${rootProject.buildDir}/jacoco/test.exec"
 task jacocoMerge(type: JacocoMerge, group: 'verification') {
     destinationFile = file(allTestCoverageFile)
     executionData = project.fileTree(dir: '.', include:'**/build/jacoco/test.exec')
@@ -35,7 +35,6 @@ subprojects {
 	
 	sonarqube {
     	properties {
-        	property "sonar.jacoco.reportPaths", allTestCoverageFile
 			property "sonar.projectKey", "eclipse-plugin-vogella"
     	}
 	}
