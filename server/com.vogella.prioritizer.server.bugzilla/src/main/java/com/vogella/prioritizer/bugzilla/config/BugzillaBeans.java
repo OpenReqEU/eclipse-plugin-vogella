@@ -37,7 +37,7 @@ public class BugzillaBeans {
 		if (null == retrofit) {
 			Builder okHttpClientBuilder = new OkHttpClient.Builder();
 			okHttpClientBuilder.networkInterceptors().add(REWRITE_CACHE_CONTROL_INTERCEPTOR);
-			okHttpClientBuilder.cache(setUpHttpCache(okHttpClientBuilder));
+			okHttpClientBuilder.cache(setUpHttpCache());
 
 			retrofit = new Retrofit.Builder().baseUrl(BugzillaApi.BASE_URL)
 					.client(okHttpClientBuilder.build())
@@ -48,7 +48,7 @@ public class BugzillaBeans {
 		return retrofit.create(BugzillaApi.class);
 	}
 
-	private Cache setUpHttpCache(Builder clientBuilder) {
+	private Cache setUpHttpCache() {
 		File httpCacheDirectory = new File(System.getProperty("user.home") + File.separator +
 				"openreq-mostdiscussed-bugs" + File.separator + "okhttp-cache");
 		httpCacheDirectory.mkdirs();
