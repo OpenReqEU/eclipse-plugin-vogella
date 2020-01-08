@@ -11,7 +11,6 @@ task jacocoMerge(type: JacocoMerge, group: 'verification') {
 
 sonarqube {
     properties {
-        property "sonar.jacoco.reportPaths", allTestCoverageFile
 		property "sonar.projectKey", "eclipse-plugin-vogella"
     }
 }
@@ -22,6 +21,7 @@ repositories {
 }
 
 subprojects {
+	apply plugin: 'jacoco'
 	apply plugin: 'java'
 	apply plugin: 'eclipse'
 
@@ -37,8 +37,18 @@ subprojects {
     	properties {
 			property "sonar.projectKey", "eclipse-plugin-vogella"
     	}
+    
+    
+    	
 	}
 	
+	jacocoTestReport {
+    	reports {
+        	xml.enabled true
+		}
+	}	
+
+
 	ext {
 		springBootVersion = '2.1.1.RELEASE'
 	}
