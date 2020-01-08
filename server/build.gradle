@@ -3,7 +3,7 @@ plugins {
     id 'jacoco'
 }
 
-def allTestCoverageFile = "${rootProject.buildDir}/jacoco/jacoco.exec"
+def allTestCoverageFile = "${rootProject.buildDir}/jacoco.exec"
 task jacocoMerge(type: JacocoMerge, group: 'verification') {
     destinationFile = file(allTestCoverageFile)
     executionData = project.fileTree(dir: '.', include:'**/build/jacoco/test.exec')
