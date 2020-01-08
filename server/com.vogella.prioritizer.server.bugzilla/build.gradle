@@ -1,3 +1,4 @@
+
 buildscript {
 	ext {
 		springBootVersion = '2.1.0.RELEASE'
@@ -8,9 +9,17 @@ buildscript {
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 	}
+	
 }
+
+plugins {
+ 		 id "org.sonarqube" version "2.6.2"
+	}
+	
+	
 apply plugin: 'jacoco'
 apply plugin: 'io.spring.dependency-management'
+
 
 
 
