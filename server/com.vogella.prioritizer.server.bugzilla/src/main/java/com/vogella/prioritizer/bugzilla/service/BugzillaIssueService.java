@@ -61,7 +61,6 @@ public class BugzillaIssueService implements IssueService {
 		});
 	}
 
-	@java.lang.SuppressWarnings("squid:S2696")
 	private Mono<List<Comment>> getComments(long bugId) {
 		Mono<ResponseBody> comments = bugzillaApi.getComments(bugId);
 		return comments.map(t -> {
