@@ -14,6 +14,7 @@ import com.vogella.prioritizer.bugzilla.BugzillaApi;
 import com.vogella.prioritizer.bugzilla.model.BugzillaBug;
 import com.vogella.prioritizer.bugzilla.model.BugzillaComment;
 import com.vogella.prioritizer.bugzilla.model.json.JSONBugResponse;
+import com.vogella.prioritizer.exception.NetworkException;
 import com.vogella.prioritizer.server.issue.api.IssueService;
 import com.vogella.prioritizer.server.issue.api.model.Bug;
 import com.vogella.prioritizer.server.issue.api.model.Comment;
@@ -60,13 +61,14 @@ public class BugzillaIssueService implements IssueService {
 		});
 	}
 
+	@java.lang.SuppressWarnings("squid:S2696")
 	private Mono<List<Comment>> getComments(long bugId) {
 		Mono<ResponseBody> comments = bugzillaApi.getComments(bugId);
 		return comments.map(t -> {
 			try {
 				return t.string();
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				throw new NetworkException(e);
 			}
 		}).map(jsonString -> {
 
@@ -83,10 +85,9 @@ public class BugzillaIssueService implements IssueService {
 			CollectionType javaType = mapper.getTypeFactory().constructCollectionType(List.class,
 					BugzillaComment.class);
 			try {
-				List<Comment> readValue = mapper.readValue(jsonArray.toString(), javaType);
-				return readValue;
+				return  mapper.readValue(jsonArray.toString(), javaType);
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				throw new NetworkException(e);
 			}
 		});
 	}
