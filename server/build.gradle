@@ -33,6 +33,13 @@ subprojects {
 	    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 	}
 	
+	sonarqube {
+    	properties {
+        	property "sonar.jacoco.reportPaths", allTestCoverageFile
+			property "sonar.projectKey", "eclipse-plugin-vogella"
+    	}
+	}
+	
 	ext {
 		springBootVersion = '2.1.1.RELEASE'
 	}
