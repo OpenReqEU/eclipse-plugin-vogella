@@ -33,10 +33,10 @@ public class BugzillaIssueService implements IssueService {
 	}
 
 	@Override
-	public Flux<Bug> getBugs(String assignee, long limit, List<String> product, List<String> component, String status,
+	public Flux<Bug> getBugs(long limit, List<String> product, List<String> component, String status,
 			Date creationTime, Date lastChangeTime, boolean withComments) {
 
-		Mono<JSONBugResponse> bugzillaBugs = bugzillaApi.getBugs(assignee, product, component, limit, status,
+		Mono<JSONBugResponse> bugzillaBugs = bugzillaApi.getBugs(product, component, limit, status,
 				creationTime, lastChangeTime);
 
 		return bugzillaBugs.map(JSONBugResponse::getBugs).flatMapMany(Flux::fromIterable).flatMap(jsonBug -> {

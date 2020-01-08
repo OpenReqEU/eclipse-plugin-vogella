@@ -25,7 +25,7 @@ public class BugzillaService {
 
 		LocalDate nowMinusDaysBack = LocalDate.now().minusDays(daysback);
 		Date lastModifiedDate = Date.from(nowMinusDaysBack.atStartOfDay(ZoneId.systemDefault()).toInstant());
-		Flux<Bug> bugs = issueApi.getBugs(null, 500, product, component, status, null, lastModifiedDate, true);
+		Flux<Bug> bugs = issueApi.getBugs(500, product, component, status, null, lastModifiedDate, true);
 
 		return bugs.sort((b1, b2) -> Integer.compare(b2.getComments().size(), b1.getComments().size()));
 	}

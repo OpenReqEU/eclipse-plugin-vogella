@@ -22,7 +22,7 @@ public interface BugzillaApi {
 
 	@Headers("Cache-Control: public, max-age=86400, s-maxage=86400") // 60 * 60 * 24 = 86400s - cache for one day
 	@GET("rest/bug")
-	Mono<JSONBugResponse> getBugs(@Query("assigned_to") String assignee, @Query("product") List<String> product,
+	Mono<JSONBugResponse> getBugs(@Query("product") List<String> product,
 			@Query("component") List<String> component, @Query("limit") long limit, @Query("status") String status,
 			@Query("creation_time") Date creationTime, @Query("last_change_time") Date lastChangeTime);
 
