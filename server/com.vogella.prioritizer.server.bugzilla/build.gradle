@@ -12,11 +12,7 @@ buildscript {
 	
 }
 
-plugins {
- 		 id "org.sonarqube" version "2.6.2"
-	}
-	
-	
+
 apply plugin: 'jacoco'
 apply plugin: 'io.spring.dependency-management'
 
