@@ -9,8 +9,16 @@ buildscript {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 	}
 }
+apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 apply plugin: 'io.spring.dependency-management'
+
+sonarqube {
+    properties {
+        property "sonar.exclusions", "**/*.java"
+    }
+}
+
 
 dependencyManagement {
     imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
