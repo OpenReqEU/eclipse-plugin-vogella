@@ -34,4 +34,14 @@ dependencies {
 	
 	implementation project (':com.vogella.prioritizer.server.bugzilla')
 	implementation project (':com.vogella.prioritizer.server.issue.api')
+	
+	
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.5.2")
 }
+
+
+test {
+    // Use junit platform for unit tests
+    useJUnitPlatform()
+}	
