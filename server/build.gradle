@@ -2,13 +2,6 @@ plugins {
     id "org.sonarqube" version "2.7"
     id 'jacoco'
 }
-
-jacocoTestReport {
-    reports {
-        xml.enabled true
-	html.destination file("${buildDir}/coverage-reports")
-	}
-}
 	
 //def allTestCoverageFile = "${rootProject.buildDir}/jacoco/jacoco.exec"
 //task jacocoMerge(type: JacocoMerge, group: 'verification') {
