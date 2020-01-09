@@ -3,32 +3,38 @@ plugins {
     id 'jacoco'
 }
 
-def allTestCoverageFile = "${rootProject.buildDir}/jacoco/jacoco.exec"
-task jacocoMerge(type: JacocoMerge, group: 'verification') {
-    destinationFile = file(allTestCoverageFile)
-    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/test.exec')
+jacocoTestReport {
+    reports {
+        xml.enabled true
+	html.destination file("${buildDir}/coverage-reports")
+	}
 }
+	
+//def allTestCoverageFile = "${rootProject.buildDir}/jacoco/jacoco.exec"
+//task jacocoMerge(type: JacocoMerge, group: 'verification') {
+//    destinationFile = file(allTestCoverageFile)
+//    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/test.exec')
+//}
 
-sonarqube {
-    properties {
-		property "sonar.projectKey", "eclipse-plugin-vogella"
-    }
-}
+//sonarqube {
+//    properties {
+//		property "sonar.projectKey", "eclipse-plugin-vogella"
+//    }
+//}
 
 repositories {
 		jcenter()
-
 }
 
 //def sourceFile = "${rootProject}/com.vogella.prioritizer.server.bugzilla/build/reports/jacoco/test/jacocoTestReport.xml"
 
-def sourceFile = "com.vogella.prioritizer.server.bugzilla/build/reports/jacoco/test/jacocoTestReport.xml"
+//def sourceFile = "com.vogella.prioritizer.server.bugzilla/build/reports/jacoco/test/jacocoTestReport.xml"
 
-task copyReport(type: Copy) {
-    from file(sourceFile)
-    into file("$buildDir/coverage-reports/")
-	rename ("jacocoTestReport.xml", "coverage.xml")
-}
+//task copyReport(type: Copy) {
+//    from file(sourceFile)
+//    into file("$buildDir/coverage-reports/")
+//	rename ("jacocoTestReport.xml", "coverage.xml")
+//}
 
 subprojects {
 	apply plugin: 'jacoco'
@@ -40,15 +46,15 @@ subprojects {
 		maven { url 'https://repo.spring.io/snapshot' }
 		maven { url 'https://repo.spring.io/milestone' }
 		maven {	url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-	    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
+	    	maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 	}
 	
-	sonarqube {
-    	properties {
-			property "sonar.projectKey", "eclipse-plugin-vogella"
-    	}
+	//sonarqube {
+    	//properties {
+	//		property "sonar.projectKey", "eclipse-plugin-vogella"
+    	//}
         	
-	}
+	//}
 	
 	jacocoTestReport {
     	reports {
