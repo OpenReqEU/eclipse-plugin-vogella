@@ -41,6 +41,7 @@ subprojects {
 		maven {	url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 	    	maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 	}
+	test.finalizedBy(jacocoMerge)
 	
 	//sonarqube {
     	//properties {
@@ -61,8 +62,6 @@ subprojects {
 	}
 
 	sourceCompatibility = 1.8
-
-	test.finalizedBy(jacocoMerge)
 }
 
 
