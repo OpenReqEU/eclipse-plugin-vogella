@@ -3,31 +3,9 @@ plugins {
     id 'jacoco'
 }
 	
-//def allTestCoverageFile = "${rootProject.buildDir}/jacoco/jacoco.exec"
-//task jacocoMerge(type: JacocoMerge, group: 'verification') {
-//    destinationFile = file(allTestCoverageFile)
-//    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/test.exec')
-//}
-
-//sonarqube {
-//    properties {
-//		property "sonar.projectKey", "eclipse-plugin-vogella"
-//    }
-//}
-
 repositories {
-		jcenter()
+	jcenter()
 }
-
-//def sourceFile = "${rootProject}/com.vogella.prioritizer.server.bugzilla/build/reports/jacoco/test/jacocoTestReport.xml"
-
-//def sourceFile = "com.vogella.prioritizer.server.bugzilla/build/reports/jacoco/test/jacocoTestReport.xml"
-
-//task copyReport(type: Copy) {
-//    from file(sourceFile)
-//    into file("$buildDir/coverage-reports/")
-//	rename ("jacocoTestReport.xml", "coverage.xml")
-//}
 
 subprojects {
 	apply plugin: 'jacoco'
@@ -42,13 +20,6 @@ subprojects {
 	    	maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 	}
 	
-	//sonarqube {
-    	//properties {
-	//		property "sonar.projectKey", "eclipse-plugin-vogella"
-    	//}
-        	
-	//}
-	
 	jacocoTestReport {
     	reports {
         	xml.enabled true
@@ -61,8 +32,7 @@ subprojects {
 	}
 
 	sourceCompatibility = 1.8
-	
-//	test.finalizedBy(jacocoMerge)
+
 }
 
 
