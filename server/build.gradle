@@ -53,6 +53,7 @@ subprojects {
 	jacocoTestReport {
     	reports {
         	xml.enabled true
+		html.destination file("${buildDir}/coverage-reports")
 		}
 	}
 
