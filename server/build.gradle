@@ -3,11 +3,11 @@ plugins {
     id 'jacoco'
 }
 	
-def allTestCoverageFile = "${rootProject.buildDir}/jacoco/jacoco.exec"
-task jacocoMerge(type: JacocoMerge, group: 'verification') {
-    destinationFile = file(allTestCoverageFile)
-    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/test.exec')
-}
+//def allTestCoverageFile = "${rootProject.buildDir}/jacoco/jacoco.exec"
+//task jacocoMerge(type: JacocoMerge, group: 'verification') {
+//    destinationFile = file(allTestCoverageFile)
+//    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/test.exec')
+//}
 
 //sonarqube {
 //    properties {
@@ -62,7 +62,7 @@ subprojects {
 
 	sourceCompatibility = 1.8
 	
-	test.finalizedBy(jacocoMerge)
+//	test.finalizedBy(jacocoMerge)
 }
 
 
