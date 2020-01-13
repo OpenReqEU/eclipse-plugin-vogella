@@ -13,7 +13,7 @@ import springfox.documentation.swagger.web.UiConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebFlux;
 
 @Configuration
-@EnableSwagger2WebFlux
+//@EnableSwagger2WebFlux
 class SwaggerConfig {
 
 	@Bean
