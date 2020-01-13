@@ -23,7 +23,7 @@ subprojects {
 	jacocoTestReport {
     	reports {
         	xml.enabled true
-			xml.destination file("${buildDir}/coverage-reports/coverage.xml")
+//			xml.destination file("${projectDir}/coverage-reports/coverage.xml")
 			//html.destination file("${buildDir}/coverage-reports/coverage.xml")
 		}
 	}
