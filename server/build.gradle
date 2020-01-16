@@ -48,7 +48,7 @@ task generateMergedReport(type: JacocoReport) {
   	
   	reports {
     	xml.enabled true
-    	xml.destination file("${projectDir}/coverage-reports/coverage.xml")
+    	xml.destination file("../coverage-reports/coverage.xml")
   	}
 }
 
