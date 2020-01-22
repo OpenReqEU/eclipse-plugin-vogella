@@ -18,7 +18,9 @@ All the services included in this Eclipse Plugin are hosted by the vogella compa
 
 == Installing the Eclipse Plugin
 
-A p2 update site can be found here: http://openreq.vogella.com/repository
+The Plugin is available at the Eclipse Marketplace: https://marketplace.eclipse.org/content/personalized-eclipse-ide-bug-prioritizer#group-details
+
+Alternatively it can be installed through the p2 update site at: http://openreq.vogella.com/repository
 
 This p2 update site can be entered in the following dialog by clicking menu:Help[Install New Software...].
 
