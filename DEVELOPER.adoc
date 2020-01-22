@@ -32,7 +32,7 @@ $ cd openreq/eclipse
 $ ./mvnw clean verify
 ----
 
-This will generate an update site for the Prioritizer Eclipse Plugin in the _openreq/eclipse/com.vogella.prioritizer.updatesite/target/repository_ folder.
+This will generate an update site for the Prioritizer Eclipse Plugin in the _openreq/eclipse/update-site/target/repository_ folder.
 
 image::img/local_update_site.png[]
 
